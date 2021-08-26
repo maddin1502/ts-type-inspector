@@ -1,0 +1,36 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking"
+  ],
+  "parserOptions": {
+    "project": ["tsconfig.json", "tests/tsconfig.json"],
+    "sourceType": "module"
+  },
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "rules": {
+    "@typescript-eslint/array-type": "off",
+    "@typescript-eslint/consistent-type-assertions": "warn",
+    "@typescript-eslint/no-empty-interface": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-var-requires": "warn",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/indent": ["warn", 2],
+    "@typescript-eslint/comma-dangle": "warn",
+    "@typescript-eslint/no-shadow": "warn",
+    "prefer-arrow-callback": "warn",
+    "object-shorthand": "warn",
+    "camelcase": "warn",
+    "indent": ["warn", 2],
+    "no-bitwise": "off",
+    "no-console": "warn",
+    "no-empty": "warn",
+    "no-param-reassign": "warn",
+    "quotes": ["warn", "single"],
+    "semi": "warn"
+  },
+  "ignorePatterns": ["dist", "tests/reports"]
+}

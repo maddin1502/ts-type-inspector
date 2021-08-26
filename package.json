@@ -1,0 +1,96 @@
+{
+  "name": "[package-name]",
+  "version": "1.0.0",
+  "description": "Template for node packages",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "reset-modules": "npx --quiet rimraf node_modules/ package-lock.json",
+    "reset-creation": "npx --quiet rimraf dist/ tests/reports/",
+    "reset": "npm run reset-creation && npm run reset-modules",
+    "init": "npm run reset && npm i && npm run build && npm run test",
+    "create": "npm run reset-creation && npm run build && npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maddin1502/[package-name].git"
+  },
+  "keywords": [
+    "typescript",
+    "template"
+  ],
+  "author": "maddin1502",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/maddin1502/[package-name]/issues"
+  },
+  "homepage": "https://github.com/maddin1502/[package-name]#readme",
+  "devDependencies": {
+    "@types/jest": "^27.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.29.2",
+    "@typescript-eslint/parser": "^4.29.2",
+    "eslint": "^7.32.0",
+    "jest": "^27.0.6",
+    "jest-class-extended": "^1.0.1",
+    "jest-html-reporters": "^2.1.6",
+    "jest-junit": "^12.2.0",
+    "ts-jest": "^27.0.5",
+    "typescript": "^4.3.5"
+  },
+  "jest": {
+    "testMatch": [
+      "<rootDir>/tests/code/**/*.test.ts"
+    ],
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "<rootDir>/src/**/*.{ts,js}"
+    ],
+    "coverageReporters": [
+      "html",
+      "text",
+      "cobertura"
+    ],
+    "coverageDirectory": "<rootDir>/tests/reports/coverage",
+    "reporters": [
+      "default",
+      [
+        "jest-junit",
+        {
+          "suiteName": "jest tests",
+          "outputDirectory": "./tests/reports/result",
+          "outputName": "junit.xml",
+          "classNameTemplate": "{classname}",
+          "titleTemplate": "{title}",
+          "ancestorSeparator": " › "
+        }
+      ],
+      [
+        "jest-html-reporters",
+        {
+          "publicPath": "./tests/reports/result",
+          "filename": "overview.html"
+        }
+      ]
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/$1",
+      "^~/(.*)$": "<rootDir>/$1"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "resetMocks": true,
+    "restoreMocks": true
+  }
+}
