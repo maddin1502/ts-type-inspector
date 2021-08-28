@@ -42,8 +42,8 @@ export class ObjectValidator<TValue extends object>
         try {
           // keep optional parameters in mind! The value must be validated even if it is undefined
           validator.validate((value_ as any)[propertyKey]);
-        } catch (error_) {
-          this.rethrowError(error_, propertyKey);
+        } catch (reason_) {
+          this.rethrowError(reason_, propertyKey);
         }
       }
     }

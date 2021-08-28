@@ -19,8 +19,8 @@ export class OptionalValidator<TValue>
 
     try {
       validatedValue = this._validator.validate(value_);
-    } catch (error_) {
-      this.rethrowError(error_);
+    } catch (reason_) {
+      this.rethrowError(reason_);
     }
 
     return validatedValue;

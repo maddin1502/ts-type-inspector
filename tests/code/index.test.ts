@@ -1,3 +1,5 @@
+import { Dictionary } from 'ts-lib-extended';
+
 describe('root', () => {
   test('exports', () => {
     expect(true).toBeDefined();
@@ -97,3 +99,61 @@ for (let i = 0; i < times; i++) {
   }
 }
 console.timeEnd('forof array');
+
+const dic: Dictionary<string> = {
+  1: 'hello',
+  2: 'you'
+};
+
+
+console.time('forin dic');
+for (let i = 0; i < times; i++) {
+  for (const key in dic) {
+    dic[key];
+  }
+}
+console.timeEnd('forin dic');
+
+
+console.time('fori dic');
+for (let i = 0; i < times; i++) {
+  const keys = Object.keys(dic)
+  for (let i = 0; i < keys.length; i++) {
+    dic[keys[i]];
+  }
+}
+console.timeEnd('fori dic');
+
+
+
+console.time('ifelse');
+for (let i = 0; i < times; i++) {
+  for (const key in dic) {
+    if (key === '1') {
+      dic[key];
+    } else if (key === '2') {
+      dic[key];
+    } else {
+      dic[key];
+    }
+  }
+}
+console.timeEnd('ifelse');
+
+console.time('switch');
+for (let i = 0; i < times; i++) {
+  for (const key in dic) {
+    switch (key) {
+      case '1':
+        dic[key];
+        break;
+      case '2':
+        dic[key];
+        break;
+      default:
+        dic[key];
+        break;
+    }
+  }
+}
+console.timeEnd('switch');

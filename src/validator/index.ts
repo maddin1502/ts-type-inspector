@@ -2,23 +2,52 @@ import { ValidationError, VALIDATION_ERROR_MARKER } from '../error';
 
 export type CustomValidationType<TValue> = (value_: TValue) => string | undefined;
 
-export abstract class Validator<TValue> implements ValidatorInterface<TValue> {
+export abstract class Validator<TValue> {
   private _validationError: ValidationError | undefined;
   private _customValidation: CustomValidationType<TValue> | undefined;
   private _customErrorMessage: string | undefined | (() => string);
 
+  /**
+   * set if validation has failed
+   *
+   * @readonly
+   * @type {(ValidationError | undefined)}
+   * @memberof Validator
+   */
   public get validationError(): ValidationError | undefined { return this._validationError; }
 
+  /**
+   * add a custom validation; return a error message if validation fails
+   *
+   * @param {CustomValidationType<TValue>} evaluation_
+   * @return {*}  {this}
+   * @memberof Validator
+   */
   public custom(evaluation_: CustomValidationType<TValue>): this {
     this._customValidation = evaluation_;
     return this;
   }
 
+  /**
+   * custom error message (overrides all coded messages)
+   *
+   * @param {(string | (() => string))} message_
+   * @return {*}  {this}
+   * @memberof Validator
+   */
   public error(message_: string | (() => string)): this {
     this._customErrorMessage = message_;
     return this;
   }
 
+  /**
+   * validate value
+   *
+   * @throws {ValidationError} if validation fails
+   * @param {unknown} value_
+   * @return {*}  {TValue} returns validated value with asserted type (same reference)
+   * @memberof Validator
+   */
   public validate(value_: unknown): TValue {
     const value = this.validateValue(value_);
     const customEvaluationResult = this._customValidation?.(value);
@@ -30,6 +59,13 @@ export abstract class Validator<TValue> implements ValidatorInterface<TValue> {
     return value;
   }
 
+  /**
+   * validate value
+   *
+   * @param {unknown} value_
+   * @return {*}  {value_ is TValue} true if valid; false if invalid; this is a type predicate - asserted type will be associated to value if true
+   * @memberof Validator
+   */
   public isValid(value_: unknown): value_ is TValue {
     try {
       this.validate(value_);
@@ -57,7 +93,7 @@ export abstract class Validator<TValue> implements ValidatorInterface<TValue> {
     } else if (this.hasMessage(reason_) && typeof reason_.message === 'string' && reason_.message !== '') {
       error = new Error(reason_.message);
     } else {
-      message = 'unknown error';
+      error = new Error('unknown error');
     }
 
     this.throwValidationError(error.message, propertyTraces, [error]);
@@ -86,54 +122,11 @@ export abstract class Validator<TValue> implements ValidatorInterface<TValue> {
     throw this._validationError;
   }
 
-  protected isValidationError(reason_: unknown): reason_ is ValidationError {
+  private isValidationError(reason_: unknown): reason_ is ValidationError {
     return typeof reason_ === 'object' && reason_ !== null && VALIDATION_ERROR_MARKER in reason_;
   }
 
   private hasMessage(value_: unknown): value_ is { message: any } {
     return typeof value_ === 'object' && value_ !== null && 'message' in value_;
   }
-}
-
-export interface ValidatorInterface<TValue> {
-  /**
-   * set if validation fails
-   *
-   * @type {(ValidationError | undefined)}
-   * @memberof ValidatorInterface
-   */
-  readonly validationError: ValidationError | undefined;
-
-  /**
-   * validates value -> true if valid; false if invalid
-   *
-   * @param {unknown} value_
-   * @return {*}  {value_ is TValue}
-   * @memberof ValidatorInterface
-   */
-  isValid(value_: unknown): value_ is TValue;
-  /**
-   * validates value -> throws error if invalid
-   *
-   * @param {unknown} value_
-   * @return {*}  {TValue}
-   * @memberof ValidatorInterface
-   */
-  validate(value_: unknown): TValue;
-  /**
-   * custom validation callback; return a error message if validation fails
-   *
-   * @param {CustomValidationType<TValue>} validation_
-   * @return {*}  {this}
-   * @memberof ValidatorInterface
-   */
-  custom(validation_: CustomValidationType<TValue>): this;
-  /**
-   * custom error message (overrides all coded messages)
-   *
-   * @param {(string | (() => string))} message_
-   * @return {*}  {this}
-   * @memberof ValidatorInterface
-   */
-  error(message_: string | (() => string)): this;
 }

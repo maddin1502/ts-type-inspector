@@ -1,61 +1,59 @@
-import { DictionaryInterface } from '@hbc/custom-types';
+import { Dictionary, DictionaryKey, DictionaryValue } from 'ts-lib-extended';
 import { Validator, ValidatorInterface } from '.';
-
-export class DictionaryValidator<TValue>
-  extends Validator<DictionaryInterface<TValue>>
-  implements DictionaryValidatorInterface<TValue>
-{
-  private _keysValidator: ValidatorInterface<string> | undefined;
-
-  constructor(
-    private _itemValidator: ValidatorInterface<TValue>
-  ) {
-    super();
-  }
-
-  public keys(validator_: ValidatorInterface<string>): this {
-    this._keysValidator = validator_;
-    return this;
-  }
-
-  protected validateValue(value_: unknown): DictionaryInterface<TValue> {
-    if (typeof value_ !== 'object' || value_ === null) {
-      this.throwValidationError('value is not an object');
-    }
-
-    const propertyKeys = Object.keys(value_);
-
-    for (let i = 0; i < propertyKeys.length; i++) {
-      const propertyKey = propertyKeys[i];
-
-      try {
-        this._keysValidator?.validate(propertyKey);
-        this._itemValidator.validate((value_ as any)[propertyKey]);
-      } catch (error_) {
-        // TODO: error origin is lost at this point -> key or item error???
-        this.rethrowError(error_, propertyKey);
-      }
-    }
-
-    return value_ as DictionaryInterface<TValue>;
-  }
-}
 
 /**
  * Validator for dictionary objects
  *
  * @export
- * @interface DictionaryValidatorInterface
- * @extends {ValidatorInterface<DictionaryInterface<T>>}
- * @template T
+ * @class DictionaryValidator
+ * @extends {Validator<TValue>}
+ * @template TValue
  */
-export interface DictionaryValidatorInterface<T> extends ValidatorInterface<DictionaryInterface<T>> {
+export class DictionaryValidator<TValue extends Dictionary> extends Validator<TValue> {
+  private _keysValidator: ValidatorInterface<string> | undefined;
+
+  constructor(
+    private _itemValidator: ValidatorInterface<DictionaryValue<TValue>>
+  ) {
+    super();
+  }
+
   /**
-   * dictionary keys have to match specific entries
+   * additional dictionary key validation
    *
-   * @param {ValidatorInterface<string>} validator_ string validator for key validation
+   * @param {ValidatorInterface<DictionaryKey<TValue>>} validator_
    * @return {*}  {this}
-   * @memberof DictionaryValidatorInterface
+   * @memberof DictionaryValidator
    */
-  keys(validator_: ValidatorInterface<string>): this;
+  public keys(validator_: ValidatorInterface<DictionaryKey<TValue>>): this {
+    this._keysValidator = validator_;
+    return this;
+  }
+
+  protected validateValue(value_: unknown): TValue {
+    if (!this.isDictionary(value_)) {
+      this.throwValidationError('value is not a dictionary');
+    }
+
+    const keys = Object.keys(value_);
+
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+
+      try {
+        this._keysValidator?.validate(key);
+        this._itemValidator.validate(value_[key]);
+      } catch (reason_) {
+        // TODO: error origin is lost at this point -> key or item error???
+        this.rethrowError(reason_, key);
+      }
+    }
+
+    return value_ as TValue;
+  }
+
+  private isDictionary(value_: unknown): value_ is Dictionary<any> {
+    // TODO: is there any validatable differnce between dictionary and standard object?
+    return typeof value_ !== 'object' || value_ === null;
+  }
 }

@@ -28,8 +28,8 @@ export class UnionValidator<V extends ValidatorsType>
       try {
         this._validators[i].validate(value_);
         break;
-      } catch (error_) {
-        validationErrors.push(error_);
+      } catch (reason_) {
+        validationErrors.push(reason_);
       }
     }
 
