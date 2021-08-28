@@ -1,6 +1,12 @@
 import { ArrayItem, MinArray } from 'ts-lib-extended';
 import { Validator } from '.';
 
+
+type WithLength<T = any> = { readonly length: T };
+type IndexedObject<T extends number> = {
+  [index in T]: any;
+} & WithLength<number>
+
 /**
  * Validator for array-like values
  *
@@ -85,7 +91,7 @@ export class ArrayValidator<TValue extends ArrayLike<any>>
   }
 
   protected validateValue(value_: unknown): TValue {
-    if (!this.hasNumericLength(value_)) {
+    if (!this.withNumericLength(value_)) {
       this.throwValidationError('value is not an array');
     }
 
@@ -102,7 +108,7 @@ export class ArrayValidator<TValue extends ArrayLike<any>>
     }
 
     for (let i = 0; i < value_.length; i++) {
-      if (!this.isIndexable(value_, i)) {
+      if (!this.isIndexed(value_, i)) {
         this.throwValidationError('value is not indexable');
       }
 
@@ -118,23 +124,23 @@ export class ArrayValidator<TValue extends ArrayLike<any>>
 
       try {
         this._itemValidator.validate(item);
-      } catch (error_) {
-        this.rethrowError(error_, i);
+      } catch (reason_) {
+        this.rethrowError(reason_, i);
       }
     }
 
     return value_ as TValue;
   }
 
-  private isIndexable(value_: { length: number }, index_: number): value_ is { length: number; [i: number]: any } {
+  private isIndexed<T extends number>(value_: WithLength<number>, index_: T): value_ is IndexedObject<T> {
     return index_ in value_;
   }
 
-  private hasLengthProp(value_: unknown): value_ is { length: any } {
+  private withLength(value_: unknown): value_ is WithLength {
     return typeof value_ === 'object' && value_ !== null && 'length' in value_;
   }
 
-  private hasNumericLength(value_: unknown): value_ is { length: number } {
-    return this.hasLengthProp(value_) && typeof value_.length === 'number' && !isNaN(value_.length);
+  private withNumericLength(value_: unknown): value_ is WithLength<number> {
+    return this.withLength(value_) && typeof value_.length === 'number' && !isNaN(value_.length);
   }
 }

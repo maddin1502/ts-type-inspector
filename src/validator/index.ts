@@ -41,18 +41,26 @@ export abstract class Validator<TValue> implements ValidatorInterface<TValue> {
 
   protected abstract validateValue(value_: unknown): TValue;
 
-  protected rethrowError(error_: Error, trace_?: PropertyKey): never {
-    const propertyTrace: PropertyKey[] = [];
+  protected rethrowError(reason_: unknown, trace_?: PropertyKey): never {
+    const propertyTraces: PropertyKey[] = trace_ === undefined ? [] : [trace_];
 
-    if (trace_ !== undefined) {
-      propertyTrace.push(trace_);
+    let error: Error;
+
+    if (this.isValidationError(reason_)) {
+      error = reason_;
+
+      if (reason_.propertyTrace) {
+        propertyTraces.push(...reason_.propertyTrace);
+      }
+    } else if (reason_ instanceof Error) {
+      error = reason_;
+    } else if (this.hasMessage(reason_) && typeof reason_.message === 'string' && reason_.message !== '') {
+      error = new Error(reason_.message);
+    } else {
+      message = 'unknown error';
     }
 
-    if (this.isValidationError(error_) && error_.propertyTrace) {
-      propertyTrace.push(...error_.propertyTrace);
-    }
-
-    this.throwValidationError(error_.message, propertyTrace, [error_]);
+    this.throwValidationError(error.message, propertyTraces, [error]);
   }
 
   protected throwValidationError(
@@ -78,8 +86,12 @@ export abstract class Validator<TValue> implements ValidatorInterface<TValue> {
     throw this._validationError;
   }
 
-  protected isValidationError(error_: Error): error_ is ValidationError {
-    return VALIDATION_ERROR_MARKER in error_;
+  protected isValidationError(reason_: unknown): reason_ is ValidationError {
+    return typeof reason_ === 'object' && reason_ !== null && VALIDATION_ERROR_MARKER in reason_;
+  }
+
+  private hasMessage(value_: unknown): value_ is { message: any } {
+    return typeof value_ === 'object' && value_ !== null && 'message' in value_;
   }
 }
 

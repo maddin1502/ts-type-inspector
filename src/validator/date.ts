@@ -1,38 +1,68 @@
 import { MinArray } from 'ts-lib-extended';
-import { RangeValidator, RangeValidatorInterface } from './range';
+import { Validator } from '.';
 
-export class DateValidator
-  extends RangeValidator<Date, number | Date | string, Date | number | string>
-  implements DateValidatorInterface
+type DateLike = string | number | Date;
+
+/**
+ * Validator for date objects
+ *
+ * @export
+ * @class DateValidator
+ * @extends {Validator<Date>}
+ */
+export class DateValidator extends Validator<Date>
 {
   private _min: string | number | Date | undefined;
   private _max: string | number | Date | undefined;
-  private _allowed: MinArray<string | number | Date, 1> | undefined;
-  private _forbidden: MinArray<string | number | Date, 1> | undefined;
+  private _allowed: MinArray<DateLike, 1> | undefined;
+  private _forbidden: MinArray<DateLike, 1> | undefined;
 
-  public get min(date_: string | number | Date): this {
+  /**
+   * earliest date
+   *
+   * @param {DateLike} date_
+   * @return {*}  {this}
+   * @memberof DateValidator
+   */
+  public min(date_: DateLike): this {
     this._min = date_;
     return this;
   }
 
-  public get max(date_: string | number | Date): this {
+  /**
+   * latest date
+   *
+   * @param {DateLike} date_
+   * @return {*}  {this}
+   * @memberof DateValidator
+   */
+  public max(date_: DateLike): this {
     this._max = date_;
     return this;
   }
 
-  public get allow(...items_: MinArray<string | number | Date, 1>): this {
+  /**
+   * allowed dates
+   *
+   * @param {...MinArray<DateLike, 1>} items_
+   * @return {*}  {this}
+   * @memberof DateValidator
+   */
+  public allow(...items_: MinArray<DateLike, 1>): this {
     this._allowed = items_;
     return this;
   }
 
-  public get forbid(...items_: MinArray<string | number | Date, 1>): this {
+  /**
+   * forbidden dates
+   *
+   * @param {...MinArray<DateLike, 1>} items_
+   * @return {*}  {this}
+   * @memberof DateValidator
+   */
+  public forbid(...items_: MinArray<DateLike, 1>): this {
     this._forbidden = items_;
     return this;
-  }
-
-  protected matches(item_: string | number | Date, value_: Date): boolean {
-    const itemNumber = this.toNumber(item_);
-    return !isNaN(itemNumber) && this.toNumber(value_) === itemNumber;
   }
 
   protected validateValue(value_: unknown): Date {
@@ -40,50 +70,59 @@ export class DateValidator
       this.throwValidationError('value is not a date');
     }
 
-    if (isNaN(value_.getTime())) {
-      this.throwValidationError('invalid date');
+    const valueTime = this.toTime(value_);
+
+    if (isNaN(valueTime)) {
+      this.throwValidationError('date is invalid');
     }
 
-    if (this._min !== undefined || this._max !== undefined || this._allowed !== undefined || this._forbidden !== undefined) {
-      const valueNumber = this.toNumber(value_);
+    if (this._min) {
+      const minTime = this.toTime(this._min);
 
-      if (this._min) {
-        const minValue = this.toNumber(this._min);
-
-        if (!isNaN(minValue) && valueNumber < minValue) {
-          this.throwValidationError('date is earlier than the minimum');
-        }
-      }
-
-      if (this._max) {
-        const maxValue = this.toNumber(this._max);
-
-        if (!isNaN(maxValue) && valueNumber > maxValue) {
-          this.throwValidationError('date is later than the minimum');
-        }
-      }
-
-      if (this._allowed) {
-        let notMatched = 0;
-
-        for (let i = 0; i < this._allowed.length; i++) {
-          const itemNumber = this.toNumber(this._allowed[i]);
-
-          if (!isNaN(itemNumber) && valueNumber !== itemNumber) {
-            notMatched++;
-          }
-        }
+      if (!isNaN(minTime) && valueTime < minTime) {
+        this.throwValidationError('date is earlier than the minimum');
       }
     }
 
-    return super.validateValue(value_);
+    if (this._max) {
+      const maxTime = this.toTime(this._max);
+
+      if (!isNaN(maxTime) && valueTime > maxTime) {
+        this.throwValidationError('date is later than the maximum');
+      }
+    }
+
+    if (this._allowed) {
+      let matched = false;
+
+      for (let i = 0; i < this._allowed.length; i++) {
+        if (valueTime === this.toTime(this._allowed[i])) {
+          matched = true;
+          break;
+        }
+      }
+
+      if (!matched) {
+        this.throwValidationError('date is not allowed');
+      }
+    }
+
+    if (this._forbidden) {
+      for (let i = 0; i < this._forbidden.length; i++) {
+        if (valueTime === this.toTime(this._forbidden[i])) {
+          this.throwValidationError('date is forbidden');
+        }
+      }
+    }
+
+    return value_;
   }
 
   private isDate(value_: unknown): value_ is Date {
     return !!value_ && Object.prototype.toString.call(value_) === '[object Date]';
   }
 
-  private toNumber(value_: number | Date | string ): number {
+  private toTime(value_: DateLike): number {
     switch (typeof value_) {
       case 'number':
         return value_;
@@ -94,12 +133,3 @@ export class DateValidator
     }
   }
 }
-
-/**
- * Validator for date objects
- *
- * @export
- * @interface DateValidatorInterface
- * @extends {(RangeValidatorInterface<Date, number | Date | string, Date | number | string>)}
- */
-export interface DateValidatorInterface extends RangeValidatorInterface<Date, number | Date | string, Date | number | string> {}
