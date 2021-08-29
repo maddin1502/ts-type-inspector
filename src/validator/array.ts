@@ -1,11 +1,6 @@
-import { ArrayItem, MinArray } from 'ts-lib-extended';
+import type { ArrayItem, MinArray } from 'ts-lib-extended';
 import { Validator } from '.';
-
-
-type WithLength<T = any> = { readonly length: T };
-type IndexedObject<T extends number> = {
-  [index in T]: any;
-} & WithLength<number>
+import type { IndexedObject, SizedObject } from '../types';
 
 /**
  * Validator for array-like values
@@ -22,7 +17,7 @@ export class ArrayValidator<TValue extends ArrayLike<any>>
   private _min: number | undefined;
   private _max: number | undefined;
   private _allowed: MinArray<ArrayItem<TValue>, 1> | undefined;
-  private _forbidden: MinArray<ArrayItem<TValue>, 1> | undefined;
+  private _denied: MinArray<ArrayItem<TValue>, 1> | undefined;
 
   constructor(
     private _itemValidator: Validator<TValue>
@@ -79,14 +74,14 @@ export class ArrayValidator<TValue extends ArrayLike<any>>
   }
 
   /**
-   * forbidden items
+   * denied items
    *
    * @param {...MinArray<ArrayItem<TValue>, 1>} items_
    * @return {*}  {this}
    * @memberof ArrayValidator
    */
-  public forbid(...items_: MinArray<ArrayItem<TValue>, 1>): this {
-    this._forbidden = items_;
+  public deny(...items_: MinArray<ArrayItem<TValue>, 1>): this {
+    this._denied = items_;
     return this;
   }
 
@@ -96,7 +91,7 @@ export class ArrayValidator<TValue extends ArrayLike<any>>
     }
 
     if (this._length !== undefined && value_.length !== this._length) {
-      this.throwValidationError('invalid array length');
+      this.throwValidationError('deviant length');
     }
 
     if (this._min !== undefined && value_.length < this._min) {
@@ -109,7 +104,7 @@ export class ArrayValidator<TValue extends ArrayLike<any>>
 
     for (let i = 0; i < value_.length; i++) {
       if (!this.isIndexed(value_, i)) {
-        this.throwValidationError('value is not indexable');
+        this.throwValidationError('array could not be indexed');
       }
 
       const item = value_[i];
@@ -118,8 +113,8 @@ export class ArrayValidator<TValue extends ArrayLike<any>>
         this.throwValidationError('item is not allowed');
       }
 
-      if (this._forbidden && this._forbidden.includes(item)) {
-        this.throwValidationError('item is forbidden');
+      if (this._denied && this._denied.includes(item)) {
+        this.throwValidationError('item is denied');
       }
 
       try {
@@ -132,15 +127,15 @@ export class ArrayValidator<TValue extends ArrayLike<any>>
     return value_ as TValue;
   }
 
-  private isIndexed<T extends number>(value_: WithLength<number>, index_: T): value_ is IndexedObject<T> {
+  private isIndexed<T extends number>(value_: SizedObject<number>, index_: T): value_ is IndexedObject<T> {
     return index_ in value_;
   }
 
-  private withLength(value_: unknown): value_ is WithLength {
+  private withLength(value_: unknown): value_ is SizedObject {
     return typeof value_ === 'object' && value_ !== null && 'length' in value_;
   }
 
-  private withNumericLength(value_: unknown): value_ is WithLength<number> {
+  private withNumericLength(value_: unknown): value_ is SizedObject<number> {
     return this.withLength(value_) && typeof value_.length === 'number' && !isNaN(value_.length);
   }
 }

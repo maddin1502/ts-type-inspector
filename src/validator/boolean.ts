@@ -47,11 +47,11 @@ export class BooleanValidator extends Validator<boolean> {
     }
 
     if (this._justTrue && !value_) {
-      this.throwValidationError('value is false');
+      this.throwValidationError('boolean is false');
     }
 
     if (this._justFalse && value_) {
-      this.throwValidationError('value is true');
+      this.throwValidationError('boolean is true');
     }
 
     return value_;

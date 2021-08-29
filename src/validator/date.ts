@@ -1,4 +1,4 @@
-import { MinArray } from 'ts-lib-extended';
+import type { MinArray } from 'ts-lib-extended';
 import { Validator } from '.';
 
 type DateLike = string | number | Date;
@@ -15,7 +15,7 @@ export class DateValidator extends Validator<Date>
   private _min: string | number | Date | undefined;
   private _max: string | number | Date | undefined;
   private _allowed: MinArray<DateLike, 1> | undefined;
-  private _forbidden: MinArray<DateLike, 1> | undefined;
+  private _denied: MinArray<DateLike, 1> | undefined;
 
   /**
    * earliest date
@@ -54,14 +54,14 @@ export class DateValidator extends Validator<Date>
   }
 
   /**
-   * forbidden dates
+   * denied dates
    *
    * @param {...MinArray<DateLike, 1>} items_
    * @return {*}  {this}
    * @memberof DateValidator
    */
-  public forbid(...items_: MinArray<DateLike, 1>): this {
-    this._forbidden = items_;
+  public deny(...items_: MinArray<DateLike, 1>): this {
+    this._denied = items_;
     return this;
   }
 
@@ -107,10 +107,10 @@ export class DateValidator extends Validator<Date>
       }
     }
 
-    if (this._forbidden) {
-      for (let i = 0; i < this._forbidden.length; i++) {
-        if (valueTime === this.toTime(this._forbidden[i])) {
-          this.throwValidationError('date is forbidden');
+    if (this._denied) {
+      for (let i = 0; i < this._denied.length; i++) {
+        if (valueTime === this.toTime(this._denied[i])) {
+          this.throwValidationError('date is denied');
         }
       }
     }

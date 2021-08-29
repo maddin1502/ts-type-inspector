@@ -8,7 +8,7 @@ import { MethodType, MethodValidator, MethodValidatorInterface } from './validat
 import { NumberValidator, NumberValidatorInterface } from './validator/number';
 import { ObjectValidator, ObjectValidatorInterface } from './validator/object';
 import { OptionalValidator, OptionalValidatorInterface } from './validator/optional';
-import { StrictValidator, StrictValidatorInterface, StrictValueType } from './validator/strict';
+import { EqualsValidator, EqualsValidatorInterface, StrictValueType } from './validator/equals';
 import { StringValidator, StringValidatorInterface } from './validator/string';
 import { UndefinedValidator, UndefinedValidatorInterface } from './validator/undefined';
 import { UnionValidator, UnionValidatorInterface, UnionValidatorsType, ValidatorsType } from './validator/union';
@@ -78,8 +78,8 @@ export class TypedValueApprover {
    * @return {*}  {StrictValidatorInterface<T>}
    * @memberof TypedValueApproverInterface
    */
-  public strict<T extends StrictValueType>(value_: T): StrictValidatorInterface<T> {
-    return new StrictValidator<T>(value_);
+  public strict<T extends StrictValueType>(value_: T): EqualsValidatorInterface<T> {
+    return new EqualsValidator<T>(value_);
   }
 
   /**

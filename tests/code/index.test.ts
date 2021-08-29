@@ -75,14 +75,7 @@ for (let i = 0; i < times; i++) {
 }
 console.timeEnd('forof entries');
 
-const array: ArrayLike<number> = {
-  0:1,
-  1:2,
-  2:3,
-  length: 3
-};
-
-console.log(Object.keys(array))
+const array = [1,2,3];
 
 console.time('fori array');
 for (let i = 0; i < times; i++) {
@@ -94,11 +87,20 @@ console.timeEnd('fori array');
 
 console.time('forof array');
 for (let i = 0; i < times; i++) {
+  // eslint-disable-next-line @typescript-eslint/no-for-in-array
   for (const index in array) {
     array[index];
   }
 }
 console.timeEnd('forof array');
+
+console.time('foreach array');
+for (let i = 0; i < times; i++) {
+  array.forEach(({}) => {
+
+  });
+}
+console.timeEnd('foreach array');
 
 const dic: Dictionary<string> = {
   1: 'hello',
@@ -115,14 +117,14 @@ for (let i = 0; i < times; i++) {
 console.timeEnd('forin dic');
 
 
-console.time('fori dic');
+console.time('fori keys dic');
 for (let i = 0; i < times; i++) {
-  const keys = Object.keys(dic)
-  for (let i = 0; i < keys.length; i++) {
-    dic[keys[i]];
+  const keys = Object.keys(dic);
+  for (let j = 0; j < keys.length; j++) {
+    dic[keys[j]];
   }
 }
-console.timeEnd('fori dic');
+console.timeEnd('fori keys dic');
 
 
 
@@ -157,3 +159,66 @@ for (let i = 0; i < times; i++) {
   }
 }
 console.timeEnd('switch');
+
+
+const allowed = [1,2,3,4,5,6,7,8,9];
+const checknum = 3;
+
+console.time('allowed includes');
+for (let i = 0; i < times; i++) {
+  if (allowed.includes(checknum)) {
+    let x = checknum;
+    x = x;
+  }
+}
+console.timeEnd('allowed includes');
+
+
+console.time('allowed fori');
+for (let i = 0; i < times; i++) {
+  let matched = false;
+  for (let j = 0; j < allowed.length; j++) {
+    if (allowed[j] !== checknum) {
+      continue;
+    }
+
+    matched = true;
+    break;
+  }
+
+  if (matched) {
+    let x = checknum;
+    x = x;
+  }
+}
+console.timeEnd('allowed fori');
+
+const checkdate = new Date();
+const toNumber = (x_: number | Date): number => {return typeof x_ === 'number' ? x_ : x_.getTime(); };
+
+console.time('date allowed fori');
+for (let i = 0; i < times; i++) {
+  let matched = false;
+
+  for (let j = 0; j < array.length; j++) {
+    if (toNumber(checkdate) === toNumber(array[j])) {
+      matched = true;
+      break;
+    }
+  }
+
+  if (!matched) {
+    /** */
+  }
+}
+console.timeEnd('allowed fori');
+
+
+console.time('date allowed some');
+for (let i = 0; i < times; i++) {
+  if (array.some(item_ => toNumber(item_) === toNumber(checkdate))) {
+    /** */
+  }
+}
+console.timeEnd('date allowed some');
+

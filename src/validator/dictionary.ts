@@ -1,5 +1,5 @@
-import { Dictionary, DictionaryKey, DictionaryValue } from 'ts-lib-extended';
-import { Validator, ValidatorInterface } from '.';
+import type { Dictionary, DictionaryKey, DictionaryValue } from 'ts-lib-extended';
+import { Validator } from '.';
 
 /**
  * Validator for dictionary objects
@@ -10,10 +10,10 @@ import { Validator, ValidatorInterface } from '.';
  * @template TValue
  */
 export class DictionaryValidator<TValue extends Dictionary> extends Validator<TValue> {
-  private _keysValidator: ValidatorInterface<string> | undefined;
+  private _keyValidator: Validator<DictionaryKey<TValue>> | undefined;
 
   constructor(
-    private _itemValidator: ValidatorInterface<DictionaryValue<TValue>>
+    private _itemValidator: Validator<DictionaryValue<TValue>>
   ) {
     super();
   }
@@ -25,8 +25,8 @@ export class DictionaryValidator<TValue extends Dictionary> extends Validator<TV
    * @return {*}  {this}
    * @memberof DictionaryValidator
    */
-  public keys(validator_: ValidatorInterface<DictionaryKey<TValue>>): this {
-    this._keysValidator = validator_;
+  public key(validator_: Validator<DictionaryKey<TValue>>): this {
+    this._keyValidator = validator_;
     return this;
   }
 
@@ -35,17 +35,13 @@ export class DictionaryValidator<TValue extends Dictionary> extends Validator<TV
       this.throwValidationError('value is not a dictionary');
     }
 
-    const keys = Object.keys(value_);
-
-    for (let i = 0; i < keys.length; i++) {
-      const key = keys[i];
-
+    for (const dictionaryKey in value_) {
       try {
-        this._keysValidator?.validate(key);
-        this._itemValidator.validate(value_[key]);
+        this._keyValidator?.validate(dictionaryKey);
+        this._itemValidator.validate(value_[dictionaryKey]);
       } catch (reason_) {
         // TODO: error origin is lost at this point -> key or item error???
-        this.rethrowError(reason_, key);
+        this.rethrowError(reason_, dictionaryKey);
       }
     }
 

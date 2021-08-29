@@ -1,11 +1,19 @@
-import { RangeValidator, RangeValidatorInterface } from './range';
+import { Validator } from '.';
+import type { MethodType } from '../types';
 
-export type MethodType = (...args_: any[]) => any;
-
-export class MethodValidator<TValue extends MethodType>
-  extends RangeValidator<TValue, number, MethodType | number>
-  implements MethodValidatorInterface<TValue>
+/**
+ * Validator for method-like values.
+ * Unfortunately (for technical reasons), this validator can only validate the number of parameters.
+ *
+ * @export
+ * @class MethodValidator
+ * @extends {Validator<TValue>}
+ * @template TValue
+ */
+export class MethodValidator<TValue extends MethodType> extends Validator<TValue>
 {
+  private _minParams: number | undefined;
+  private _maxParams: number | undefined;
   private _paramsCount: number | undefined;
   protected readonly minErrorMessage: string = 'too few parameters';
   protected readonly maxErrorMessage: string = 'too many parameters';
@@ -14,8 +22,39 @@ export class MethodValidator<TValue extends MethodType>
     super();
   }
 
+  /**
+   * specific parameter count
+   *
+   * @param {number} count_
+   * @return {*}  {this}
+   * @memberof MethodValidator
+   */
   public params(count_: number): this {
     this._paramsCount = count_;
+    return this;
+  }
+
+  /**
+   * minimum params count
+   *
+   * @param {number} parms_
+   * @return {*}  {this}
+   * @memberof MethodValidator
+   */
+  public min(parms_: number): this {
+    this._minParams = parms_;
+    return this;
+  }
+
+  /**
+   * maximum params count
+   *
+   * @param {number} parms_
+   * @return {*}  {this}
+   * @memberof MethodValidator
+   */
+  public max(parms_: number): this {
+    this._maxParams = parms_;
     return this;
   }
 
@@ -28,40 +67,14 @@ export class MethodValidator<TValue extends MethodType>
       this.throwValidationError('incorrect params count');
     }
 
-    return super.validateValue(value_ as TValue);
-  }
+    if (this._minParams && value_.length < this._minParams) {
+      this.throwValidationError('too few parameters');
+    }
 
-  protected applyMin(min_: number, value_: TValue): boolean {
-    return value_.length >= min_;
-  }
+    if (this._maxParams && value_.length > this._maxParams) {
+      this.throwValidationError('too many parameters');
+    }
 
-  protected applyMax(max_: number, value_: TValue): boolean {
-    return value_.length <= max_;
+    return value_ as TValue;
   }
-
-  protected matches(item_: number | TValue, value_: TValue): boolean {
-    return typeof item_ === 'number' ? value_.length === item_ : value_ === item_;
-  }
-}
-
-/**
- * Validator for method-like values.
- * Unfortunately (for technical reasons), this validator can only validate the number of parameters.
- *
- * @export
- * @interface MethodValidatorInterface
- * @extends {(RangeValidatorInterface<TValue, number, MethodType | number>)}
- * @template TValue
- */
-export interface MethodValidatorInterface<TValue extends MethodType>
-  extends RangeValidatorInterface<TValue, number, MethodType | number>
-{
-  /**
-   * parameter count has to match given number
-   *
-   * @param {number} count_
-   * @return {*}  {this}
-   * @memberof MethodValidatorInterface
-   */
-  params(count_: number): this;
 }
