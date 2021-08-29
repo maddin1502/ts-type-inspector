@@ -77,25 +77,24 @@ export abstract class Validator<TValue> {
 
   protected abstract validateValue(value_: unknown): TValue;
 
+  protected detectError(reason_: unknown, propertyTraces_?: PropertyKey[]): Error {
+    if (this.isValidationError(reason_)) {
+      if (reason_.propertyTrace && propertyTraces_) {
+        propertyTraces_.push(...reason_.propertyTrace);
+      }
+      return reason_;
+    } else if (reason_ instanceof Error) {
+      return reason_;
+    } else if (this.hasMessage(reason_) && typeof reason_.message === 'string' && reason_.message !== '') {
+      return  new Error(reason_.message);
+    } else {
+      return new Error('unknown error');
+    }
+  }
+
   protected rethrowError(reason_: unknown, trace_?: PropertyKey): never {
     const propertyTraces: PropertyKey[] = trace_ === undefined ? [] : [trace_];
-
-    let error: Error;
-
-    if (this.isValidationError(reason_)) {
-      error = reason_;
-
-      if (reason_.propertyTrace) {
-        propertyTraces.push(...reason_.propertyTrace);
-      }
-    } else if (reason_ instanceof Error) {
-      error = reason_;
-    } else if (this.hasMessage(reason_) && typeof reason_.message === 'string' && reason_.message !== '') {
-      error = new Error(reason_.message);
-    } else {
-      error = new Error('unknown error');
-    }
-
+    const error = this.detectError(reason_, propertyTraces);
     this.throwValidationError(error.message, propertyTraces, [error]);
   }
 

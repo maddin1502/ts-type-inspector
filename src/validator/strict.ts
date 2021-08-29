@@ -16,7 +16,7 @@ import type { AnyLike } from '../types';
  * @template TValue
  * @template A
  */
-export class StrictValidator<TValue extends ArrayItem<A>, A extends MinArray<AnyLike, 2>> extends Validator<TValue> {
+export class StrictValidator<TValue extends ArrayItem<A>, A extends MinArray<AnyLike, 1>> extends Validator<TValue> {
   private _strictValues: A;
 
   constructor(

@@ -23,6 +23,7 @@
     "@typescript-eslint/no-shadow": "warn",
     "@typescript-eslint/no-unsafe-member-access": "off",
     "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-return": "off",
     "prefer-arrow-callback": "warn",
     "object-shorthand": "warn",
     "camelcase": "warn",
