@@ -1,5 +1,7 @@
 import { Validator } from '.';
 
+// TODO: use AnyLike to avoid misuse?
+
 /**
  * USE THIS FOR ANY TYPES ONLY !!!!
  * Actually this validator does not validate.

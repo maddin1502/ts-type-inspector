@@ -1,17 +1,22 @@
-import { Validator, ValidatorInterface } from './index';
+import { Validator } from './index';
 
-export type ValidatorsType<TValue = any> = ValidatorInterface<TValue>[];
+export type ValidatorsType<TValue = any> = Validator<TValue>[];
 export type UnionValidatorsType<V extends ValidatorsType>
   = V['length'] extends 0 | 1
-    ? [ ValidatorInterface<any>, ValidatorInterface<any> ]
+    ? [ Validator<any>, Validator<any> ]
     : V;
 export type ValidatorsItemType<V extends ValidatorsType>
-  = V extends ArrayLike<ValidatorInterface<infer P>> ? P : never;
+  = V extends ArrayLike<Validator<infer P>> ? P : never;
 
-export class UnionValidator<V extends ValidatorsType>
-  extends Validator<ValidatorsItemType<V>>
-  implements UnionValidatorInterface<V>
-{
+/**
+ * Validator for union type values (like "string | number")
+ *
+ * @export
+ * @class UnionValidator
+ * @extends {Validator<ValidatorsItemType<V>>}
+ * @template V
+ */
+export class UnionValidator<V extends ValidatorsType> extends Validator<ValidatorsItemType<V>> {
   private _validators: UnionValidatorsType<V>;
 
   constructor(
@@ -40,13 +45,3 @@ export class UnionValidator<V extends ValidatorsType>
     return value_ as ValidatorsItemType<V>;
   }
 }
-
-/**
- * Validator for union type values (like "string | number")
- *
- * @export
- * @interface UnionValidatorInterface
- * @extends {ValidatorInterface<ValidatorsItemType<V>>}
- * @template V
- */
-export interface UnionValidatorInterface<V extends ValidatorsType> extends ValidatorInterface<ValidatorsItemType<V>> { }

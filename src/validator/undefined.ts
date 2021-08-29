@@ -1,9 +1,13 @@
-import { Validator, ValidatorInterface } from '.';
+import { Validator } from '.';
 
-export class UndefinedValidator
-  extends Validator<undefined>
-  implements UndefinedValidatorInterface
-{
+/**
+ * Validator for undefined values
+ *
+ * @export
+ * @class UndefinedValidator
+ * @extends {Validator<undefined>}
+ */
+export class UndefinedValidator extends Validator<undefined> {
   protected validateValue(value_: unknown): undefined {
     if (value_ !== undefined) {
       this.throwValidationError('value is defined');
@@ -12,12 +16,3 @@ export class UndefinedValidator
     return value_;
   }
 }
-
-/**
- * Validator for undefined values
- *
- * @export
- * @interface UndefinedValidatorInterface
- * @extends {ValidatorInterface<undefined>}
- */
-export interface UndefinedValidatorInterface extends ValidatorInterface<undefined> {}

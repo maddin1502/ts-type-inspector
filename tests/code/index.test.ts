@@ -1,12 +1,11 @@
 import { Dictionary } from 'ts-lib-extended';
+import { ObjectLike } from '../../src/types';
 
 describe('root', () => {
   test('exports', () => {
     expect(true).toBeDefined();
   });
 });
-
-type ObjectType = Record<PropertyKey, any>;
 
 // class Anything {
 //   public affe = 'hallo';
@@ -27,7 +26,7 @@ for (let i = 0; i < times; i++) {
   const keys = Object.keys(anything);
 
   for (let j = 0; j < keys.length; j++) {
-    let value = (anything as ObjectType)[keys[j]];
+    let value = (anything as ObjectLike)[keys[j]];
     value = value;
   }
 }
@@ -49,7 +48,7 @@ for (let i = 0; i < times; i++) {
   // eslint-disable-next-line @typescript-eslint/no-for-in-array
   for (const key in anything) {
     // if (Object.prototype.hasOwnProperty.call(anything, key)) {
-    let value = (anything as ObjectType)[key];
+    let value = (anything as ObjectLike)[key];
     value = value;
     // }
   }

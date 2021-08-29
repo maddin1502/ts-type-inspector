@@ -1,5 +1,5 @@
 import { Validator } from '.';
-import type { MethodType } from '../types';
+import type { MethodLike } from '../types';
 
 /**
  * Validator for method-like values.
@@ -10,7 +10,7 @@ import type { MethodType } from '../types';
  * @extends {Validator<TValue>}
  * @template TValue
  */
-export class MethodValidator<TValue extends MethodType> extends Validator<TValue>
+export class MethodValidator<TValue extends MethodLike> extends Validator<TValue>
 {
   private _minParams: number | undefined;
   private _maxParams: number | undefined;

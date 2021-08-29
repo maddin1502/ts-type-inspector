@@ -1,11 +1,16 @@
-import { Validator, ValidatorInterface } from '.';
+import { Validator } from '.';
 
-export class OptionalValidator<TValue>
-  extends Validator<undefined | TValue>
-  implements OptionalValidatorInterface<TValue>
-{
+/**
+ * Validator for optional (maybe undefined) properties/values
+ *
+ * @export
+ * @class OptionalValidator
+ * @extends {(Validator<undefined | TValue>)}
+ * @template TValue
+ */
+export class OptionalValidator<TValue> extends Validator<undefined | TValue> {
   constructor(
-    private _validator: ValidatorInterface<TValue>
+    private _validator: Validator<TValue>
   ) {
     super();
   }
@@ -15,24 +20,10 @@ export class OptionalValidator<TValue>
       return value_;
     }
 
-    let validatedValue: TValue;
-
     try {
-      validatedValue = this._validator.validate(value_);
+      return this._validator.validate(value_);
     } catch (reason_) {
       this.rethrowError(reason_);
     }
-
-    return validatedValue;
   }
 }
-
-/**
- * Validator for optional (maybe undefined) properties/values
- *
- * @export
- * @interface OptionalValidatorInterface
- * @extends {(ValidatorInterface<undefined | T>)}
- * @template T
- */
-export interface OptionalValidatorInterface<T> extends ValidatorInterface<undefined | T> {}

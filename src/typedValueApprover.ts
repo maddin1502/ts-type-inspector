@@ -8,11 +8,12 @@ import { MethodType, MethodValidator, MethodValidatorInterface } from './validat
 import { NumberValidator, NumberValidatorInterface } from './validator/number';
 import { ObjectValidator, ObjectValidatorInterface } from './validator/object';
 import { OptionalValidator, OptionalValidatorInterface } from './validator/optional';
-import { EqualsValidator, EqualsValidatorInterface, StrictValueType } from './validator/equals';
+import { StrictValidator, EqualsValidatorInterface, StrictValueType } from './validator/strict';
 import { StringValidator, StringValidatorInterface } from './validator/string';
 import { UndefinedValidator, UndefinedValidatorInterface } from './validator/undefined';
 import { UnionValidator, UnionValidatorInterface, UnionValidatorsType, ValidatorsType } from './validator/union';
 import { ArrayItem } from 'ts-lib-extended';
+import { ObjectLike } from './types';
 
 export class TypedValueApprover {
   /**
@@ -79,7 +80,7 @@ export class TypedValueApprover {
    * @memberof TypedValueApproverInterface
    */
   public strict<T extends StrictValueType>(value_: T): EqualsValidatorInterface<T> {
-    return new EqualsValidator<T>(value_);
+    return new StrictValidator<T>(value_);
   }
 
   /**
@@ -118,7 +119,7 @@ export class TypedValueApprover {
    * @return {*}  {ObjectValidatorInterface<T>}
    * @memberof TypedValueApproverInterface
    */
-  public object<T extends Record<string, unknown>>(propertyValidators_: { [key in keyof T]-?: ValidatorInterface<T[key]>; }): ObjectValidatorInterface<T> {
+  public object<T extends ObjectLike>(propertyValidators_: { [key in keyof T]-?: ValidatorInterface<T[key]>; }): ObjectValidatorInterface<T> {
     return new ObjectValidator(propertyValidators_);
   }
 
