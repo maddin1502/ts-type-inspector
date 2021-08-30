@@ -1,160 +1,170 @@
-import { ValidatorInterface } from './validator';
-import { AnyValidator, AnyValidatorInterface } from './validator/any';
-import { ArrayValidator, ArrayValidatorInterface } from './validator/array';
-import { BooleanValidator, BooleanValidatorInterface } from './validator/boolean';
-import { DateValidator, DateValidatorInterface } from './validator/date';
-import { DictionaryValidator, DictionaryValidatorInterface } from './validator/dictionary';
-import { MethodType, MethodValidator, MethodValidatorInterface } from './validator/method';
-import { NumberValidator, NumberValidatorInterface } from './validator/number';
-import { ObjectValidator, ObjectValidatorInterface } from './validator/object';
-import { OptionalValidator, OptionalValidatorInterface } from './validator/optional';
-import { StrictValidator, EqualsValidatorInterface, StrictValueType } from './validator/strict';
-import { StringValidator, StringValidatorInterface } from './validator/string';
-import { UndefinedValidator, UndefinedValidatorInterface } from './validator/undefined';
-import { UnionValidator, UnionValidatorInterface, UnionValidatorsType, ValidatorsType } from './validator/union';
-import { ArrayItem } from 'ts-lib-extended';
-import { ObjectLike } from './types';
+import type { ArrayItem, Dictionary, DictionaryValue, MinArray } from 'ts-lib-extended';
+import type { AnyLike, MethodLike, ObjectLike } from './types';
+import { Validator } from './validator';
+import { AnyValidator } from './validator/any';
+import { ArrayValidator } from './validator/array';
+import { BooleanValidator } from './validator/boolean';
+import { DateValidator } from './validator/date';
+import { DictionaryValidator } from './validator/dictionary';
+import { MethodValidator } from './validator/method';
+import { NumberValidator } from './validator/number';
+import type { PropertyValidators } from './validator/object';
+import { ObjectValidator } from './validator/object';
+import { OptionalValidator } from './validator/optional';
+import { StrictValidator } from './validator/strict';
+import { StringValidator } from './validator/string';
+import { UndefinedValidator } from './validator/undefined';
+import type { ValidatorsValue } from './validator/union';
+import { UnionValidator } from './validator/union';
 
 export class TypedValueApprover {
   /**
    * Validate string values.
    * EMPTY STRINGS ARE REJECTED BY DEFAULT! Use "allowEmpty()" to allow emptry strings
    *
-   * @return {*}  {StringValidatorInterface}
-   * @memberof TypedValueApproverInterface
+   * @readonly
+   * @type {StringValidator}
+   * @memberof TypedValueApprover
    */
-  public get string(): StringValidatorInterface { return new StringValidator(); }
+  public get string(): StringValidator { return new StringValidator(); }
 
   /**
    * Validate numeric values.
    * NaN IS REJECTED BY DEFAULT! Use "allowNaN()" to allow NaN
    * INFINITY IS REJECTED BY DEFAULT! Use "allowInfinity()" to allow INFINITY
    *
-   * @return {*}  {NumberValidatorInterface}
-   * @memberof TypedValueApproverInterface
+   * @readonly
+   * @type {NumberValidator}
+   * @memberof TypedValueApprover
    */
-  public get number(): NumberValidatorInterface { return new NumberValidator(); }
+  public get number(): NumberValidator { return new NumberValidator(); }
 
   /**
    * Validate boolean values
    *
-   * @return {*}  {BooleanValidatorInterface}
-   * @memberof TypedValueApproverInterface
+   * @readonly
+   * @type {BooleanValidator}
+   * @memberof TypedValueApprover
    */
-  public get boolean(): BooleanValidatorInterface { return new BooleanValidator(); }
+  public get boolean(): BooleanValidator { return new BooleanValidator(); }
 
   /**
    * Validate method-like values.
    * Unfortunately (for technical reasons), this validator can only validate the number of parameters.
    *
    * @template T
-   * @return {*}  {MethodValidatorInterface<T>}
-   * @memberof TypedValueApproverInterface
+   * @return {*}  {MethodValidator<T>}
+   * @memberof TypedValueApprover
    */
-  public method<T extends MethodType>(): MethodValidatorInterface<T> {
+  public method<T extends MethodLike>(): MethodValidator<T> {
     return new MethodValidator<T>();
   }
 
   /**
    * Validate data values
    *
-   * @return {*}  {DateValidatorInterface}
-   * @memberof TypedValueApproverInterface
+   * @readonly
+   * @type {DateValidator}
+   * @memberof TypedValueApprover
    */
-  public get date(): DateValidatorInterface { return new DateValidator(); }
+  public get date(): DateValidator { return new DateValidator(); }
 
   /**
    * Validate undefined values... The value has to be undefined to match this validator
    *
-   * @return {*}  {UndefinedValidatorInterface}
-   * @memberof TypedValueApproverInterface
+   * @readonly
+   * @type {UndefinedValidator}
+   * @memberof TypedValueApprover
    */
-  public get undefined(): UndefinedValidatorInterface { return new UndefinedValidator(); }
+  public get undefined(): UndefinedValidator { return new UndefinedValidator(); }
 
   /**
    * Validate values through strict equality (===). Keep in mind that objects are compared by reference
    *
-   * @template T
-   * @param {T} value_ the comparison value
-   * @return {*}  {StrictValidatorInterface<T>}
-   * @memberof TypedValueApproverInterface
+   * @template TValue
+   * @template A
+   * @param {...A} values_
+   * @return {*}  {StrictValidator<TValue, A>}
+   * @memberof TypedValueApprover
    */
-  public strict<T extends StrictValueType>(value_: T): EqualsValidatorInterface<T> {
-    return new StrictValidator<T>(value_);
+  public strict<TValue extends ArrayItem<A>, A extends MinArray<AnyLike, 1>>(...values_: A): StrictValidator<TValue, A> {
+    return new StrictValidator<TValue, A>(...values_);
   }
 
   /**
    * Validate array-like values
    *
-   * @template T
-   * @param {ValidatorInterface<T>} itemValidator_ Validator, which is applied to each item
-   * @return {*}  {ArrayValidatorInterface<T>}
-   * @memberof TypedValueApproverInterface
+   * @template TValue
+   * @param {ArrayItem<TValue>} itemValidator_
+   * @return {*}  {ArrayValidator<TValue>}
+   * @memberof TypedValueApprover
    */
-  public array<T extends ArrayLike<any>>(itemValidator_: ValidatorInterface<ArrayItem<T>>): ArrayValidatorInterface<T> {
-    return new ArrayValidator<T>(itemValidator_);
+  public array<TValue extends ArrayLike<any>>(itemValidator_: Validator<ArrayItem<TValue>>): ArrayValidator<TValue> {
+    return new ArrayValidator<TValue>(itemValidator_);
   }
 
   /**
    * Validate union types like "string | number" or optional properties.
    * At least one validator have to match for a positive result
    *
-   * @template T
-   * @param {...UnionValidatorsType<T>} validators_ List of applicable validators
-   * @return {*}  {UnionValidatorInterface<T>}
-   * @memberof TypedValueApproverInterface
+   * @template TValue
+   * @template A
+   * @param {...A} validators_
+   * @return {*}  {UnionValidator<TValue>}
+   * @memberof TypedValueApprover
    */
-  public union<T extends ValidatorsType>(
-    ...validators_: UnionValidatorsType<T>
-  ): UnionValidatorInterface<T> {
-    return new UnionValidator<T>(...validators_);
+  public union<TValue extends ValidatorsValue<A>, A extends MinArray<Validator<any>, 2> = MinArray<Validator<TValue>, 2>>(
+    ...validators_: A
+  ): UnionValidator<TValue> {
+    return new UnionValidator<TValue, A>(...validators_);
   }
 
   /**
    * Validate object based values. Each property has to match its specified validator
    * NULL IS REJECTED BY DEFAULT! Use "allowNull()" to allow null.
    *
-   * @template T
-   * @param {{ [key in keyof T]-?: ValidatorInterface<T[key]> }} propertyValidators_ Property related validators
-   * @return {*}  {ObjectValidatorInterface<T>}
-   * @memberof TypedValueApproverInterface
+   * @template TValue
+   * @param {PropertyValidators<TValue>} propertyValidators_
+   * @return {*}  {ObjectValidator<TValue>}
+   * @memberof TypedValueApprover
    */
-  public object<T extends ObjectLike>(propertyValidators_: { [key in keyof T]-?: ValidatorInterface<T[key]>; }): ObjectValidatorInterface<T> {
+  public object<TValue extends ObjectLike>(propertyValidators_: PropertyValidators<TValue>): ObjectValidator<TValue> {
     return new ObjectValidator(propertyValidators_);
   }
 
   /**
    * Validate dictionary values.
    *
-   * @template T
-   * @param {ValidatorInterface<T>} itemValidator_ Validator, which is applied to each dictionary-value
-   * @return {*}  {DictionaryValidatorInterface<T>}
-   * @memberof TypedValueApproverInterface
+   * @template TValue
+   * @param {Validator<DictionaryValue<TValue>>} itemValidator_
+   * @return {*}  {DictionaryValidator<TValue>}
+   * @memberof TypedValueApprover
    */
-  public dictionary<T>(itemValidator_: ValidatorInterface<T>): DictionaryValidatorInterface<T> {
-    return new DictionaryValidator<T>(itemValidator_);
+  public dictionary<TValue extends Dictionary>(itemValidator_: Validator<DictionaryValue<TValue>>): DictionaryValidator<TValue> {
+    return new DictionaryValidator<TValue>(itemValidator_);
   }
 
   /**
    * USE THIS FOR ANY TYPES ONLY !!!!
    * Actually this validator does not validate.
    *
-   * @return {*}  {AnyValidatorInterface}
-   * @memberof TypedValueApproverInterface
+   * @readonly
+   * @type {AnyValidator}
+   * @memberof TypedValueApprover
    */
-  public get any(): AnyValidatorInterface {
+  public get any(): AnyValidator {
     return new AnyValidator();
   }
 
   /**
    * Validator for optional properties/values
    *
-   * @template T
-   * @param {ValidatorInterface<T>} validator_
-   * @return {*}  {OptionalValidatorInterface<T>}
-   * @memberof TypedValueApproverInterface
+   * @template TValue
+   * @param {Validator<TValue>} validator_
+   * @return {*}  {OptionalValidator<TValue>}
+   * @memberof TypedValueApprover
    */
-  public optional<T>(validator_: ValidatorInterface<T>): OptionalValidatorInterface<T> {
+  public optional<TValue>(validator_: Validator<TValue>): OptionalValidator<TValue> {
     return new OptionalValidator(validator_);
   }
 }

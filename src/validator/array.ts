@@ -20,7 +20,7 @@ export class ArrayValidator<TValue extends ArrayLike<any>>
   private _denied: MinArray<ArrayItem<TValue>, 1> | undefined;
 
   constructor(
-    private _itemValidator: Validator<TValue>
+    private _itemValidator: Validator<ArrayItem<TValue>>
   ) {
     super();
   }

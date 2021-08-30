@@ -15,8 +15,6 @@ export class MethodValidator<TValue extends MethodLike> extends Validator<TValue
   private _minParams: number | undefined;
   private _maxParams: number | undefined;
   private _paramsCount: number | undefined;
-  protected readonly minErrorMessage: string = 'too few parameters';
-  protected readonly maxErrorMessage: string = 'too many parameters';
 
   constructor() {
     super();

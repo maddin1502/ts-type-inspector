@@ -1,7 +1,7 @@
 import { Validator } from '.';
 import type { ObjectLike } from '../types';
 
-type PropertyValidators<TValue extends ObjectLike> = { [key in keyof TValue]-?: Validator<TValue[key]> };
+export type PropertyValidators<TValue extends ObjectLike> = { [key in keyof TValue]-?: Validator<TValue[key]> };
 
 /**
  * Validator for object based values. Each property has to match its specified validator

@@ -15,7 +15,7 @@ export class NumberValidator extends Validator<number>
   private _min: number | undefined;
   private _max: number | undefined;
   private _allowed: number[] | undefined;
-  private _forbidden: number[] | undefined;
+  private _denied: number[] | undefined;
   private _onlyPositiv: boolean;
   private _onlyNegative: boolean;
   private _allowNaN: boolean;
@@ -128,14 +128,14 @@ export class NumberValidator extends Validator<number>
   }
 
   /**
-   * forbidden numbers
+   * denied numbers
    *
    * @param {...number[]} numbers_
    * @return {*}  {this}
    * @memberof NumberValidator
    */
-  public forbid(...numbers_: number[]): this {
-    this._forbidden = numbers_;
+  public deny(...numbers_: number[]): this {
+    this._denied = numbers_;
     return this;
   }
 
@@ -176,8 +176,8 @@ export class NumberValidator extends Validator<number>
       this.throwValidationError('number is not allowed');
     }
 
-    if (this._forbidden && this._forbidden.includes(value_)) {
-      this.throwValidationError('number is forbidden');
+    if (this._denied && this._denied.includes(value_)) {
+      this.throwValidationError('number is denied');
     }
 
     return value_;
