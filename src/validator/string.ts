@@ -8,8 +8,7 @@ import { Validator } from '.';
  * @class StringValidator
  * @extends {Validator<string>}
  */
-export class StringValidator extends Validator<string>
-{
+export class StringValidator extends Validator<string> {
   private _min: number | undefined;
   private _max: number | undefined;
   private _allowed: (string | RegExp)[] | undefined;

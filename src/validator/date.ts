@@ -10,8 +10,7 @@ type DateLike = string | number | Date;
  * @class DateValidator
  * @extends {Validator<Date>}
  */
-export class DateValidator extends Validator<Date>
-{
+export class DateValidator extends Validator<Date> {
   private _min: string | number | Date | undefined;
   private _max: string | number | Date | undefined;
   private _allowed: MinArray<DateLike, 1> | undefined;

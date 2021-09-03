@@ -1,4 +1,5 @@
 import { Validator } from '.';
+import { Validatable } from '../types';
 
 /**
  * Validator for optional (maybe undefined) properties/values
@@ -10,7 +11,7 @@ import { Validator } from '.';
  */
 export class OptionalValidator<TValue> extends Validator<undefined | TValue> {
   constructor(
-    private _validator: Validator<TValue>
+    private _validator: Validatable<TValue>
   ) {
     super();
   }

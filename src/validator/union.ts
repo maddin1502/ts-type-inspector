@@ -1,17 +1,19 @@
-import { MinArray } from 'ts-lib-extended';
+import { ArrayItem, MinArray } from 'ts-lib-extended';
+import { Validatable } from '../types';
 import { Validator } from './index';
 
-export type ValidatorsValue<A>
-  = A extends ArrayLike<infer V>
-    ? V extends Validator<infer T>
-      ? T
-      : never
-    : never;
+// export type ValidatorsValue<A>
+//   = A extends ArrayLike<infer V>
+//     ? V extends Validatable<infer T>
+//       ? T
+//       : never
+//     : never;
 
+export type ValidatorsValue<A extends IterableIterator<any> | ArrayLike<any>>
+  = ArrayItem<A> extends Validatable<infer T>
+    ? T
+    : never
 
-// function xyz<TValue extends ValidatorsValue<A>, A extends MinArray<Validator<any>, 2> = MinArray<Validator<TValue>, 2>>(...v_: A): TValue {
-//   return null as unknown as TValue;
-// }
 /**
  * Validator for union type values (like "string | number")
  *
@@ -20,7 +22,7 @@ export type ValidatorsValue<A>
  * @extends {Validator<ValidatorsValue<V>>}
  * @template V
  */
-export class UnionValidator<TValue extends ValidatorsValue<A>, A extends MinArray<Validator<any>, 2> = MinArray<Validator<TValue>, 2>> extends Validator<TValue> {
+export class UnionValidator<TValue extends ValidatorsValue<A>, A extends MinArray<Validatable<any>, 2> = MinArray<Validatable<TValue>, 2>> extends Validator<TValue> {
   private _validators: A;
 
   constructor(

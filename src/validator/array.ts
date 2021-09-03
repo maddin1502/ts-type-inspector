@@ -1,6 +1,6 @@
 import type { ArrayItem, MinArray } from 'ts-lib-extended';
 import { Validator } from '.';
-import type { IndexedObject, SizedObject } from '../types';
+import type { IndexedObject, SizedObject, Validatable } from '../types';
 
 /**
  * Validator for array-like values
@@ -10,9 +10,7 @@ import type { IndexedObject, SizedObject } from '../types';
  * @extends {Validator<TValue>}
  * @template TValue
  */
-export class ArrayValidator<TValue extends ArrayLike<any>>
-  extends Validator<TValue>
-{
+export class ArrayValidator<TValue extends ArrayLike<any>> extends Validator<TValue> {
   private _length: number | undefined;
   private _min: number | undefined;
   private _max: number | undefined;
@@ -20,7 +18,7 @@ export class ArrayValidator<TValue extends ArrayLike<any>>
   private _denied: MinArray<ArrayItem<TValue>, 1> | undefined;
 
   constructor(
-    private _itemValidator: Validator<ArrayItem<TValue>>
+    private _itemValidator: Validatable<ArrayItem<TValue>>
   ) {
     super();
   }

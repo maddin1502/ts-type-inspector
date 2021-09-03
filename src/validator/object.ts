@@ -1,7 +1,5 @@
 import { Validator } from '.';
-import type { ObjectLike } from '../types';
-
-export type PropertyValidators<TValue extends ObjectLike> = { [key in keyof TValue]-?: Validator<TValue[key]> };
+import type { ObjectLike, PropertyValidators } from '../types';
 
 /**
  * Validator for object based values. Each property has to match its specified validator
@@ -14,6 +12,7 @@ export type PropertyValidators<TValue extends ObjectLike> = { [key in keyof TVal
 export class ObjectValidator<TValue extends ObjectLike> extends Validator<TValue> {
   private _noOverload: boolean;
 
+  // TODO: Property validators can be manipulated from outside the class
   constructor(
     private _propertyValidators: PropertyValidators<TValue>
   ) {

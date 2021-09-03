@@ -1,10 +1,9 @@
 import { ValidationError, VALIDATION_ERROR_MARKER } from '../error';
+import { CustomValidation, Validatable } from '../types';
 
-export type CustomValidationType<TValue> = (value_: TValue) => string | undefined;
-
-export abstract class Validator<TValue> {
+export abstract class Validator<TValue> implements Validatable<TValue> {
   private _validationError: ValidationError | undefined;
-  private _customValidation: CustomValidationType<TValue> | undefined;
+  private _customValidation: CustomValidation<TValue> | undefined;
   private _customErrorMessage: string | undefined | (() => string);
 
   /**
@@ -19,17 +18,17 @@ export abstract class Validator<TValue> {
   /**
    * add a custom validation; return a error message if validation fails
    *
-   * @param {CustomValidationType<TValue>} evaluation_
+   * @param {CustomValidation<TValue>} evaluation_
    * @return {*}  {this}
    * @memberof Validator
    */
-  public custom(evaluation_: CustomValidationType<TValue>): this {
+  public custom(evaluation_: CustomValidation<TValue>): this {
     this._customValidation = evaluation_;
     return this;
   }
 
   /**
-   * custom error message (overrides all coded messages)
+   * custom error message (overrides all hard coded messages)
    *
    * @param {(string | (() => string))} message_
    * @return {*}  {this}

@@ -1,5 +1,6 @@
 import type { Dictionary, DictionaryKey, DictionaryValue } from 'ts-lib-extended';
 import { Validator } from '.';
+import { Validatable } from '../types';
 
 /**
  * Validator for dictionary objects
@@ -10,10 +11,10 @@ import { Validator } from '.';
  * @template TValue
  */
 export class DictionaryValidator<TValue extends Dictionary> extends Validator<TValue> {
-  private _keyValidator: Validator<DictionaryKey<TValue>> | undefined;
+  private _keyValidator: Validatable<DictionaryKey<TValue>> | undefined;
 
   constructor(
-    private _itemValidator: Validator<DictionaryValue<TValue>>
+    private _itemValidator: Validatable<DictionaryValue<TValue>>
   ) {
     super();
   }
@@ -25,7 +26,7 @@ export class DictionaryValidator<TValue extends Dictionary> extends Validator<TV
    * @return {*}  {this}
    * @memberof DictionaryValidator
    */
-  public key(validator_: Validator<DictionaryKey<TValue>>): this {
+  public key(validator_: Validatable<DictionaryKey<TValue>>): this {
     this._keyValidator = validator_;
     return this;
   }

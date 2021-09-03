@@ -1,6 +1,5 @@
 import type { ArrayItem, Dictionary, DictionaryValue, MinArray } from 'ts-lib-extended';
-import type { AnyLike, MethodLike, ObjectLike } from './types';
-import { Validator } from './validator';
+import type { AnyLike, MethodLike, ObjectLike, PropertyValidators, Validatable } from './types';
 import { AnyValidator } from './validator/any';
 import { ArrayValidator } from './validator/array';
 import { BooleanValidator } from './validator/boolean';
@@ -8,7 +7,6 @@ import { DateValidator } from './validator/date';
 import { DictionaryValidator } from './validator/dictionary';
 import { MethodValidator } from './validator/method';
 import { NumberValidator } from './validator/number';
-import type { PropertyValidators } from './validator/object';
 import { ObjectValidator } from './validator/object';
 import { OptionalValidator } from './validator/optional';
 import { StrictValidator } from './validator/strict';
@@ -52,12 +50,12 @@ export class TypedValueApprover {
    * Validate method-like values.
    * Unfortunately (for technical reasons), this validator can only validate the number of parameters.
    *
-   * @template T
-   * @return {*}  {MethodValidator<T>}
+   * @template TValue
+   * @return {*}  {MethodValidator<TValue>}
    * @memberof TypedValueApprover
    */
-  public method<T extends MethodLike>(): MethodValidator<T> {
-    return new MethodValidator<T>();
+  public method<TValue extends MethodLike>(): MethodValidator<TValue> {
+    return new MethodValidator<TValue>();
   }
 
   /**
@@ -87,7 +85,7 @@ export class TypedValueApprover {
    * @return {*}  {StrictValidator<TValue, A>}
    * @memberof TypedValueApprover
    */
-  public strict<TValue extends ArrayItem<A>, A extends MinArray<AnyLike, 1>>(...values_: A): StrictValidator<TValue, A> {
+  public strict<TValue extends ArrayItem<A>, A extends MinArray<AnyLike, 1> = MinArray<TValue, 1>>(...values_: A): StrictValidator<TValue, A> {
     return new StrictValidator<TValue, A>(...values_);
   }
 
@@ -95,11 +93,11 @@ export class TypedValueApprover {
    * Validate array-like values
    *
    * @template TValue
-   * @param {ArrayItem<TValue>} itemValidator_
+   * @param {Validatable<ArrayItem<TValue>>} itemValidator_
    * @return {*}  {ArrayValidator<TValue>}
    * @memberof TypedValueApprover
    */
-  public array<TValue extends ArrayLike<any>>(itemValidator_: Validator<ArrayItem<TValue>>): ArrayValidator<TValue> {
+  public array<TValue extends ArrayLike<any>>(itemValidator_: Validatable<ArrayItem<TValue>>): ArrayValidator<TValue> {
     return new ArrayValidator<TValue>(itemValidator_);
   }
 
@@ -113,7 +111,7 @@ export class TypedValueApprover {
    * @return {*}  {UnionValidator<TValue>}
    * @memberof TypedValueApprover
    */
-  public union<TValue extends ValidatorsValue<A>, A extends MinArray<Validator<any>, 2> = MinArray<Validator<TValue>, 2>>(
+  public union<TValue extends ValidatorsValue<A>, A extends MinArray<Validatable<any>, 2> = MinArray<Validatable<TValue>, 2>>(
     ...validators_: A
   ): UnionValidator<TValue> {
     return new UnionValidator<TValue, A>(...validators_);
@@ -121,7 +119,6 @@ export class TypedValueApprover {
 
   /**
    * Validate object based values. Each property has to match its specified validator
-   * NULL IS REJECTED BY DEFAULT! Use "allowNull()" to allow null.
    *
    * @template TValue
    * @param {PropertyValidators<TValue>} propertyValidators_
@@ -129,18 +126,18 @@ export class TypedValueApprover {
    * @memberof TypedValueApprover
    */
   public object<TValue extends ObjectLike>(propertyValidators_: PropertyValidators<TValue>): ObjectValidator<TValue> {
-    return new ObjectValidator(propertyValidators_);
+    return new ObjectValidator<TValue>(propertyValidators_);
   }
 
   /**
    * Validate dictionary values.
    *
    * @template TValue
-   * @param {Validator<DictionaryValue<TValue>>} itemValidator_
+   * @param {Validatable<DictionaryValue<TValue>>} itemValidator_
    * @return {*}  {DictionaryValidator<TValue>}
    * @memberof TypedValueApprover
    */
-  public dictionary<TValue extends Dictionary>(itemValidator_: Validator<DictionaryValue<TValue>>): DictionaryValidator<TValue> {
+  public dictionary<TValue extends Dictionary>(itemValidator_: Validatable<DictionaryValue<TValue>>): DictionaryValidator<TValue> {
     return new DictionaryValidator<TValue>(itemValidator_);
   }
 
@@ -160,11 +157,11 @@ export class TypedValueApprover {
    * Validator for optional properties/values
    *
    * @template TValue
-   * @param {Validator<TValue>} validator_
+   * @param {Validatable<TValue>} validator_
    * @return {*}  {OptionalValidator<TValue>}
    * @memberof TypedValueApprover
    */
-  public optional<TValue>(validator_: Validator<TValue>): OptionalValidator<TValue> {
+  public optional<TValue>(validator_: Validatable<TValue>): OptionalValidator<TValue> {
     return new OptionalValidator(validator_);
   }
 }

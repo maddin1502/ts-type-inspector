@@ -10,8 +10,7 @@ import { Validator } from '.';
  * @extends {RangeValidator<number>}
  * @implements {NumberValidatorInterface}
  */
-export class NumberValidator extends Validator<number>
-{
+export class NumberValidator extends Validator<number> {
   private _min: number | undefined;
   private _max: number | undefined;
   private _allowed: number[] | undefined;
