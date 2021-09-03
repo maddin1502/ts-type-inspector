@@ -20,7 +20,7 @@ export class StringValidator extends Validator<string> {
   private _date: boolean;
   private _numeric: boolean;
   private _uuid: boolean;
-  private _mail: boolean;
+  // private _mail: boolean;
 
   constructor() {
     super();
@@ -30,7 +30,7 @@ export class StringValidator extends Validator<string> {
     this._date = false;
     this._numeric = false;
     this._uuid = false;
-    this._mail = false;
+    // this._mail = false;
   }
 
   /**
@@ -166,16 +166,17 @@ export class StringValidator extends Validator<string> {
   }
 
   /**
-   * string has to be an email
+   * string has to be an email.
+   * HINT: this validation is not perfect. False negative results may occure.
    *
    * @readonly
    * @type {this}
    * @memberof StringValidator
    */
-  public get email(): this {
-    this._mail = true;
-    return this;
-  }
+  // public get email(): this {
+  //   this._mail = true;
+  //   return this;
+  // }
 
   protected validateValue(value_: unknown): string {
     if (typeof value_ !== 'string') {
@@ -247,12 +248,12 @@ export class StringValidator extends Validator<string> {
       this.throwValidationError('string is not an uuid');
     }
 
-    if (
-      this._mail
-      && !/^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.([a-zA-Z](-?[a-zA-Z0-9])+|[0-9]{3})$/.test(value_)
-    ) {
-      this.throwValidationError('string is not an email');
-    }
+    // if (
+    //   this._mail
+    //   && !/^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.([a-zA-Z](-?[a-zA-Z0-9])+|[0-9]{3})$/.test(value_)
+    // ) {
+    //   this.throwValidationError('string is not an email');
+    // }
 
     return value_;
   }

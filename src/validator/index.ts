@@ -116,8 +116,7 @@ export abstract class Validator<TValue> implements Validatable<TValue> {
         break;
     }
 
-    this._validationError = new ValidationError(errorMessage, propertyTrace_, subErrors_);
-    throw this._validationError;
+    throw this._validationError = new ValidationError(errorMessage, propertyTrace_, subErrors_);
   }
 
   private isValidationError(reason_: unknown): reason_ is ValidationError {

@@ -51,6 +51,6 @@ export class DictionaryValidator<TValue extends Dictionary> extends Validator<TV
 
   private isDictionary(value_: unknown): value_ is Dictionary<any> {
     // TODO: is there any validatable differnce between dictionary and standard object?
-    return typeof value_ !== 'object' || value_ === null;
+    return typeof value_ === 'object' && value_ !== null;
   }
 }

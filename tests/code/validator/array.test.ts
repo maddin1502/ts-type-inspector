@@ -42,13 +42,15 @@ jce.describe(() => {
 
   jce.test(
     ['isValid', 'incorrect conditions'],
-    5,
+    7,
     () => {
       expect(tva.array(tva.number).length(3).isValid([ 42 ])).toBe(false);
       expect(tva.array(tva.string).length(1).isValid(['1', '2', '42'])).toBe(false);
+      expect(tva.array(tva.string).min(2).isValid(['42'])).toBe(false);
       expect(tva.array(tva.string).max(2).isValid(['1', '2', '42'])).toBe(false);
       expect(tva.array(tva.string).allow('1', '2', '24').isValid(['1', '2', '42'])).toBe(false);
       expect(tva.array(tva.string).deny('3', '4', '42').isValid(['1', '2', '42'])).toBe(false);
+      expect(tva.array(tva.string).isValid({ length: 2 })).toBe(false);
     }
   );
 });
