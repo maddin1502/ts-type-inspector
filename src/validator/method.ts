@@ -7,10 +7,10 @@ import type { MethodLike } from '../types';
  *
  * @export
  * @class MethodValidator
- * @extends {Validator<TValue>}
- * @template TValue
+ * @extends {Validator<V>}
+ * @template V
  */
-export class MethodValidator<TValue extends MethodLike> extends Validator<TValue> {
+export class MethodValidator<V extends MethodLike> extends Validator<V> {
   private _minParams: number | undefined;
   private _maxParams: number | undefined;
   private _paramsCount: number | undefined;
@@ -55,7 +55,7 @@ export class MethodValidator<TValue extends MethodLike> extends Validator<TValue
     return this;
   }
 
-  protected validateValue(value_: unknown): TValue {
+  protected validateValue(value_: unknown): V {
     if (typeof value_ !== 'function') {
       this.throwValidationError('value is not a method');
     }
@@ -72,6 +72,6 @@ export class MethodValidator<TValue extends MethodLike> extends Validator<TValue
       this.throwValidationError('too many parameters');
     }
 
-    return value_ as TValue;
+    return value_ as V;
   }
 }

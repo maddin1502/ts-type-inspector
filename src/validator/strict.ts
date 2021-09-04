@@ -1,6 +1,5 @@
-import type { ArrayItem, MinArray } from 'ts-lib-extended';
 import { Validator } from '.';
-import type { AnyLike } from '../types';
+import type { AnyLike, StrictValues, StrictValuesItem } from '../types';
 
 /**
  * Validator for precisely defined values (not just of specific type)
@@ -8,25 +7,25 @@ import type { AnyLike } from '../types';
  *
  * @export
  * @class StrictValidator
- * @extends {Validator<TValue>}
- * @template TValue
- * @template A
+ * @extends {Validator<V>}
+ * @template V
+ * @template S
  */
-export class StrictValidator<TValue extends ArrayItem<A>, A extends MinArray<AnyLike, 1> = MinArray<TValue, 1>> extends Validator<TValue> {
-  private _strictValues: A;
+export class StrictValidator<V extends StrictValuesItem<S>, S extends StrictValues = StrictValues<V>> extends Validator<V> {
+  private _strictValues: S;
 
   constructor(
-    ...strictValues_: A
+    ...strictValues_: S
   ) {
     super();
     this._strictValues = strictValues_;
   }
 
-  protected validateValue(value_: AnyLike): TValue {
+  protected validateValue(value_: AnyLike): V {
     if (!this._strictValues.includes(value_)) {
       this.throwValidationError('no equality found');
     }
 
-    return value_ as TValue;
+    return value_ as V;
   }
 }

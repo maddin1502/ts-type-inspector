@@ -1,22 +1,22 @@
 import { Validator } from '.';
-import { Validatable } from '../types';
+import type { Validatable } from '../types';
 
 /**
  * Validator for optional (maybe undefined) properties/values
  *
  * @export
  * @class OptionalValidator
- * @extends {(Validator<undefined | TValue>)}
- * @template TValue
+ * @extends {(Validator<undefined | V>)}
+ * @template V
  */
-export class OptionalValidator<TValue> extends Validator<undefined | TValue> {
+export class OptionalValidator<V> extends Validator<undefined | V> {
   constructor(
-    private _validator: Validatable<TValue>
+    private _validator: Validatable<V>
   ) {
     super();
   }
 
-  protected validateValue(value_: unknown): undefined | TValue {
+  protected validateValue(value_: unknown): undefined | V {
     if (typeof value_ === 'undefined') {
       return value_;
     }

@@ -1,19 +1,32 @@
+import type { ArrayItem, MinArray } from 'ts-lib-extended';
 import { ValidationError } from './error';
 
 export type MethodLike = (...args_: any[]) => any;
 export type ObjectLike = Record<PropertyKey, any>;
-export type SizedObject<T = any> = { readonly length: T };
-export type IndexedObject<T extends number> = {
-  [index in T]: any;
+export type SizedObject<V = any> = { readonly length: V };
+export type IndexedObject<V extends number> = {
+  [index in V]: any;
 } & SizedObject<number>;
 export type AnyLike = number | string | boolean | ObjectLike | MethodLike | undefined | symbol | null;
-export type CustomValidation<TValue> = (value_: TValue) => string | undefined;
-export interface Validatable<TValue> {
+export type CustomValidation<V> = (value_: V) => string | undefined;
+export interface Validatable<V> {
   readonly validationError: ValidationError | undefined;
 
-  custom(validation_: CustomValidation<TValue>): this;
+  custom(validation_: CustomValidation<V>): this;
   error(message_: string | (() => string)): this;
-  validate(value_: unknown): TValue;
-  isValid(value_: unknown): value_ is TValue;
+  validate(value_: unknown): V;
+  isValid(value_: unknown): value_ is V;
 }
-export type PropertyValidators<TValue extends ObjectLike> = { [key in keyof TValue]-?: Validatable<TValue[key]> };
+export type PropertyValidators<V extends ObjectLike> = { [key in keyof V]-?: Validatable<V[key]> };
+export type UnitedValidators<V = any> = MinArray<Validatable<V>, 2>;
+export type UnitedValidatorsItem<U extends UnitedValidators>
+  = ArrayItem<U> extends Validatable<infer V>
+    ? V
+    : never;
+export type StrictValues<V extends AnyLike = AnyLike> = MinArray<V, 1>;
+export type StrictValuesItem<S extends StrictValues> = ArrayItem<S>;
+export type ArrayItemValidator<A extends ArrayLike<any> = ArrayLike<any>> = Validatable<ArrayItem<A>>;
+export type ArrayItemValidatorArray<A extends ArrayItemValidator>
+  = A extends Validatable<infer V>
+    ? ArrayLike<V>
+    : never;

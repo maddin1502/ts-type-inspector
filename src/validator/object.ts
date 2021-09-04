@@ -6,15 +6,15 @@ import type { ObjectLike, PropertyValidators } from '../types';
  *
  * @export
  * @class ObjectValidator
- * @extends {Validator<TValue>}
- * @template TValue
+ * @extends {Validator<V>}
+ * @template V
  */
-export class ObjectValidator<TValue extends ObjectLike> extends Validator<TValue> {
+export class ObjectValidator<V extends ObjectLike> extends Validator<V> {
   private _noOverload: boolean;
 
   // TODO: Property validators can be manipulated from outside the class
   constructor(
-    private _propertyValidators: PropertyValidators<TValue>
+    private _propertyValidators: PropertyValidators<V>
   ) {
     super();
     this._noOverload = false;
@@ -33,7 +33,7 @@ export class ObjectValidator<TValue extends ObjectLike> extends Validator<TValue
     return this;
   }
 
-  protected validateValue(value_: unknown): TValue {
+  protected validateValue(value_: unknown): V {
     if (!this.isObjectLike(value_)) {
       this.throwValidationError('value is not an object');
     }

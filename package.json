@@ -31,6 +31,7 @@
   "homepage": "https://github.com/maddin1502/[package-name]#readme",
   "devDependencies": {
     "@types/jest": "^27.0.1",
+    "@types/node": "^15.14.9",
     "@typescript-eslint/eslint-plugin": "^4.29.2",
     "@typescript-eslint/parser": "^4.29.2",
     "eslint": "^7.32.0",
@@ -39,61 +40,10 @@
     "jest-html-reporters": "^2.1.6",
     "jest-junit": "^12.2.0",
     "ts-jest": "^27.0.5",
-    "typescript": "^4.3.5"
+    "ts-node": "^10.2.1",
+    "typescript": "^4.4.2"
   },
   "dependencies": {
     "ts-lib-extended": "^1.1.2"
-  },
-  "jest": {
-    "testMatch": [
-      "<rootDir>/tests/code/**/*.test.ts"
-    ],
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "<rootDir>/src/**/*.{ts,js}"
-    ],
-    "coverageReporters": [
-      "html",
-      "text",
-      "cobertura"
-    ],
-    "coverageDirectory": "<rootDir>/tests/reports/coverage",
-    "reporters": [
-      "default",
-      [
-        "jest-junit",
-        {
-          "suiteName": "jest tests",
-          "outputDirectory": "./tests/reports/result",
-          "outputName": "junit.xml",
-          "classNameTemplate": "{classname}",
-          "titleTemplate": "{title}",
-          "ancestorSeparator": " › "
-        }
-      ],
-      [
-        "jest-html-reporters",
-        {
-          "publicPath": "./tests/reports/result",
-          "filename": "overview.html"
-        }
-      ]
-    ],
-    "moduleNameMapper": {
-      "^@/(.*)$": "<rootDir>/$1",
-      "^~/(.*)$": "<rootDir>/$1"
-    },
-    "moduleFileExtensions": [
-      "ts",
-      "js",
-      "json"
-    ],
-    "transform": {
-      "^.+\\.ts$": "ts-jest"
-    },
-    "resetMocks": true,
-    "restoreMocks": true
   }
 }

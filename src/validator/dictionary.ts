@@ -1,20 +1,20 @@
 import type { Dictionary, DictionaryKey, DictionaryValue } from 'ts-lib-extended';
 import { Validator } from '.';
-import { Validatable } from '../types';
+import type { Validatable } from '../types';
 
 /**
  * Validator for dictionary objects
  *
  * @export
  * @class DictionaryValidator
- * @extends {Validator<TValue>}
- * @template TValue
+ * @extends {Validator<V>}
+ * @template V
  */
-export class DictionaryValidator<TValue extends Dictionary> extends Validator<TValue> {
-  private _keyValidator: Validatable<DictionaryKey<TValue>> | undefined;
+export class DictionaryValidator<V extends Dictionary> extends Validator<V> {
+  private _keyValidator: Validatable<DictionaryKey<V>> | undefined;
 
   constructor(
-    private _itemValidator: Validatable<DictionaryValue<TValue>>
+    private _itemValidator: Validatable<DictionaryValue<V>>
   ) {
     super();
   }
@@ -22,16 +22,16 @@ export class DictionaryValidator<TValue extends Dictionary> extends Validator<TV
   /**
    * additional dictionary key validation
    *
-   * @param {ValidatorInterface<DictionaryKey<TValue>>} validator_
+   * @param {ValidatorInterface<DictionaryKey<V>>} validator_
    * @return {*}  {this}
    * @memberof DictionaryValidator
    */
-  public key(validator_: Validatable<DictionaryKey<TValue>>): this {
+  public key(validator_: Validatable<DictionaryKey<V>>): this {
     this._keyValidator = validator_;
     return this;
   }
 
-  protected validateValue(value_: unknown): TValue {
+  protected validateValue(value_: unknown): V {
     if (!this.isDictionary(value_)) {
       this.throwValidationError('value is not a dictionary');
     }
@@ -46,7 +46,7 @@ export class DictionaryValidator<TValue extends Dictionary> extends Validator<TV
       }
     }
 
-    return value_ as TValue;
+    return value_ as V;
   }
 
   private isDictionary(value_: unknown): value_ is Dictionary<any> {

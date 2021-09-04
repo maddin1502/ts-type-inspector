@@ -1,9 +1,9 @@
 import { ValidationError, VALIDATION_ERROR_MARKER } from '../error';
-import { CustomValidation, Validatable } from '../types';
+import type { CustomValidation, Validatable } from '../types';
 
-export abstract class Validator<TValue> implements Validatable<TValue> {
+export abstract class Validator<V> implements Validatable<V> {
   private _validationError: ValidationError | undefined;
-  private _customValidation: CustomValidation<TValue> | undefined;
+  private _customValidation: CustomValidation<V> | undefined;
   private _customErrorMessage: string | undefined | (() => string);
 
   /**
@@ -18,11 +18,11 @@ export abstract class Validator<TValue> implements Validatable<TValue> {
   /**
    * add a custom validation; return a error message if validation fails
    *
-   * @param {CustomValidation<TValue>} evaluation_
+   * @param {CustomValidation<V>} evaluation_
    * @return {*}  {this}
    * @memberof Validator
    */
-  public custom(evaluation_: CustomValidation<TValue>): this {
+  public custom(evaluation_: CustomValidation<V>): this {
     this._customValidation = evaluation_;
     return this;
   }
@@ -42,12 +42,11 @@ export abstract class Validator<TValue> implements Validatable<TValue> {
   /**
    * validate value
    *
-   * @throws {ValidationError} if validation fails
    * @param {unknown} value_
-   * @return {*}  {TValue} returns validated value with asserted type (same reference)
+   * @return {*}  {V}
    * @memberof Validator
    */
-  public validate(value_: unknown): TValue {
+  public validate(value_: unknown): V {
     const value = this.validateValue(value_);
     const customEvaluationResult = this._customValidation?.(value);
 
@@ -62,10 +61,10 @@ export abstract class Validator<TValue> implements Validatable<TValue> {
    * validate value
    *
    * @param {unknown} value_
-   * @return {*}  {value_ is TValue} true if valid; false if invalid; this is a type predicate - asserted type will be associated to value if true
+   * @return {*}  {value_ is V} true if valid; false if invalid; this is a type predicate - asserted type will be associated to value if true
    * @memberof Validator
    */
-  public isValid(value_: unknown): value_ is TValue {
+  public isValid(value_: unknown): value_ is V {
     try {
       this.validate(value_);
       return true;
@@ -74,7 +73,7 @@ export abstract class Validator<TValue> implements Validatable<TValue> {
     }
   }
 
-  protected abstract validateValue(value_: unknown): TValue;
+  protected abstract validateValue(value_: unknown): V;
 
   protected detectError(reason_: unknown, propertyTraces_?: PropertyKey[]): Error {
     if (this.isValidationError(reason_)) {

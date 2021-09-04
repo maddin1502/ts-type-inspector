@@ -1,24 +1,24 @@
 import type { ArrayItem, MinArray } from 'ts-lib-extended';
 import { Validator } from '.';
-import type { IndexedObject, SizedObject, Validatable } from '../types';
+import type { ArrayItemValidator, ArrayItemValidatorArray, IndexedObject, SizedObject } from '../types';
 
 /**
  * Validator for array-like values
  *
  * @export
  * @class ArrayValidator
- * @extends {Validator<TValue>}
- * @template TValue
+ * @extends {Validator<A>}
+ * @template A
  */
-export class ArrayValidator<TValue extends ArrayLike<any>> extends Validator<TValue> {
+export class ArrayValidator<A extends ArrayItemValidatorArray<V>, V extends ArrayItemValidator = ArrayItemValidator<A>> extends Validator<A> {
   private _length: number | undefined;
   private _min: number | undefined;
   private _max: number | undefined;
-  private _allowed: MinArray<ArrayItem<TValue>, 1> | undefined;
-  private _denied: MinArray<ArrayItem<TValue>, 1> | undefined;
+  private _allowed: MinArray<ArrayItem<A>, 1> | undefined;
+  private _denied: MinArray<ArrayItem<A>, 1> | undefined;
 
   constructor(
-    private _itemValidator: Validatable<ArrayItem<TValue>>
+    private _itemValidator: V
   ) {
     super();
   }
@@ -62,11 +62,11 @@ export class ArrayValidator<TValue extends ArrayLike<any>> extends Validator<TVa
   /**
    * allowed items
    *
-   * @param {...MinArray<ArrayItem<TValue>, 1>} items_
+   * @param {...MinArray<ArrayItem<A>, 1>} items_
    * @return {*}  {this}
    * @memberof ArrayValidator
    */
-  public allow(...items_: MinArray<ArrayItem<TValue>, 1>): this {
+  public allow(...items_: MinArray<ArrayItem<A>, 1>): this {
     this._allowed = items_;
     return this;
   }
@@ -74,16 +74,16 @@ export class ArrayValidator<TValue extends ArrayLike<any>> extends Validator<TVa
   /**
    * denied items
    *
-   * @param {...MinArray<ArrayItem<TValue>, 1>} items_
+   * @param {...MinArray<ArrayItem<A>, 1>} items_
    * @return {*}  {this}
    * @memberof ArrayValidator
    */
-  public deny(...items_: MinArray<ArrayItem<TValue>, 1>): this {
+  public deny(...items_: MinArray<ArrayItem<A>, 1>): this {
     this._denied = items_;
     return this;
   }
 
-  protected validateValue(value_: unknown): TValue {
+  protected validateValue(value_: unknown): A {
     if (!this.withNumericLength(value_)) {
       this.throwValidationError('value is not an array');
     }
@@ -122,7 +122,7 @@ export class ArrayValidator<TValue extends ArrayLike<any>> extends Validator<TVa
       }
     }
 
-    return value_ as TValue;
+    return value_ as A;
   }
 
   private isIndexed<T extends number>(value_: SizedObject<number>, index_: T): value_ is IndexedObject<T> {
