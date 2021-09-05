@@ -1,5 +1,15 @@
 import type { Dictionary, DictionaryValue } from 'ts-lib-extended';
-import type { ArrayItemValidator, ArrayItemValidatorArray, MethodLike, ObjectLike, PropertyValidators, StrictValues, StrictValuesItem, UnitedValidators, UnitedValidatorsItem, Validatable } from './types';
+import type {
+  ArrayItemValidator,
+  ArrayItemValidatorArray, MethodLike,
+  ObjectLike,
+  PropertyValidators,
+  StrictValues,
+  StrictValuesItem,
+  UnitedValidators,
+  UnitedValidatorsItem,
+  Validatable
+} from './types';
 import { AnyValidator } from './validator/any';
 import { ArrayValidator } from './validator/array';
 import { BooleanValidator } from './validator/boolean';
@@ -100,6 +110,10 @@ export class TypedValueApprover {
   public array<A extends ArrayItemValidatorArray<V>, V extends ArrayItemValidator = ArrayItemValidator<A>>(itemValidator_: V): ArrayValidator<A> {
     return new ArrayValidator<A>(itemValidator_);
   }
+
+  // public arrayLike<A extends ArrayLikeItemValidatorArray<V>, V extends ArrayLikeItemValidator = ArrayLikeItemValidator<A>>(itemValidator_: V): ArrayLikeValidator<A> {
+  //   return new ArrayLikeValidator<A>(itemValidator_);
+  // }
 
   /**
    * Validate union types like "string | number" or optional properties.

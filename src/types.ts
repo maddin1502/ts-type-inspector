@@ -3,10 +3,6 @@ import { ValidationError } from './error';
 
 export type MethodLike = (...args_: any[]) => any;
 export type ObjectLike = Record<PropertyKey, any>;
-export type SizedObject<V = any> = { readonly length: V };
-export type IndexedObject<V extends number> = {
-  [index in V]: any;
-} & SizedObject<number>;
 export type AnyLike = number | string | boolean | ObjectLike | MethodLike | undefined | symbol | null;
 export type CustomValidation<V> = (value_: V) => string | undefined;
 export interface Validatable<V> {
@@ -25,8 +21,8 @@ export type UnitedValidatorsItem<U extends UnitedValidators>
     : never;
 export type StrictValues<V extends AnyLike = AnyLike> = MinArray<V, 1>;
 export type StrictValuesItem<S extends StrictValues> = ArrayItem<S>;
-export type ArrayItemValidator<A extends ArrayLike<any> = ArrayLike<any>> = Validatable<ArrayItem<A>>;
+export type ArrayItemValidator<A extends any[] = any[]> = Validatable<ArrayItem<A>>;
 export type ArrayItemValidatorArray<A extends ArrayItemValidator>
   = A extends Validatable<infer V>
-    ? ArrayLike<V>
+    ? V[]
     : never;

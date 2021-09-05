@@ -1,6 +1,6 @@
 import type { ArrayItem, MinArray } from 'ts-lib-extended';
 import { Validator } from '.';
-import type { ArrayItemValidator, ArrayItemValidatorArray, IndexedObject, SizedObject } from '../types';
+import type { ArrayItemValidator, ArrayItemValidatorArray } from '../types';
 
 /**
  * Validator for array-like values
@@ -84,7 +84,7 @@ export class ArrayValidator<A extends ArrayItemValidatorArray<V>, V extends Arra
   }
 
   protected validateValue(value_: unknown): A {
-    if (!this.withNumericLength(value_)) {
+    if (!Array.isArray(value_)) {
       this.throwValidationError('value is not an array');
     }
 
@@ -101,10 +101,6 @@ export class ArrayValidator<A extends ArrayItemValidatorArray<V>, V extends Arra
     }
 
     for (let i = 0; i < value_.length; i++) {
-      if (!this.isIndexed(value_, i)) {
-        this.throwValidationError('array could not be indexed');
-      }
-
       const item = value_[i];
 
       if (this._allowed && !this._allowed.includes(item)) {
@@ -123,17 +119,5 @@ export class ArrayValidator<A extends ArrayItemValidatorArray<V>, V extends Arra
     }
 
     return value_ as A;
-  }
-
-  private isIndexed<T extends number>(value_: SizedObject<number>, index_: T): value_ is IndexedObject<T> {
-    return index_ in value_;
-  }
-
-  private withLength(value_: unknown): value_ is SizedObject {
-    return typeof value_ === 'object' && value_ !== null && 'length' in value_;
-  }
-
-  private withNumericLength(value_: unknown): value_ is SizedObject<number> {
-    return this.withLength(value_) && typeof value_.length === 'number' && !isNaN(value_.length);
   }
 }
