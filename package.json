@@ -1,5 +1,5 @@
 {
-  "name": "[package-name]",
+  "name": "type-inspector",
   "version": "1.0.0",
   "description": "Template for node packages",
   "files": [
@@ -8,6 +8,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
+    "lint": "eslint src",
+    "lint:fix": "npm run lint -- --fix",
     "test": "jest",
     "reset-modules": "npx --quiet rimraf node_modules/ package-lock.json",
     "reset-creation": "npx --quiet rimraf dist/ tests/reports/",
@@ -17,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/maddin1502/[package-name].git"
+    "url": "git+https://github.com/maddin1502/type-inspector.git"
   },
   "keywords": [
     "typescript",
@@ -26,24 +28,25 @@
   "author": "maddin1502",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/maddin1502/[package-name]/issues"
+    "url": "https://github.com/maddin1502/type-inspector/issues"
   },
-  "homepage": "https://github.com/maddin1502/[package-name]#readme",
+  "homepage": "https://github.com/maddin1502/type-inspector#readme",
   "devDependencies": {
-    "@types/jest": "^27.0.1",
-    "@types/node": "^15.14.9",
-    "@typescript-eslint/eslint-plugin": "^4.29.2",
-    "@typescript-eslint/parser": "^4.29.2",
-    "eslint": "^7.32.0",
-    "jest": "^27.0.6",
+    "@types/jest": "^27.0.3",
+    "@types/node": "^16.11.11",
+    "@typescript-eslint/eslint-plugin": "^5.5.0",
+    "@typescript-eslint/parser": "^5.5.0",
+    "eslint": "^8.4.0",
+    "jest": "^27.4.3",
     "jest-class-extended": "^1.0.1",
     "jest-html-reporters": "^2.1.6",
-    "jest-junit": "^12.2.0",
-    "ts-jest": "^27.0.5",
-    "ts-node": "^10.2.1",
-    "typescript": "^4.4.2"
+    "jest-junit": "^13.0.0",
+    "ts-jest": "^27.1.0",
+    "ts-node": "10.4.0",
+    "typescript": "^4.5.2"
   },
   "dependencies": {
-    "ts-lib-extended": "^1.1.2"
+    "@sideway/address": "^4.1.2",
+    "ts-lib-extended": "^1.1.4"
   }
 }

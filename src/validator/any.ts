@@ -1,7 +1,5 @@
 import { Validator } from '.';
 
-// TODO: use AnyLike to avoid misuse?
-
 /**
  * USE THIS FOR ANY TYPES ONLY !!!!
  * Actually this validator does not validate.
@@ -12,10 +10,14 @@ import { Validator } from '.';
  */
 export class AnyValidator extends Validator<any> {
   private _notNullish: boolean;
+  private _falsy: boolean;
+  private _truthy: boolean;
 
   constructor() {
     super();
     this._notNullish = false;
+    this._falsy = false;
+    this._truthy = false;
   }
 
   /**

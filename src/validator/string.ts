@@ -1,4 +1,6 @@
 import { Validator } from '.';
+import { email, uri } from '@sideway/address';
+import { URL } from 'url';
 
 /**
  * Validator for string values.
@@ -20,7 +22,9 @@ export class StringValidator extends Validator<string> {
   private _date: boolean;
   private _numeric: boolean;
   private _uuid: boolean;
-  // private _mail: boolean;
+  private _mail: boolean;
+  private _uri: boolean;
+  private _url: boolean;
 
   constructor() {
     super();
@@ -30,7 +34,9 @@ export class StringValidator extends Validator<string> {
     this._date = false;
     this._numeric = false;
     this._uuid = false;
-    // this._mail = false;
+    this._mail = false;
+    this._uri = false;
+    this._url = false;
   }
 
   /**
@@ -173,10 +179,20 @@ export class StringValidator extends Validator<string> {
    * @type {this}
    * @memberof StringValidator
    */
-  // public get email(): this {
-  //   this._mail = true;
-  //   return this;
-  // }
+  public get email(): this {
+    this._mail = true;
+    return this;
+  }
+
+  public get uri(): this {
+    this._uri = true;
+    return this;
+  }
+
+  public get url(): this {
+    this._url = true;
+    return this;
+  }
 
   protected validateValue(value_: unknown): string {
     if (typeof value_ !== 'string') {
@@ -230,7 +246,7 @@ export class StringValidator extends Validator<string> {
     }
 
     if (this._json && !this.isJsonString(value_)) {
-      this.throwValidationError('value is not json');
+      this.throwValidationError('string is not a json string');
     }
 
     if (this._date && isNaN(new Date(value_).getTime())) {
@@ -248,12 +264,21 @@ export class StringValidator extends Validator<string> {
       this.throwValidationError('string is not an uuid');
     }
 
-    // if (
-    //   this._mail
-    //   && !/^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.([a-zA-Z](-?[a-zA-Z0-9])+|[0-9]{3})$/.test(value_)
-    // ) {
-    //   this.throwValidationError('string is not an email');
-    // }
+    if (this._mail && !email.isValid(value_)) {
+      this.throwValidationError('string is not an email');
+    }
+
+    if (this._uri && !uri.regex({ allowQuerySquareBrackets: true }).regex.test(value_)) {
+      this.throwValidationError('string is not a uri');
+    }
+
+    if (this._url) {
+      try {
+        new URL(value_); // requires WebWorkers in browser
+      } catch {
+        this.throwValidationError('string is not a url');
+      }
+    }
 
     return value_;
   }

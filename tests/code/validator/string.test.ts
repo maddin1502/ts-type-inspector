@@ -31,7 +31,7 @@ jce.describe(() => {
 
   jce.test(
     ['isValid', 'correct conditions'],
-    14,
+    27,
     () => {
       expect(tva.string.length(5).isValid('hello')).toBe(true);
       expect(tva.string.length(5).max(6).isValid('hello')).toBe(true);
@@ -47,33 +47,33 @@ jce.describe(() => {
       expect(tva.string.date.isValid('2021-01-01')).toBe(true);
       expect(tva.string.numeric.isValid('42')).toBe(true);
       expect(tva.string.uuid.isValid('0cceef42-6b9b-4150-828a-501ef1299578')).toBe(true);
+      expect(tva.string.email.isValid('email@example.com')).toBe(true); // just a simple test... @sideway/address will do the job
 
-      // const validMails = [
-      //   'email@example.com',
-      //   'firstname.lastname@example.com',
-      //   'email@subdomain.example.com',
-      //   'firstname+lastname@example.com',
-      //   'email@123.123.123.123',
-      //   '1234567890@example.com',
-      //   'email@example-one.com',
-      //   '_______@example.com',
-      //   'email@example.name',
-      //   'email@example.museum',
-      //   'email@example.co.jp',
-      //   'firstname-lastname@example.com'
-      // ];
+      // just a few simple tests... @sideway/address will do the job
+      expect(tva.string.uri.isValid('https://github.com/sideway/address')).toBe(true);
+      expect(tva.string.uri.isValid('ftp://ftp.is.co.za/rfc/rfc1808.txt')).toBe(true);
+      expect(tva.string.uri.isValid('http://www.ietf.org/rfc/rfc2396.txt')).toBe(true);
+      expect(tva.string.uri.isValid('ldap://[2001:db8::7]/c=GB?objectClass?one')).toBe(true);
+      expect(tva.string.uri.isValid('news:comp.infosystems.www.servers.unix')).toBe(true);
+      expect(tva.string.uri.isValid('tel:+1-816-555-1212')).toBe(true);
+      expect(tva.string.uri.isValid('telnet://192.0.2.16:80/')).toBe(true);
+      expect(tva.string.uri.isValid('urn:oasis:names:specification:docbook:dtd:xml:4.1.2')).toBe(true);
 
-      // for (let i = 0; i < validMails.length; i++) {
-      //   const validMail = validMails[i];
-      //   const isValid = tva.string.email.isValid(validMail);
-      //   expect(isValid).toBe(true);
-      // }
+      expect(tva.string.url.isValid('https://github.com/sideway/address')).toBe(true);
+      expect(tva.string.url.isValid('http://www.ietf.org/rfc/rfc2396.txt')).toBe(true);
+      expect(tva.string.url.isValid('ftp://ftp.is.co.za/rfc/rfc1808.txt')).toBe(true);
+      expect(tva.string.url.isValid('ldap://[2001:db8::7]/c=GB?objectClass?one')).toBe(true);
+      expect(tva.string.url.isValid('news:comp.infosystems.www.servers.unix')).toBe(true);
+      expect(tva.string.url.isValid('tel:+1-816-555-1212')).toBe(true);
+      expect(tva.string.url.isValid('telnet://192.0.2.16:80/')).toBe(true);
+      expect(tva.string.url.isValid('urn:oasis:names:specification:docbook:dtd:xml:4.1.2')).toBe(true);
+      expect(tva.string.url.isValid('urn:ISBN:3-8233-4429-1')).toBe(true);
     }
   );
 
   jce.test(
     ['isValid', 'incorrect conditions'],
-    13,
+    15,
     () => {
       expect(tva.string.length(6).isValid('hello')).toBe(false);
       expect(tva.string.length(5).max(4).isValid('hello')).toBe(false);
@@ -88,31 +88,22 @@ jce.describe(() => {
       expect(tva.string.date.isValid('20210101')).toBe(false);
       expect(tva.string.numeric.isValid('42+42')).toBe(false);
       expect(tva.string.uuid.isValid('0cceef42-6b9b-4150828a-501ef1299578')).toBe(false);
+      expect(tva.string.email.isValid('email@examplecom')).toBe(false); // just a simple test... @sideway/address will do the job
 
-      // const invalidMails = [
-      //   'plainaddress',
-      //   '#@%^%#$@#$@#.com',
-      //   '@example.com',
-      //   'Joe Smith <email@example.com>',
-      //   'email.example.com',
-      //   'email@example@example.com',
-      //   '.email@example.com',
-      //   'email.@example.com',
-      //   'email..email@example.com',
-      //   'あいうえお@example.com',
-      //   'email@example.com (Joe Smith)',
-      //   // 'email@example',
-      //   'email@-example.com',
-      //   'email@111.222.333.44444',
-      //   'email@example..com',
-      //   'Abc..123@example.com'
-      // ];
+      expect(tva.string.url.isValid('news:comp.infosystems.www.servers.unix')).toBe(false);
+      expect(tva.string.url.isValid('tel:+1-816-555-1212')).toBe(false);
+      expect(tva.string.url.isValid('telnet://192.0.2.16:80/')).toBe(false);
+      expect(tva.string.url.isValid('urn:oasis:names:specification:docbook:dtd:xml:4.1.2')).toBe(false);
 
-      // for (let i = 0; i < invalidMails.length; i++) {
-      //   const invalidMail = invalidMails[i];
-      //   const isValid = tva.string.email.isValid(invalidMail);
-      //   expect(isValid).toBe(false);
-      // }
+      // just a few simple tests... @sideway/address will do the job
+      expect(tva.string.uri.isValid('https//github.com/sideway/address')).toBe(false);
+      expect(tva.string.uri.isValid('ftp//ftp.is.co.za/rfc/rfc1808.txt')).toBe(false);
+      expect(tva.string.uri.isValid('http//www.ietf.org/rfc/rfc2396.txt')).toBe(false);
+      expect(tva.string.uri.isValid('ldap//[2001:db8::7]/c=GB?objectClass?one')).toBe(false);
+      expect(tva.string.uri.isValid('newscomp.infosystems.www.servers.unix')).toBe(false);
+      expect(tva.string.uri.isValid('tel+1-816-555-1212')).toBe(false);
+      expect(tva.string.uri.isValid('telnet//192.0.2.16:80/')).toBe(false);
+      expect(tva.string.uri.isValid('urn.oasis:names:specification:docbook:dtd:xml:4.1.2')).toBe(false);
     }
   );
 });
