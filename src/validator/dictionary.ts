@@ -31,7 +31,7 @@ export class DictionaryValidator<V extends Dictionary> extends Validator<V> {
     return this;
   }
 
-  protected validateValue(value_: unknown): V {
+  protected validateBaseType(value_: unknown): V {
     if (!this.isDictionary(value_)) {
       this.throwValidationError('value is not a dictionary');
     }

@@ -194,7 +194,7 @@ export class StringValidator extends Validator<string> {
     return this;
   }
 
-  protected validateValue(value_: unknown): string {
+  protected validateBaseType(value_: unknown): string {
     if (typeof value_ !== 'string') {
       this.throwValidationError('value is not a string');
     }

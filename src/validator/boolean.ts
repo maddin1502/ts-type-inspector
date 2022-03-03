@@ -8,52 +8,47 @@ import { Validator } from '.';
  * @extends {Validator<boolean>}
  */
 export class BooleanValidator extends Validator<boolean> {
-  private _justTrue: boolean;
-  private _justFalse: boolean;
-
-  constructor() {
-    super();
-    this._justTrue = false;
-    this._justFalse = false;
-  }
-
   /**
    * allow just true
    *
+   * @since 1.0.0
    * @readonly
    * @type {this}
    * @memberof BooleanValidator
    */
   public get true(): this {
-    this._justTrue = true;
-    return this;
+    return this.setupCondition(value_ => this.checkTrue(value_));
   }
 
   /**
    * allow just false
    *
+   * @since 1.0.0
    * @readonly
    * @type {this}
    * @memberof BooleanValidator
    */
   public get false(): this {
-    this._justFalse = true;
-    return this;
+    return this.setupCondition(value_ => this.checkFalse(value_));
   }
 
-  protected validateValue(value_: unknown): boolean {
+  protected validateBaseType(value_: unknown): boolean {
     if (typeof value_ !== 'boolean') {
       this.throwValidationError('value is not a boolean');
     }
 
-    if (this._justTrue && !value_) {
+    return value_;
+  }
+
+  private checkTrue(value_: boolean): void {
+    if (!value_) {
       this.throwValidationError('boolean is false');
     }
+  }
 
-    if (this._justFalse && value_) {
+  private checkFalse(value_: boolean): void {
+    if (value_) {
       this.throwValidationError('boolean is true');
     }
-
-    return value_;
   }
 }

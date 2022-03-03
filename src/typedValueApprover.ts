@@ -29,6 +29,7 @@ export class TypedValueApprover {
    * Validate string values.
    * EMPTY STRINGS ARE REJECTED BY DEFAULT! Use "allowEmpty()" to allow emptry strings
    *
+   * @since 1.0.0
    * @readonly
    * @type {StringValidator}
    * @memberof TypedValueApprover
@@ -40,6 +41,7 @@ export class TypedValueApprover {
    * NaN IS REJECTED BY DEFAULT! Use "allowNaN()" to allow NaN
    * INFINITY IS REJECTED BY DEFAULT! Use "allowInfinity()" to allow INFINITY
    *
+   * @since 1.0.0
    * @readonly
    * @type {NumberValidator}
    * @memberof TypedValueApprover
@@ -49,6 +51,7 @@ export class TypedValueApprover {
   /**
    * Validate boolean values
    *
+   * @since 1.0.0
    * @readonly
    * @type {BooleanValidator}
    * @memberof TypedValueApprover
@@ -59,6 +62,7 @@ export class TypedValueApprover {
    * Validate method-like values.
    * Unfortunately (for technical reasons), this validator can only validate the number of parameters.
    *
+   * @since 1.0.0
    * @template V
    * @return {*}  {MethodValidator<V>}
    * @memberof TypedValueApprover
@@ -70,6 +74,7 @@ export class TypedValueApprover {
   /**
    * Validate data values
    *
+   * @since 1.0.0
    * @readonly
    * @type {DateValidator}
    * @memberof TypedValueApprover
@@ -79,6 +84,7 @@ export class TypedValueApprover {
   /**
    * Validate undefined values... The value has to be undefined to match this validator
    *
+   * @since 1.0.0
    * @readonly
    * @type {UndefinedValidator}
    * @memberof TypedValueApprover
@@ -88,6 +94,7 @@ export class TypedValueApprover {
   /**
    * Validate values through strict equality (===). Keep in mind that objects are compared by reference
    *
+   * @since 1.0.0
    * @template V
    * @template S
    * @param {...S} values_
@@ -101,6 +108,7 @@ export class TypedValueApprover {
   /**
    * Validate array-like values
    *
+   * @since 1.0.0
    * @template A
    * @template V
    * @param {V} itemValidator_
@@ -119,6 +127,7 @@ export class TypedValueApprover {
    * Validate union types like "string | number" or optional properties.
    * At least one validator have to match for a positive result
    *
+   * @since 1.0.0
    * @template V
    * @template U
    * @param {...U} validators_
@@ -134,6 +143,7 @@ export class TypedValueApprover {
   /**
    * Validate object based values. Each property has to match its specified validator
    *
+   * @since 1.0.0
    * @template V
    * @param {PropertyValidators<V>} propertyValidators_
    * @return {*}  {ObjectValidator<V>}
@@ -146,6 +156,7 @@ export class TypedValueApprover {
   /**
    * Validate dictionary values.
    *
+   * @since 1.0.0
    * @template V
    * @param {Validatable<DictionaryValue<V>>} itemValidator_
    * @return {*}  {DictionaryValidator<V>}
@@ -159,6 +170,7 @@ export class TypedValueApprover {
    * USE THIS FOR ANY TYPES ONLY !!!!
    * Actually this validator does not validate.
    *
+   * @since 1.0.0
    * @readonly
    * @type {AnyValidator}
    * @memberof TypedValueApprover
@@ -170,6 +182,7 @@ export class TypedValueApprover {
   /**
    * Validator for optional properties/values
    *
+   * @since 1.0.0
    * @template V
    * @param {Validatable<V>} validator_
    * @return {*}  {OptionalValidator<V>}
@@ -179,3 +192,8 @@ export class TypedValueApprover {
     return new OptionalValidator(validator_);
   }
 }
+
+
+const xyz: TypedValueApprover = null as any;
+
+const affe = xyz.array(xyz.string).validate(null)

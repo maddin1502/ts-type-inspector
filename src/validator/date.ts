@@ -11,107 +11,61 @@ type DateLike = string | number | Date;
  * @extends {Validator<Date>}
  */
 export class DateValidator extends Validator<Date> {
-  private _min: string | number | Date | undefined;
-  private _max: string | number | Date | undefined;
-  private _allowed: MinArray<DateLike, 1> | undefined;
-  private _denied: MinArray<DateLike, 1> | undefined;
-
   /**
-   * earliest date
+   * define earliest accepted date
    *
-   * @param {DateLike} date_
+   * @since 1.0.0
+   * @param {DateLike} min_
    * @return {*}  {this}
    * @memberof DateValidator
    */
-  public min(date_: DateLike): this {
-    this._min = date_;
-    return this;
+  public earliest(earliest_: DateLike): this {
+    return this.setupCondition(value_ => this.checkEarliest(value_, earliest_));
   }
 
   /**
-   * latest date
+   * define latest accepted date
    *
-   * @param {DateLike} date_
+   * @since 1.0.0
+   * @param {DateLike} max_
    * @return {*}  {this}
    * @memberof DateValidator
    */
-  public max(date_: DateLike): this {
-    this._max = date_;
-    return this;
+  public latest(latest_: DateLike): this {
+    return this.setupCondition(value_ => this.checkLatest(value_, latest_));
   }
 
   /**
-   * allowed dates
+   * define accepted dates
    *
+   * @since 1.0.0
    * @param {...MinArray<DateLike, 1>} items_
    * @return {*}  {this}
    * @memberof DateValidator
    */
-  public allow(...items_: MinArray<DateLike, 1>): this {
-    this._allowed = items_;
-    return this;
+  public accept(...items_: MinArray<DateLike, 1>): this {
+    return this.setupCondition(value_ => this.checkAccepted(value_, items_));
   }
 
   /**
-   * denied dates
+   * define rejected dates
    *
+   * @since 1.0.0
    * @param {...MinArray<DateLike, 1>} items_
    * @return {*}  {this}
    * @memberof DateValidator
    */
-  public deny(...items_: MinArray<DateLike, 1>): this {
-    this._denied = items_;
-    return this;
+  public reject(...items_: MinArray<DateLike, 1>): this {
+    return this.setupCondition(value_ => this.checkRejected(value_, items_));
   }
 
-  protected validateValue(value_: unknown): Date {
+  protected validateBaseType(value_: unknown): Date {
     if (!this.isDate(value_)) {
       this.throwValidationError('value is not a date');
     }
 
-    const valueTime = this.toTime(value_);
-
-    if (isNaN(valueTime)) {
+    if (isNaN(this.toTime(value_))) {
       this.throwValidationError('date is invalid');
-    }
-
-    if (this._min) {
-      const minTime = this.toTime(this._min);
-
-      if (!isNaN(minTime) && valueTime < minTime) {
-        this.throwValidationError('date is earlier than the minimum');
-      }
-    }
-
-    if (this._max) {
-      const maxTime = this.toTime(this._max);
-
-      if (!isNaN(maxTime) && valueTime > maxTime) {
-        this.throwValidationError('date is later than the maximum');
-      }
-    }
-
-    if (this._allowed) {
-      let matched = false;
-
-      for (let i = 0; i < this._allowed.length; i++) {
-        if (valueTime === this.toTime(this._allowed[i])) {
-          matched = true;
-          break;
-        }
-      }
-
-      if (!matched) {
-        this.throwValidationError('date is not allowed');
-      }
-    }
-
-    if (this._denied) {
-      for (let i = 0; i < this._denied.length; i++) {
-        if (valueTime === this.toTime(this._denied[i])) {
-          this.throwValidationError('date is denied');
-        }
-      }
     }
 
     return value_;
@@ -130,5 +84,47 @@ export class DateValidator extends Validator<Date> {
       default:
         return value_.getTime();
     }
+  }
+
+  private checkEarliest(value_: Date, earliest_: DateLike): void {
+    const valueTime = this.toTime(value_);
+    const earliestTime = this.toTime(earliest_);
+
+    if (!isNaN(earliestTime) && valueTime < earliestTime) {
+      this.throwValidationError('date is too early');
+    }
+  }
+
+  private checkLatest(value_: Date, latest_: DateLike): void {
+    const valueTime = this.toTime(value_);
+    const latestTime = this.toTime(latest_);
+
+    if (!isNaN(latestTime) && valueTime > latestTime) {
+      this.throwValidationError('date is too late');
+    }
+  }
+
+  private checkAccepted(value_: Date, acceptedItems_: DateLike[]): void {
+    const valueTime = this.toTime(value_);
+
+    for (let i = 0; i < acceptedItems_.length; i++) {
+      if (valueTime === this.toTime(acceptedItems_[i])) {
+        return;
+      }
+    }
+
+    this.throwValidationError('date is not accepted');
+  }
+
+  private checkRejected(value_: Date, rejectedItems_: DateLike[]): void {
+    const valueTime = this.toTime(value_);
+
+    for (let i = 0; i < rejectedItems_.length; i++) {
+      if (valueTime === this.toTime(rejectedItems_[i])) {
+        this.throwValidationError('date is rejected');
+      }
+    }
+
+    this.throwValidationError('date is not accepted');
   }
 }

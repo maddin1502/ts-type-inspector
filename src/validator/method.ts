@@ -55,7 +55,7 @@ export class MethodValidator<V extends MethodLike> extends Validator<V> {
     return this;
   }
 
-  protected validateValue(value_: unknown): V {
+  protected validateBaseType(value_: unknown): V {
     if (typeof value_ !== 'function') {
       this.throwValidationError('value is not a method');
     }

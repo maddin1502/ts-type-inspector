@@ -26,3 +26,5 @@ export type ArrayItemValidatorArray<A extends ArrayItemValidator>
   = A extends Validatable<infer V>
     ? V[]
     : never;
+
+export type ValidationCondition<V> = (value_: V) => void | never;

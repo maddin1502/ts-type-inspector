@@ -16,7 +16,7 @@ export class OptionalValidator<V> extends Validator<undefined | V> {
     super();
   }
 
-  protected validateValue(value_: unknown): undefined | V {
+  protected validateBaseType(value_: unknown): undefined | V {
     if (typeof value_ === 'undefined') {
       return value_;
     }

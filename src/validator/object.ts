@@ -33,7 +33,7 @@ export class ObjectValidator<V extends ObjectLike> extends Validator<V> {
     return this;
   }
 
-  protected validateValue(value_: unknown): V {
+  protected validateBaseType(value_: unknown): V {
     if (!this.isObjectLike(value_)) {
       this.throwValidationError('value is not an object');
     }

@@ -138,7 +138,7 @@ export class NumberValidator extends Validator<number> {
     return this;
   }
 
-  protected validateValue(value_: unknown): number {
+  protected validateBaseType(value_: unknown): number {
     if (typeof value_ !== 'number') {
       this.throwValidationError('value is not a number');
     }

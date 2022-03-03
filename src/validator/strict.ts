@@ -21,7 +21,7 @@ export class StrictValidator<V extends StrictValuesItem<S>, S extends StrictValu
     this._strictValues = strictValues_;
   }
 
-  protected validateValue(value_: AnyLike): V {
+  protected validateBaseType(value_: AnyLike): V {
     if (!this._strictValues.includes(value_)) {
       this.throwValidationError('no equality found');
     }

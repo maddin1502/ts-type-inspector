@@ -1,10 +1,15 @@
 import { ValidationError, VALIDATION_ERROR_MARKER } from '../error';
-import type { CustomValidation, Validatable } from '../types';
+import type { CustomValidation, Validatable, ValidationCondition } from '../types';
 
 export abstract class Validator<V> implements Validatable<V> {
   private _validationError: ValidationError | undefined;
   private _customValidation: CustomValidation<V> | undefined;
   private _customErrorMessage: string | undefined | (() => string);
+  private _conditions: ValidationCondition<V>[];
+
+  constructor() {
+    this._conditions = [];
+  }
 
   /**
    * set if validation has failed
@@ -47,7 +52,11 @@ export abstract class Validator<V> implements Validatable<V> {
    * @memberof Validator
    */
   public validate(value_: unknown): V {
-    const value = this.validateValue(value_);
+    const value = this.validateBaseType?.(value_) ?? value_ as V;
+
+    for (let i = 0; i < this._conditions.length; i++) {
+      this._conditions[i](value);
+    }
     const customEvaluationResult = this._customValidation?.(value);
 
     if (customEvaluationResult !== undefined) {
@@ -73,7 +82,7 @@ export abstract class Validator<V> implements Validatable<V> {
     }
   }
 
-  protected abstract validateValue(value_: unknown): V;
+  protected abstract validateBaseType(value_: unknown): V;
 
   protected detectError(reason_: unknown, propertyTraces_?: PropertyKey[]): Error {
     if (this.isValidationError(reason_)) {
@@ -84,7 +93,7 @@ export abstract class Validator<V> implements Validatable<V> {
     } else if (reason_ instanceof Error) {
       return reason_;
     } else if (this.hasMessage(reason_) && typeof reason_.message === 'string' && reason_.message !== '') {
-      return  new Error(reason_.message);
+      return new Error(reason_.message);
     } else {
       return new Error('unknown error');
     }
@@ -116,6 +125,11 @@ export abstract class Validator<V> implements Validatable<V> {
     }
 
     throw this._validationError = new ValidationError(errorMessage, propertyTrace_, subErrors_);
+  }
+
+  protected setupCondition(condition_: ValidationCondition<V>): this {
+    this._conditions.push(condition_);
+    return this;
   }
 
   private isValidationError(reason_: unknown): reason_ is ValidationError {

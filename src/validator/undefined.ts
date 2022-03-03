@@ -8,7 +8,7 @@ import { Validator } from '.';
  * @extends {Validator<undefined>}
  */
 export class UndefinedValidator extends Validator<undefined> {
-  protected validateValue(value_: unknown): undefined {
+  protected validateBaseType(value_: unknown): undefined {
     if (value_ !== undefined) {
       this.throwValidationError('value is defined');
     }

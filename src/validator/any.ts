@@ -1,42 +1,50 @@
 import { Validator } from '.';
 
 /**
- * USE THIS FOR ANY TYPES ONLY !!!!
- * Actually this validator does not validate.
+ * This validator should only be used when a value is indeterminate or when you want to bypass deep validation of an object
  *
  * @export
  * @class AnyValidator
  * @extends {Validator<any>}
  */
 export class AnyValidator extends Validator<any> {
-  private _notNullish: boolean;
-  private _falsy: boolean;
-  private _truthy: boolean;
-
-  constructor() {
-    super();
-    this._notNullish = false;
-    this._falsy = false;
-    this._truthy = false;
-  }
-
   /**
    * forbid nullish values (undefined, null)
    *
+   * @since 1.0.0
    * @readonly
    * @type {this}
    * @memberof AnyValidator
    */
   public get notNullish(): this {
-    this._notNullish = true;
-    return this;
+    return this.setupCondition(value_ => this.checkNullish(value_));
   }
 
-  protected validateValue(value_: unknown): any {
-    if (this._notNullish && (value_ === null || value_ === undefined)) {
+  /**
+   * forbid falsy values (undefined, null, 0, false, '', NaN, 0n, ...)
+   *
+   * @since 1.0.0
+   * @readonly
+   * @type {this}
+   * @memberof AnyValidator
+   */
+  public get notFalsy(): this {
+    return this.setupCondition(value_ => this.checkFalsy(value_));
+  }
+
+  protected validateBaseType(value_: unknown): any {
+    return value_ as any;
+  }
+
+  private checkNullish(value_: any): void {
+    if (value_ === null || value_ === undefined) {
       this.throwValidationError('value is nullish');
     }
+  }
 
-    return value_;
+  private checkFalsy(value_: any): void {
+    if (!value_) {
+      this.throwValidationError('value is falsy');
+    }
   }
 }

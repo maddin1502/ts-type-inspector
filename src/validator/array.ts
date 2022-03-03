@@ -5,119 +5,127 @@ import type { ArrayItemValidator, ArrayItemValidatorArray } from '../types';
 /**
  * Validator for array-like values
  *
+ * @since 1.0.0
  * @export
  * @class ArrayValidator
  * @extends {Validator<A>}
  * @template A
+ * @template V
  */
 export class ArrayValidator<A extends ArrayItemValidatorArray<V>, V extends ArrayItemValidator = ArrayItemValidator<A>> extends Validator<A> {
-  private _length: number | undefined;
-  private _min: number | undefined;
-  private _max: number | undefined;
-  private _allowed: MinArray<ArrayItem<A>, 1> | undefined;
-  private _denied: MinArray<ArrayItem<A>, 1> | undefined;
-
   constructor(
-    private _itemValidator: V
+    private readonly _itemValidator: V
   ) {
     super();
   }
 
   /**
-   * specific array length
+   * specify array length
    *
-   * @param {number} value_
-   * @return {*}  {this}
-   * @memberof ArrayValidator
-   */
-  public length(value_: number): this {
-    this._length = value_;
-    return this;
-  }
-
-  /**
-   * minimum array length
-   *
+   * @since 1.0.0
    * @param {number} length_
    * @return {*}  {this}
    * @memberof ArrayValidator
    */
-  public min(length_: number): this {
-    this._min = length_;
-    return this;
+  public length(length_: number): this {
+    return this.setupCondition(value_ => this.checkLength(value_, length_));
   }
 
   /**
-   * maximum array length
+   * specify minimum array length
    *
-   * @param {number} length_
+   * @since 1.0.0
+   * @param {number} min_
    * @return {*}  {this}
    * @memberof ArrayValidator
    */
-  public max(length_: number): this {
-    this._max = length_;
-    return this;
+  public min(min_: number): this {
+    return this.setupCondition(value_ => this.checkMin(value_, min_));
   }
 
   /**
-   * allowed items
+   * specify maximum array length
    *
+   * @since 1.0.0
+   * @param {number} max_
+   * @return {*}  {this}
+   * @memberof ArrayValidator
+   */
+  public max(max_: number): this {
+    return this.setupCondition(value_ => this.checkMax(value_, max_));
+  }
+
+  /**
+   * define accepted values
+   *
+   * @since 1.0.0
    * @param {...MinArray<ArrayItem<A>, 1>} items_
    * @return {*}  {this}
    * @memberof ArrayValidator
    */
-  public allow(...items_: MinArray<ArrayItem<A>, 1>): this {
-    this._allowed = items_;
-    return this;
+  public accept(...items_: MinArray<ArrayItem<A>, 1>): this {
+    return this.setupCondition(value_ => this.checkAccepted(value_, items_));
   }
 
   /**
-   * denied items
+   * define rejected values
    *
+   * @since 1.0.0
    * @param {...MinArray<ArrayItem<A>, 1>} items_
    * @return {*}  {this}
    * @memberof ArrayValidator
    */
-  public deny(...items_: MinArray<ArrayItem<A>, 1>): this {
-    this._denied = items_;
-    return this;
+  public reject(...items_: MinArray<ArrayItem<A>, 1>): this {
+    return this.setupCondition(value_ => this.checkRejected(value_, items_));
   }
 
-  protected validateValue(value_: unknown): A {
+  protected validateBaseType(value_: unknown): A {
     if (!Array.isArray(value_)) {
       this.throwValidationError('value is not an array');
     }
 
-    if (this._length !== undefined && value_.length !== this._length) {
-      this.throwValidationError('deviant length');
-    }
-
-    if (this._min !== undefined && value_.length < this._min) {
-      this.throwValidationError('too few items');
-    }
-
-    if (this._max !== undefined && value_.length > this._max) {
-      this.throwValidationError('too many items');
-    }
-
     for (let i = 0; i < value_.length; i++) {
-      const item = value_[i];
-
-      if (this._allowed && !this._allowed.includes(item)) {
-        this.throwValidationError('item is not allowed');
-      }
-
-      if (this._denied && this._denied.includes(item)) {
-        this.throwValidationError('item is denied');
-      }
-
       try {
-        this._itemValidator.validate(item);
+        this._itemValidator.validate(value_[i]);
       } catch (reason_) {
         this.rethrowError(reason_, i);
       }
     }
 
     return value_ as A;
+  }
+
+  private checkLength(value_: A, length_: number): void {
+    if (length_ !== undefined && value_.length !== length_) {
+      this.throwValidationError('deviant length');
+    }
+  }
+
+  private checkMin(value_: A, min_: number): void {
+    if (min_ !== undefined && value_.length < min_) {
+      this.throwValidationError('too few items');
+    }
+  }
+
+  private checkMax(value_: A, max_: number): void {
+    if (max_ !== undefined && value_.length > max_) {
+      this.throwValidationError('too many items');
+    }
+  }
+
+  private checkAccepted(value_: A, acceptedItems_: any[]): void {
+    for (let i = 0; i < value_.length; i++) {
+      if (!acceptedItems_.includes(value_[i])) {
+        this.throwValidationError('item is not accepted');
+      }
+    }
+  }
+
+  private checkRejected(value_: A, rejectedItems_: any[]): void {
+    for (let i = 0; i < value_.length; i++) {
+      if (rejectedItems_.includes(value_[i])) {
+        this.throwValidationError('item is rejected');
+      }
+    }
   }
 }

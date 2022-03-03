@@ -20,7 +20,7 @@ export class UnionValidator<V extends UnitedValidatorsItem<U>, U extends UnitedV
     this._validators = validators_;
   }
 
-  protected validateValue(value_: unknown): V {
+  protected validateBaseType(value_: unknown): V {
     const errors: Error[] = [];
 
     for (let i = 0; i < this._validators.length; i++) {
