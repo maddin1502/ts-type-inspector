@@ -124,7 +124,5 @@ export class DateValidator extends Validator<Date> {
         this.throwValidationError('date is rejected');
       }
     }
-
-    this.throwValidationError('date is not accepted');
   }
 }

@@ -11,10 +11,8 @@ import type { Validatable } from '../types';
  * @template V
  */
 export class DictionaryValidator<V extends Dictionary> extends Validator<V> {
-  private _keyValidator: Validatable<DictionaryKey<V>> | undefined;
-
   constructor(
-    private _itemValidator: Validatable<DictionaryValue<V>>
+    private readonly _itemValidator: Validatable<DictionaryValue<V>>
   ) {
     super();
   }
@@ -22,13 +20,12 @@ export class DictionaryValidator<V extends Dictionary> extends Validator<V> {
   /**
    * additional dictionary key validation
    *
-   * @param {ValidatorInterface<DictionaryKey<V>>} validator_
+   * @param {Validatable<DictionaryKey<V>>} validator_
    * @return {*}  {this}
    * @memberof DictionaryValidator
    */
-  public key(validator_: Validatable<DictionaryKey<V>>): this {
-    this._keyValidator = validator_;
-    return this;
+  public keys(validator_: Validatable<DictionaryKey<V>>): this {
+    return this.setupCondition(value_ => this.checkKeys(value_, validator_));
   }
 
   protected validateBaseType(value_: unknown): V {
@@ -38,10 +35,8 @@ export class DictionaryValidator<V extends Dictionary> extends Validator<V> {
 
     for (const dictionaryKey in value_) {
       try {
-        this._keyValidator?.validate(dictionaryKey);
         this._itemValidator.validate(value_[dictionaryKey]);
       } catch (reason_) {
-        // TODO: error origin is lost at this point -> key or item error???
         this.rethrowError(reason_, dictionaryKey);
       }
     }
@@ -52,5 +47,15 @@ export class DictionaryValidator<V extends Dictionary> extends Validator<V> {
   private isDictionary(value_: unknown): value_ is Dictionary<any> {
     // TODO: is there any validatable differnce between dictionary and standard object?
     return typeof value_ === 'object' && value_ !== null;
+  }
+
+  private checkKeys(value_: Dictionary<any>, keyValidator_: Validatable<DictionaryKey<V>>): void {
+    for (const dictionaryKey in value_) {
+      try {
+        keyValidator_.validate(dictionaryKey);
+      } catch (reason_) {
+        this.rethrowError(reason_, dictionaryKey);
+      }
+    }
   }
 }
