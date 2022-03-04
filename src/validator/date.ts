@@ -39,11 +39,11 @@ export class DateValidator extends Validator<Date> {
    * define accepted dates
    *
    * @since 1.0.0
-   * @param {...MinArray<DateLike, 1>} items_
+   * @param {...ReadonlyArray<DateLike>} items_
    * @return {*}  {this}
    * @memberof DateValidator
    */
-  public accept(...items_: MinArray<DateLike, 1>): this {
+  public accept(...items_: ReadonlyArray<DateLike>): this {
     return this.setupCondition(value_ => this.checkAccepted(value_, items_));
   }
 
@@ -51,11 +51,11 @@ export class DateValidator extends Validator<Date> {
    * define rejected dates
    *
    * @since 1.0.0
-   * @param {...MinArray<DateLike, 1>} items_
+   * @param {...ReadonlyArray<DateLike>} items_
    * @return {*}  {this}
    * @memberof DateValidator
    */
-  public reject(...items_: MinArray<DateLike, 1>): this {
+  public reject(...items_: ReadonlyArray<DateLike>): this {
     return this.setupCondition(value_ => this.checkRejected(value_, items_));
   }
 
@@ -104,7 +104,7 @@ export class DateValidator extends Validator<Date> {
     }
   }
 
-  private checkAccepted(value_: Date, acceptedItems_: DateLike[]): void {
+  private checkAccepted(value_: Date, acceptedItems_: ReadonlyArray<DateLike>): void {
     const valueTime = this.toTime(value_);
 
     for (let i = 0; i < acceptedItems_.length; i++) {
@@ -116,7 +116,7 @@ export class DateValidator extends Validator<Date> {
     this.throwValidationError('date is not accepted');
   }
 
-  private checkRejected(value_: Date, rejectedItems_: DateLike[]): void {
+  private checkRejected(value_: Date, rejectedItems_: ReadonlyArray<DateLike>): void {
     const valueTime = this.toTime(value_);
 
     for (let i = 0; i < rejectedItems_.length; i++) {

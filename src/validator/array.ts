@@ -1,4 +1,4 @@
-import type { ArrayItem, MinArray } from 'ts-lib-extended';
+import type { ArrayItem } from 'ts-lib-extended';
 import { Validator } from '.';
 import type { ArrayItemValidator, ArrayItemValidatorArray } from '../types';
 
@@ -59,11 +59,11 @@ export class ArrayValidator<A extends ArrayItemValidatorArray<V>, V extends Arra
    * define accepted values
    *
    * @since 1.0.0
-   * @param {...MinArray<ArrayItem<A>, 1>} items_
+   * @param {...ReadonlyArray<ArrayItem<A>>} items_
    * @return {*}  {this}
    * @memberof ArrayValidator
    */
-  public accept(...items_: MinArray<ArrayItem<A>, 1>): this {
+  public accept(...items_: ReadonlyArray<ArrayItem<A>>): this {
     return this.setupCondition(value_ => this.checkAccepted(value_, items_));
   }
 
@@ -71,11 +71,11 @@ export class ArrayValidator<A extends ArrayItemValidatorArray<V>, V extends Arra
    * define rejected values
    *
    * @since 1.0.0
-   * @param {...MinArray<ArrayItem<A>, 1>} items_
+   * @param {...ReadonlyArray<ArrayItem<A>>} items_
    * @return {*}  {this}
    * @memberof ArrayValidator
    */
-  public reject(...items_: MinArray<ArrayItem<A>, 1>): this {
+  public reject(...items_: ReadonlyArray<ArrayItem<A>>): this {
     return this.setupCondition(value_ => this.checkRejected(value_, items_));
   }
 
@@ -113,7 +113,7 @@ export class ArrayValidator<A extends ArrayItemValidatorArray<V>, V extends Arra
     }
   }
 
-  private checkAccepted(value_: A, acceptedItems_: any[]): void {
+  private checkAccepted(value_: A, acceptedItems_: ReadonlyArray<any>): void {
     for (let i = 0; i < value_.length; i++) {
       if (!acceptedItems_.includes(value_[i])) {
         this.throwValidationError('item is not accepted');
@@ -121,7 +121,7 @@ export class ArrayValidator<A extends ArrayItemValidatorArray<V>, V extends Arra
     }
   }
 
-  private checkRejected(value_: A, rejectedItems_: any[]): void {
+  private checkRejected(value_: A, rejectedItems_: ReadonlyArray<any>): void {
     for (let i = 0; i < value_.length; i++) {
       if (rejectedItems_.includes(value_[i])) {
         this.throwValidationError('item is rejected');

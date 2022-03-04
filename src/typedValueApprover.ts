@@ -16,6 +16,7 @@ import { BooleanValidator } from './validator/boolean';
 import { DateValidator } from './validator/date';
 import { DictionaryValidator } from './validator/dictionary';
 import { MethodValidator } from './validator/method';
+import { NullValidator } from './validator/null';
 import { NumberValidator } from './validator/number';
 import { ObjectValidator } from './validator/object';
 import { OptionalValidator } from './validator/optional';
@@ -27,7 +28,6 @@ import { UnionValidator } from './validator/union';
 export class TypedValueApprover {
   /**
    * Validate string values.
-   * EMPTY STRINGS ARE REJECTED BY DEFAULT! Use "allowEmpty()" to allow emptry strings
    *
    * @since 1.0.0
    * @readonly
@@ -38,8 +38,6 @@ export class TypedValueApprover {
 
   /**
    * Validate numeric values.
-   * NaN IS REJECTED BY DEFAULT! Use "allowNaN()" to allow NaN
-   * INFINITY IS REJECTED BY DEFAULT! Use "allowInfinity()" to allow INFINITY
    *
    * @since 1.0.0
    * @readonly
@@ -49,7 +47,7 @@ export class TypedValueApprover {
   public get number(): NumberValidator { return new NumberValidator(); }
 
   /**
-   * Validate boolean values
+   * Validate boolean values.
    *
    * @since 1.0.0
    * @readonly
@@ -72,7 +70,7 @@ export class TypedValueApprover {
   }
 
   /**
-   * Validate data values
+   * Validate data values.
    *
    * @since 1.0.0
    * @readonly
@@ -90,6 +88,16 @@ export class TypedValueApprover {
    * @memberof TypedValueApprover
    */
   public get undefined(): UndefinedValidator { return new UndefinedValidator(); }
+
+  /**
+   * Validate null values... The value has to be null to match this validator
+   *
+   * @since 1.0.0
+   * @readonly
+   * @type {NullValidator}
+   * @memberof TypedValueApprover
+   */
+  public get null(): NullValidator { return new NullValidator(); }
 
   /**
    * Validate values through strict equality (===). Keep in mind that objects are compared by reference
@@ -167,8 +175,7 @@ export class TypedValueApprover {
   }
 
   /**
-   * USE THIS FOR ANY TYPES ONLY !!!!
-   * Actually this validator does not validate.
+   * This validator should only be used when a value is indeterminate or when you want to bypass deep validation of an object
    *
    * @since 1.0.0
    * @readonly
@@ -192,8 +199,3 @@ export class TypedValueApprover {
     return new OptionalValidator(validator_);
   }
 }
-
-
-const xyz: TypedValueApprover = null as any;
-
-const affe = xyz.array(xyz.string).validate(null)

@@ -11,131 +11,112 @@ import { Validator } from '.';
  * @implements {NumberValidatorInterface}
  */
 export class NumberValidator extends Validator<number> {
-  private _min: number | undefined;
-  private _max: number | undefined;
-  private _allowed: number[] | undefined;
-  private _denied: number[] | undefined;
-  private _onlyPositiv: boolean;
-  private _onlyNegative: boolean;
-  private _allowNaN: boolean;
-  private _allowInfinity: boolean;
-  private _notZero: boolean;
-
-  constructor() {
-    super();
-    this._onlyPositiv = false;
-    this._onlyNegative = false;
-    this._allowNaN = false;
-    this._allowInfinity = false;
-    this._notZero = false;
-  }
-
   /**
    * allow positive values only (zero is not positive)
    *
+   * @since 1.0.0
    * @readonly
    * @type {this}
    * @memberof NumberValidator
    */
   public get positive(): this {
-    this._onlyPositiv = true;
-    return this;
+    return this.setupCondition(value_ => this.checkPositive(value_));
   }
 
   /**
    * allow negative values only (zero is not negative)
    *
+   * @since 1.0.0
    * @readonly
    * @type {this}
    * @memberof NumberValidator
    */
   public get negative(): this {
-    this._onlyNegative = true;
-    return this;
+    return this.setupCondition(value_ => this.checkNegative(value_));
   }
 
   /**
-   * allow NaN
+   * reject NaN
    *
+   * @since 1.0.0
    * @readonly
    * @type {this}
    * @memberof NumberValidator
    */
-  public get allowNaN(): this {
-    this._allowNaN = true;
-    return this;
+  public get rejectNaN(): this {
+    return this.setupCondition(value_ => this.checkNaN(value_));
   }
 
   /**
-   * allow INFINITY
+   * reject INFINITY
    *
+   * @since 1.0.0
    * @readonly
    * @type {this}
    * @memberof NumberValidator
    */
-  public get allowInfinity(): this {
-    this._allowInfinity = true;
-    return this;
+  public get rejectInfinity(): this {
+    return this.setupCondition(value_ => this.checkInfinity(value_));
   }
 
   /**
-   * forbid 0
+   * reject 0
    *
+   * @since 1.0.0
    * @readonly
    * @type {this}
    * @memberof NumberValidator
    */
-  public get notZero(): this {
-    this._notZero = true;
-    return this;
+  public get rejectZero(): this {
+    return this.setupCondition(value_ => this.checkZero(value_));
   }
 
   /**
-   * minimum value
+   * define minimum value
    *
-   * @param {number} number_
+   * @since 1.0.0
+   * @param {number} min_
    * @return {*}  {this}
    * @memberof NumberValidator
    */
-  public min(number_: number): this {
-    this._min = number_;
-    return this;
+  public min(min_: number): this {
+    return this.setupCondition(value_ => this.checkMin(value_, min_));
   }
 
   /**
-   * maximum value
+   * define maximum value
    *
-   * @param {number} number_
+   * @since 1.0.0
+   * @param {number} max_
    * @return {*}  {this}
    * @memberof NumberValidator
    */
-  public max(number_: number): this {
-    this._max = number_;
-    return this;
+  public max(max_: number): this {
+    return this.setupCondition(value_ => this.checkMax(value_, max_));
   }
 
   /**
-   * allowed numbers
+   * define accepted numbers
    *
-   * @param {...number[]} numbers_
+   * @since 1.0.0
+   * @param {...ReadonlyArray<number>} numbers_
    * @return {*}  {this}
    * @memberof NumberValidator
    */
-  public allow(...numbers_: number[]): this {
-    this._allowed = numbers_;
-    return this;
+  public accept(...numbers_: ReadonlyArray<number>): this {
+    return this.setupCondition(value_ => this.checkAccepted(value_, numbers_));
   }
 
   /**
-   * denied numbers
+   * define rejected numbers
    *
-   * @param {...number[]} numbers_
+   * @since 1.0.0
+   * @param {...ReadonlyArray<number>} numbers_
    * @return {*}  {this}
    * @memberof NumberValidator
    */
-  public deny(...numbers_: number[]): this {
-    this._denied = numbers_;
-    return this;
+  public deny(...numbers_: ReadonlyArray<number>): this {
+    return this.setupCondition(value_ => this.checkRejected(value_, numbers_));
   }
 
   protected validateBaseType(value_: unknown): number {
@@ -143,42 +124,60 @@ export class NumberValidator extends Validator<number> {
       this.throwValidationError('value is not a number');
     }
 
-    if (!this._allowNaN && isNaN(value_)) {
-      this.throwValidationError('number is NaN'); //TODO: better message?
-    }
+    return value_;
+  }
 
-    if (!this._allowInfinity && value_ === Infinity) {
+  private checkNaN(value_: number): void {
+    if (isNaN(value_)) {
+      this.throwValidationError('number is NaN');
+    }
+  }
+
+  private checkInfinity(value_: number): void {
+    if (value_ === Infinity) {
       this.throwValidationError('number is infinite');
     }
+  }
 
-    if (this._notZero && value_ === 0) {
+  private checkZero(value_: number): void {
+    if (value_ === 0) {
       this.throwValidationError('number is 0');
     }
+  }
 
-    if (this._min && value_ < this._min) {
+  private checkMin(value_: number, min_: number): void {
+    if (value_ < min_) {
       this.throwValidationError('number is less than minimum');
     }
+  }
 
-    if (this._max && value_ > this._max) {
+  private checkMax(value_: number, max_: number): void {
+    if (value_ > max_) {
       this.throwValidationError('number is greater than maximum');
     }
+  }
 
-    if (this._onlyNegative && value_ >= 0) {
-      this.throwValidationError('number is >= 0');
+  private checkNegative(value_: number): void {
+    if (value_ >= 0) {
+      this.throwValidationError('number is not negative');
     }
+  }
 
-    if (this._onlyPositiv && value_ <= 0) {
-      this.throwValidationError('number is <= 0');
+  private checkPositive(value_: number): void {
+    if (value_ <= 0) {
+      this.throwValidationError('number is not positive');
     }
+  }
 
-    if (this._allowed && !this._allowed.includes(value_)) {
-      this.throwValidationError('number is not allowed');
+  private checkAccepted(value_: number, accepted_: ReadonlyArray<number>): void {
+    if (!accepted_.includes(value_)) {
+      this.throwValidationError('number is not accepted');
     }
+  }
 
-    if (this._denied && this._denied.includes(value_)) {
+  private checkRejected(value_: number, rejected_: ReadonlyArray<number>): void {
+    if (rejected_.includes(value_)) {
       this.throwValidationError('number is denied');
     }
-
-    return value_;
   }
 }
