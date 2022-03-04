@@ -1,4 +1,3 @@
-import type { MinArray } from 'ts-lib-extended';
 import { Validator } from '.';
 
 type DateLike = string | number | Date;

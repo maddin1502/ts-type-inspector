@@ -9,7 +9,7 @@ import { Validator } from '.';
  */
 export class BooleanValidator extends Validator<boolean> {
   /**
-   * allow just true
+   * accept just true
    *
    * @since 1.0.0
    * @readonly
@@ -21,7 +21,7 @@ export class BooleanValidator extends Validator<boolean> {
   }
 
   /**
-   * allow just false
+   * accept just false
    *
    * @since 1.0.0
    * @readonly

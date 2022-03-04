@@ -1,9 +1,7 @@
 import { Validator } from '.';
 
 /**
- * Validator for number values
- * NaN IS REJECTED BY DEFAULT! Use "allowNaN()" to allow NaN
- * INFINITY IS REJECTED BY DEFAULT! Use "allowInfinity()" to allow INFINITY
+ * Validator for numeric values
  *
  * @export
  * @class NumberValidator
@@ -12,7 +10,7 @@ import { Validator } from '.';
  */
 export class NumberValidator extends Validator<number> {
   /**
-   * allow positive values only (zero is not positive)
+   * accept positive values only (zero is not positive)
    *
    * @since 1.0.0
    * @readonly
@@ -24,7 +22,7 @@ export class NumberValidator extends Validator<number> {
   }
 
   /**
-   * allow negative values only (zero is not negative)
+   * accept negative values only (zero is not negative)
    *
    * @since 1.0.0
    * @readonly
@@ -33,6 +31,17 @@ export class NumberValidator extends Validator<number> {
    */
   public get negative(): this {
     return this.setupCondition(value_ => this.checkNegative(value_));
+  }
+
+  /**
+   * reject NaN and Infinity
+   *
+   * @readonly
+   * @type {this}
+   * @memberof NumberValidator
+   */
+  public get finite(): this {
+    return this.setupCondition(value_ => this.checkFinite(value_));
   }
 
   /**
@@ -72,7 +81,7 @@ export class NumberValidator extends Validator<number> {
   }
 
   /**
-   * define minimum value
+   * validate minimum value
    *
    * @since 1.0.0
    * @param {number} min_
@@ -84,7 +93,7 @@ export class NumberValidator extends Validator<number> {
   }
 
   /**
-   * define maximum value
+   * validate maximum value
    *
    * @since 1.0.0
    * @param {number} max_
@@ -125,6 +134,12 @@ export class NumberValidator extends Validator<number> {
     }
 
     return value_;
+  }
+
+  private checkFinite(value_: number): void {
+    if (!isFinite(value_)) {
+      this.throwValidationError('number is not finite');
+    }
   }
 
   private checkNaN(value_: number): void {

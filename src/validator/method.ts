@@ -12,7 +12,7 @@ import type { MethodLike } from '../types';
  */
 export class MethodValidator<V extends MethodLike> extends Validator<V> {
   /**
-   * specify exact params count
+   * validate exact params count
    *
    * @since 1.0.0
    * @param {number} count_
@@ -24,7 +24,7 @@ export class MethodValidator<V extends MethodLike> extends Validator<V> {
   }
 
   /**
-   * specify minimum params count
+   * validate minimum params count
    *
    * @since 1.0.0
    * @param {number} min_
@@ -36,7 +36,7 @@ export class MethodValidator<V extends MethodLike> extends Validator<V> {
   }
 
   /**
-   * specify maximum params count
+   * validate maximum params count
    *
    * @since 1.0.0
    * @param {number} max_

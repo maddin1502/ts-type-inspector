@@ -13,13 +13,15 @@ export interface Validatable<V> {
   validate(value_: unknown): V;
   isValid(value_: unknown): value_ is V;
 }
-export type PropertyValidators<V extends ObjectLike> = { [key in keyof V]-?: Validatable<V[key]> };
+export type PropertyValidators<V extends ObjectLike> = { readonly [key in keyof V]-?: Validatable<V[key]> };
+// TODO: readonly MinArray
 export type UnitedValidators<V = any> = MinArray<Validatable<V>, 2>;
 export type UnitedValidatorsItem<U extends UnitedValidators>
   = ArrayItem<U> extends Validatable<infer V>
     ? V
     : never;
-export type StrictValues<V extends AnyLike = AnyLike> = MinArray<V, 1>;
+// TODO: or readonly MinArray?
+export type StrictValues<V extends AnyLike = AnyLike> = ReadonlyArray<V>;
 export type StrictValuesItem<S extends StrictValues> = ArrayItem<S>;
 export type ArrayItemValidator<A extends any[] = any[]> = Validatable<ArrayItem<A>>;
 export type ArrayItemValidatorArray<A extends ArrayItemValidator>

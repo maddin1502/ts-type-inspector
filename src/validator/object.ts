@@ -10,18 +10,14 @@ import type { ObjectLike, PropertyValidators } from '../types';
  * @template V
  */
 export class ObjectValidator<V extends ObjectLike> extends Validator<V> {
-  private _noOverload: boolean;
-
-  // TODO: Property validators can be manipulated from outside the class
   constructor(
-    private _propertyValidators: PropertyValidators<V>
+    private readonly _propertyValidators: PropertyValidators<V>
   ) {
     super();
-    this._noOverload = false;
   }
 
   /**
-   * Reject objects that contain more keys than have been validated
+   * reject objects that contain more keys than have been validated
    * USE FOR POJOs ONLY!. Getter/Setter/Methods will lead to false negative results
    *
    * @readonly
@@ -29,8 +25,7 @@ export class ObjectValidator<V extends ObjectLike> extends Validator<V> {
    * @memberof ObjectValidator
    */
   public get noOverload(): this {
-    this._noOverload = true;
-    return this;
+    return this.setupCondition(value_ => this.checkOverload(value_));
   }
 
   protected validateBaseType(value_: unknown): V {
@@ -47,18 +42,18 @@ export class ObjectValidator<V extends ObjectLike> extends Validator<V> {
       }
     }
 
-    if (this._noOverload) {
-      for (const propertyKey in value_) {
-        if (!(propertyKey in this._propertyValidators)) {
-          this.throwValidationError('value is overloaded');
-        }
-      }
-    }
-
     return value_;
   }
 
   private isObjectLike(value_: unknown): value_ is ObjectLike {
     return typeof value_ === 'object' && value_ !== null;
+  }
+
+  private checkOverload(value_: ObjectLike): void {
+    for (const propertyKey in value_) {
+      if (!(propertyKey in this._propertyValidators)) {
+        this.throwValidationError('value is overloaded');
+      }
+    }
   }
 }

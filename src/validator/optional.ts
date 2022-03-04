@@ -11,7 +11,7 @@ import type { Validatable } from '../types';
  */
 export class OptionalValidator<V> extends Validator<undefined | V> {
   constructor(
-    private _validator: Validatable<V>
+    private readonly _validator: Validatable<V>
   ) {
     super();
   }

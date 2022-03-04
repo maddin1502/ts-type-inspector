@@ -4,111 +4,76 @@ import { URL } from 'url';
 
 /**
  * Validator for string values.
- * EMPTY STRINGS ARE REJECTED BY DEFAULT! Use "allowEmpty()" to allow empty strings
  *
  * @export
  * @class StringValidator
  * @extends {Validator<string>}
  */
 export class StringValidator extends Validator<string> {
-  private _min: number | undefined;
-  private _max: number | undefined;
-  private _allowed: (string | RegExp)[] | undefined;
-  private _denied: (string | RegExp)[] | undefined;
-  private _length: number | undefined;
-  private _allowEmpty: boolean;
-  private _base64: boolean;
-  private _json: boolean;
-  private _date: boolean;
-  private _numeric: boolean;
-  private _uuid: boolean;
-  private _mail: boolean;
-  private _uri: boolean;
-  private _url: boolean;
-
-  constructor() {
-    super();
-    this._allowEmpty = false;
-    this._base64 = false;
-    this._json = false;
-    this._date = false;
-    this._numeric = false;
-    this._uuid = false;
-    this._mail = false;
-    this._uri = false;
-    this._url = false;
+  /**
+   * define minimum string length
+   *
+   * @param {number} min_
+   * @return {*}  {this}
+   * @memberof StringValidator
+   */
+  public shortest(min_: number): this {
+    return this.setupCondition(value_ => this.checkShortest(value_, min_));
   }
 
   /**
-   * minimum string length
+   * define maximum string length
+   *
+   * @param {number} max_
+   * @return {*}  {this}
+   * @memberof StringValidator
+   */
+  public longest(max_: number): this {
+    return this.setupCondition(value_ => this.checkLongest(value_, max_));
+  }
+
+  /**
+   * define accepted values or patterns
+   *
+   * @param {(...ReadonlyArray<(string | RegExp)>)} accepted_
+   * @return {*}  {this}
+   * @memberof StringValidator
+   */
+  public accept(...accepted_: ReadonlyArray<(string | RegExp)>): this {
+    return this.setupCondition(value_ => this.checkAccept(value_, accepted_));
+  }
+
+  /**
+   * define rejected values or patterns
+   *
+   * @param {(...ReadonlyArray<(string | RegExp)>)} rejected_
+   * @return {*}  {this}
+   * @memberof StringValidator
+   */
+  public reject(...rejected_: ReadonlyArray<(string | RegExp)>): this {
+    return this.setupCondition(value_ => this.checkRejected(value_, rejected_));
+  }
+
+  /**
+   * specify exact string length
    *
    * @param {number} length_
    * @return {*}  {this}
    * @memberof StringValidator
    */
-  public min(length_: number): this {
-    this._min = length_;
-    return this;
+  public length(length_: number): this {
+    return this.setupCondition(value_ => this.checkLength(value_, length_));
   }
 
   /**
-   * maximum string length
-   *
-   * @param {number} length_
-   * @return {*}  {this}
-   * @memberof StringValidator
-   */
-  public max(length_: number): this {
-    this._max = length_;
-    return this;
-  }
-
-  /**
-   * allowed values or patterns
-   *
-   * @param {(...(string | RegExp)[])} allowed_
-   * @return {*}  {this}
-   * @memberof StringValidator
-   */
-  public allow(...allowed_: (string | RegExp)[]): this {
-    this._allowed = allowed_;
-    return this;
-  }
-
-  /**
-   * denied values or patterns
-   *
-   * @param {(...(string | RegExp)[])} allowed_
-   * @return {*}  {this}
-   * @memberof StringValidator
-   */
-  public deny(...denied_: (string | RegExp)[]): this {
-    this._denied = denied_;
-    return this;
-  }
-
-  /**
-   * value has to match a specific string length
-   *
-   * @param {number} value_
-   * @return {*}  {this}
-   * @memberof StringValidator
-   */
-  public length(value_: number): this {
-    this._length = value_;
-    return this;
-  }
-
-  /**
-   * allow empty string
+   * reject empty string
    *
    * @readonly
    * @type {this}
    * @memberof StringValidator
    */
-  public get allowEmpty(): this {
-    this._allowEmpty = true;
-    return this;
+  public get rejectEmpty(): this {
+    return this.setupCondition(value_ => this.checkEmpty(value_));
   }
 
   /**
@@ -119,8 +84,7 @@ export class StringValidator extends Validator<string> {
    * @memberof StringValidator
    */
   public get base64(): this {
-    this._base64 = true;
-    return this;
+    return this.setupCondition(value_ => this.checkBase64(value_));
   }
 
   /**
@@ -131,8 +95,7 @@ export class StringValidator extends Validator<string> {
    * @memberof StringValidator
    */
   public get json(): this {
-    this._json = true;
-    return this;
+    return this.setupCondition(value_ => this.checkJson(value_));
   }
 
   /**
@@ -143,8 +106,7 @@ export class StringValidator extends Validator<string> {
    * @memberof StringValidator
    */
   public get date(): this {
-    this._date = true;
-    return this;
+    return this.setupCondition(value_ => this.checkDate(value_));
   }
 
   /**
@@ -155,8 +117,7 @@ export class StringValidator extends Validator<string> {
    * @memberof StringValidator
    */
   public get numeric(): this {
-    this._numeric = true;
-    return this;
+    return this.setupCondition(value_ => this.checkNumeric(value_));
   }
 
   /**
@@ -167,8 +128,7 @@ export class StringValidator extends Validator<string> {
    * @memberof StringValidator
    */
   public get uuid(): this {
-    this._uuid = true;
-    return this;
+    return this.setupCondition(value_ => this.checkUuid(value_));
   }
 
   /**

@@ -20,7 +20,7 @@ export class ArrayValidator<A extends ArrayItemValidatorArray<V>, V extends Arra
   }
 
   /**
-   * specify array length
+   * validate exact array length
    *
    * @since 1.0.0
    * @param {number} length_
@@ -32,7 +32,7 @@ export class ArrayValidator<A extends ArrayItemValidatorArray<V>, V extends Arra
   }
 
   /**
-   * specify minimum array length
+   * validate minimum array length
    *
    * @since 1.0.0
    * @param {number} min_
@@ -44,7 +44,7 @@ export class ArrayValidator<A extends ArrayItemValidatorArray<V>, V extends Arra
   }
 
   /**
-   * specify maximum array length
+   * validate maximum array length
    *
    * @since 1.0.0
    * @param {number} max_
