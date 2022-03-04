@@ -96,19 +96,19 @@ export class ArrayValidator<A extends ArrayItemValidatorArray<V>, V extends Arra
   }
 
   private checkLength(value_: A, length_: number): void {
-    if (length_ !== undefined && value_.length !== length_) {
+    if (value_.length !== length_) {
       this.throwValidationError('deviant length');
     }
   }
 
   private checkMin(value_: A, min_: number): void {
-    if (min_ !== undefined && value_.length < min_) {
+    if (value_.length < min_) {
       this.throwValidationError('too few items');
     }
   }
 
   private checkMax(value_: A, max_: number): void {
-    if (max_ !== undefined && value_.length > max_) {
+    if (value_.length > max_) {
       this.throwValidationError('too many items');
     }
   }

@@ -11,48 +11,40 @@ import type { MethodLike } from '../types';
  * @template V
  */
 export class MethodValidator<V extends MethodLike> extends Validator<V> {
-  private _minParams: number | undefined;
-  private _maxParams: number | undefined;
-  private _paramsCount: number | undefined;
-
-  constructor() {
-    super();
-  }
-
   /**
-   * specific parameter count
+   * specify exact params count
    *
+   * @since 1.0.0
    * @param {number} count_
    * @return {*}  {this}
    * @memberof MethodValidator
    */
-  public params(count_: number): this {
-    this._paramsCount = count_;
-    return this;
+  public count(count_: number): this {
+    return this.setupCondition(value_ => this.checkCount(value_, count_));
   }
 
   /**
-   * minimum params count
+   * specify minimum params count
    *
-   * @param {number} parms_
+   * @since 1.0.0
+   * @param {number} min_
    * @return {*}  {this}
    * @memberof MethodValidator
    */
-  public min(parms_: number): this {
-    this._minParams = parms_;
-    return this;
+  public min(min_: number): this {
+    return this.setupCondition(value_ => this.checkMin(value_, min_));
   }
 
   /**
-   * maximum params count
+   * specify maximum params count
    *
-   * @param {number} parms_
+   * @since 1.0.0
+   * @param {number} max_
    * @return {*}  {this}
    * @memberof MethodValidator
    */
-  public max(parms_: number): this {
-    this._maxParams = parms_;
-    return this;
+  public max(max_: number): this {
+    return this.setupCondition(value_ => this.checkMax(value_, max_));
   }
 
   protected validateBaseType(value_: unknown): V {
@@ -60,18 +52,24 @@ export class MethodValidator<V extends MethodLike> extends Validator<V> {
       this.throwValidationError('value is not a method');
     }
 
-    if (this._paramsCount !== undefined && this._paramsCount !== value_.length) {
+    return value_ as V;
+  }
+
+  private checkCount(value_: V, count_: number): void {
+    if (count_ !== value_.length) {
       this.throwValidationError('incorrect params count');
     }
+  }
 
-    if (this._minParams && value_.length < this._minParams) {
+  private checkMin(value_: V, min_: number): void {
+    if (value_.length < min_) {
       this.throwValidationError('too few parameters');
     }
+  }
 
-    if (this._maxParams && value_.length > this._maxParams) {
+  private checkMax(value_: V, max_: number): void {
+    if (value_.length > max_) {
       this.throwValidationError('too many parameters');
     }
-
-    return value_ as V;
   }
 }

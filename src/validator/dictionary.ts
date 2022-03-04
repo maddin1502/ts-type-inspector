@@ -20,6 +20,7 @@ export class DictionaryValidator<V extends Dictionary> extends Validator<V> {
   /**
    * additional dictionary key validation
    *
+   * @since 1.0.0
    * @param {Validatable<DictionaryKey<V>>} validator_
    * @return {*}  {this}
    * @memberof DictionaryValidator
