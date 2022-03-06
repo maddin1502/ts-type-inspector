@@ -192,7 +192,7 @@ export class NumberValidator extends Validator<number> {
 
   private checkRejected(value_: number, rejected_: ReadonlyArray<number>): void {
     if (rejected_.includes(value_)) {
-      this.throwValidationError('number is denied');
+      this.throwValidationError('number is rejected');
     }
   }
 }

@@ -1,7 +1,8 @@
 import { JestClassExtended } from 'jest-class-extended';
-import tva from '../../../src';
+import { InspectorGadget } from '../../../src/inspectorGadget';
 import { OptionalValidator } from '../../../src/validator/optional';
 
+const ig = new InspectorGadget();
 const jce = new JestClassExtended(OptionalValidator);
 
 jce.describe(() => {
@@ -9,8 +10,8 @@ jce.describe(() => {
     ['isValid', 'success'],
     2,
     () => {
-      expect(tva.optional(tva.number).isValid(42)).toBe(true);
-      expect(tva.optional(tva.number).isValid(undefined)).toBe(true);
+      expect(ig.optional(ig.number).isValid(42)).toBe(true);
+      expect(ig.optional(ig.number).isValid(undefined)).toBe(true);
     }
   );
 
@@ -18,8 +19,8 @@ jce.describe(() => {
     ['isValid', 'failure'],
     2,
     () => {
-      expect(tva.optional(tva.number).isValid('42')).toBe(false);
-      expect(tva.optional(tva.number).isValid(null)).toBe(false);
+      expect(ig.optional(ig.number).isValid('42')).toBe(false);
+      expect(ig.optional(ig.number).isValid(null)).toBe(false);
     }
   );
 });

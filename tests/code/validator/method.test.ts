@@ -1,7 +1,8 @@
 import { JestClassExtended } from 'jest-class-extended';
-import tva from '../../../src';
+import { InspectorGadget } from '../../../src/inspectorGadget';
 import { MethodValidator } from '../../../src/validator/method';
 
+const ig = new InspectorGadget();
 const jce = new JestClassExtended(MethodValidator);
 
 const methodDummy = (x_: number, y_: number) => {
@@ -39,12 +40,12 @@ jce.describe(() => {
     ['isValid', 'success'],
     5,
     () => {
-      expect(tva.method().isValid(methodDummy)).toBe(true);
-      expect(tva.method().isValid(methodDummy2)).toBe(true);
+      expect(ig.method().isValid(methodDummy)).toBe(true);
+      expect(ig.method().isValid(methodDummy2)).toBe(true);
       const container = new DummyMethodContainer();
-      expect(tva.method().isValid(container.one)).toBe(true);
-      expect(tva.method().isValid(container.two)).toBe(true);
-      expect(tva.method().isValid(container.three)).toBe(true);
+      expect(ig.method().isValid(container.one.bind(container))).toBe(true);
+      expect(ig.method().isValid(container.two.bind(container))).toBe(true);
+      expect(ig.method().isValid(container.three.bind(container))).toBe(true);
     }
   );
 
@@ -52,13 +53,13 @@ jce.describe(() => {
     ['isValid', 'failure'],
     7,
     () => {
-      expect(tva.method().isValid(undefined)).toBe(false);
-      expect(tva.method().isValid(null)).toBe(false);
-      expect(tva.method().isValid('42')).toBe(false);
-      expect(tva.method().isValid(42)).toBe(false);
-      expect(tva.method().isValid({ oh: 'no'})).toBe(false);
-      expect(tva.method().isValid(/.*oh.*no:+/)).toBe(false);
-      expect(tva.method().isValid(true)).toBe(false);
+      expect(ig.method().isValid(undefined)).toBe(false);
+      expect(ig.method().isValid(null)).toBe(false);
+      expect(ig.method().isValid('42')).toBe(false);
+      expect(ig.method().isValid(42)).toBe(false);
+      expect(ig.method().isValid({ oh: 'no' })).toBe(false);
+      expect(ig.method().isValid(/.*oh.*no:+/)).toBe(false);
+      expect(ig.method().isValid(true)).toBe(false);
     }
   );
 
@@ -66,12 +67,12 @@ jce.describe(() => {
     ['isValid', 'correct conditions'],
     5,
     () => {
-      expect(tva.method().params(2).isValid(methodDummy)).toBe(true);
-      expect(tva.method().params(2).isValid(methodDummy2)).toBe(true);
+      expect(ig.method().count(2).isValid(methodDummy)).toBe(true);
+      expect(ig.method().count(2).isValid(methodDummy2)).toBe(true);
       const container = new DummyMethodContainer();
-      expect(tva.method().params(2).isValid(container.two)).toBe(true);
-      expect(tva.method().max(2).isValid(container.two)).toBe(true);
-      expect(tva.method().min(3).isValid(container.three)).toBe(true);
+      expect(ig.method().count(2).isValid(container.two.bind(container))).toBe(true);
+      expect(ig.method().max(2).isValid(container.two.bind(container))).toBe(true);
+      expect(ig.method().min(3).isValid(container.three.bind(container))).toBe(true);
     }
   );
 
@@ -79,12 +80,12 @@ jce.describe(() => {
     ['isValid', 'incorrect conditions'],
     5,
     () => {
-      expect(tva.method().params(3).isValid(methodDummy)).toBe(false);
-      expect(tva.method().params(1).isValid(methodDummy2)).toBe(false);
+      expect(ig.method().count(3).isValid(methodDummy)).toBe(false);
+      expect(ig.method().count(1).isValid(methodDummy2)).toBe(false);
       const container = new DummyMethodContainer();
-      expect(tva.method().params(2).isValid(container.one)).toBe(false);
-      expect(tva.method().max(2).isValid(container.three)).toBe(false);
-      expect(tva.method().min(3).isValid(container.two)).toBe(false);
+      expect(ig.method().count(2).isValid(container.one.bind(container))).toBe(false);
+      expect(ig.method().max(2).isValid(container.three.bind(container))).toBe(false);
+      expect(ig.method().min(3).isValid(container.two.bind(container))).toBe(false);
     }
   );
 });

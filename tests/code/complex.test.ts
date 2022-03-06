@@ -1,8 +1,9 @@
 import { JestClassExtended } from 'jest-class-extended';
-import tva, { TypedValueApprover } from '../../src';
 import { ValidationError } from '../../src/error';
+import { InspectorGadget } from '../../src/inspectorGadget';
 
-const jce = new JestClassExtended(TypedValueApprover);
+const ig = new InspectorGadget();
+const jce = new JestClassExtended(InspectorGadget);
 
 jce.describe(() => {
   jce.test(
@@ -10,12 +11,12 @@ jce.describe(() => {
     2,
     () => {
       try {
-        tva.object({
-          prop1: tva.array(
-            tva.object({
-              prop2: tva.object({
-                prop3: tva.array(
-                  tva.boolean
+        ig.object({
+          prop1: ig.array(
+            ig.object({
+              prop2: ig.object({
+                prop3: ig.array(
+                  ig.boolean
                 )
               })
             })
@@ -46,12 +47,12 @@ jce.describe(() => {
           }
         }]
       };
-      const value = tva.object({
-        prop1: tva.array(
-          tva.object({
-            prop2: tva.object({
-              prop3: tva.array(
-                tva.boolean
+      const value = ig.object({
+        prop1: ig.array(
+          ig.object({
+            prop2: ig.object({
+              prop3: ig.array(
+                ig.boolean
               )
             })
           })
@@ -67,12 +68,12 @@ jce.describe(() => {
     2,
     () => {
       try {
-        tva.object({
-          prop1: tva.array(
-            tva.object({
-              prop2: tva.object({
-                prop3: tva.array(
-                  tva.boolean.error('bad value')
+        ig.object({
+          prop1: ig.array(
+            ig.object({
+              prop2: ig.object({
+                prop3: ig.array(
+                  ig.boolean.error('bad value')
                 )
               })
             })
@@ -97,12 +98,12 @@ jce.describe(() => {
     2,
     () => {
       try {
-        tva.object({
-          prop1: tva.array(
-            tva.object({
-              prop2: tva.object({
-                prop3: tva.array(
-                  tva.boolean.error(() => 'bad value')
+        ig.object({
+          prop1: ig.array(
+            ig.object({
+              prop2: ig.object({
+                prop3: ig.array(
+                  ig.boolean.error(() => 'bad value')
                 )
               })
             })
@@ -126,12 +127,12 @@ jce.describe(() => {
     ['object', 'failure - complex property path - isValid'],
     4,
     () => {
-      const validator = tva.object({
-        prop1: tva.array(
-          tva.object({
-            prop2: tva.object({
-              prop3: tva.array(
-                tva.boolean
+      const validator = ig.object({
+        prop1: ig.array(
+          ig.object({
+            prop2: ig.object({
+              prop3: ig.array(
+                ig.boolean
               )
             })
           })
@@ -157,16 +158,16 @@ jce.describe(() => {
     ['object', 'failure - complex property path - isValid - recursive'],
     19,
     () => {
-      const booleanValidator = tva.boolean;
-      const array2validator = tva.array(booleanValidator);
-      const object3Validator = tva.object({
+      const booleanValidator = ig.boolean;
+      const array2validator = ig.array(booleanValidator);
+      const object3Validator = ig.object({
         prop3: array2validator
       });
-      const object2Validator = tva.object({
+      const object2Validator = ig.object({
         prop2: object3Validator
       });
-      const array1Validator = tva.array(object2Validator);
-      const object1Validator = tva.object({
+      const array1Validator = ig.array(object2Validator);
+      const object1Validator = ig.object({
         prop1: array1Validator
       });
 
@@ -204,11 +205,11 @@ jce.describe(() => {
     ['object', 'failure - complex property path - custom validation'],
     4,
     () => {
-      const validator = tva.object({
-        prop1: tva.array(tva.object({
-          prop2: tva.object({
-            prop3: tva.array(
-              tva.number.custom(value_ => value_ % 7 === 0 ? undefined : 'the number is not divisible by 7')
+      const validator = ig.object({
+        prop1: ig.array(ig.object({
+          prop2: ig.object({
+            prop3: ig.array(
+              ig.number.custom(value_ => value_ % 7 === 0 ? undefined : 'the number is not divisible by 7')
             )
           })
         }))
@@ -234,12 +235,12 @@ jce.describe(() => {
     2,
     () => {
       try {
-        tva.dictionary(
-          tva.array(
-            tva.dictionary(
-              tva.dictionary(
-                tva.array(
-                  tva.boolean
+        ig.dictionary(
+          ig.array(
+            ig.dictionary(
+              ig.dictionary(
+                ig.array(
+                  ig.boolean
                 )
               )
             )
@@ -264,12 +265,12 @@ jce.describe(() => {
     2,
     () => {
       try {
-        tva.dictionary(
-          tva.array(
-            tva.dictionary(
-              tva.dictionary(
-                tva.array(
-                  tva.boolean.error('bad value')
+        ig.dictionary(
+          ig.array(
+            ig.dictionary(
+              ig.dictionary(
+                ig.array(
+                  ig.boolean.error('bad value')
                 )
               )
             )
@@ -293,12 +294,12 @@ jce.describe(() => {
     ['dictionary', 'failure - complex property path - isValid'],
     4,
     () => {
-      const validator = tva.dictionary(
-        tva.array(
-          tva.dictionary(
-            tva.dictionary(
-              tva.array(
-                tva.boolean
+      const validator = ig.dictionary(
+        ig.array(
+          ig.dictionary(
+            ig.dictionary(
+              ig.array(
+                ig.boolean
               )
             )
           )
@@ -324,12 +325,12 @@ jce.describe(() => {
     ['dictionary', 'failure - complex property path - isValid - recursive'],
     19,
     () => {
-      const booleanValidator = tva.boolean;
-      const array2validator = tva.array(booleanValidator);
-      const dictionary3Validator = tva.dictionary(array2validator);
-      const dictionary2Validator = tva.dictionary(dictionary3Validator);
-      const array1Validator = tva.array(dictionary2Validator);
-      const dictionary1Validator = tva.dictionary(array1Validator);
+      const booleanValidator = ig.boolean;
+      const array2validator = ig.array(booleanValidator);
+      const dictionary3Validator = ig.dictionary(array2validator);
+      const dictionary2Validator = ig.dictionary(dictionary3Validator);
+      const array1Validator = ig.array(dictionary2Validator);
+      const dictionary1Validator = ig.dictionary(array1Validator);
 
       const isValid = dictionary1Validator.isValid({
         prop1: [{
@@ -365,12 +366,12 @@ jce.describe(() => {
     ['dictionary', 'failure - complex property path - custom validation'],
     4,
     () => {
-      const validator = tva.dictionary(
-        tva.array(
-          tva.dictionary(
-            tva.dictionary(
-              tva.array(
-                tva.number.custom(value_ => value_ % 7 === 0 ? undefined : 'the number is not divisible by 7')
+      const validator = ig.dictionary(
+        ig.array(
+          ig.dictionary(
+            ig.dictionary(
+              ig.array(
+                ig.number.custom(value_ => value_ % 7 === 0 ? undefined : 'the number is not divisible by 7')
               )
             )
           )
@@ -396,12 +397,12 @@ jce.describe(() => {
     ['dictionary', 'failure - unknown error'],
     1,
     () => {
-      const validator = tva.dictionary(
-        tva.array(
-          tva.dictionary(
-            tva.dictionary(
-              tva.array(
-                tva.number.custom(() => { throw new Error('something went really wrong'); })
+      const validator = ig.dictionary(
+        ig.array(
+          ig.dictionary(
+            ig.dictionary(
+              ig.array(
+                ig.number.custom(() => { throw new Error('something went really wrong'); })
               )
             )
           )
@@ -426,20 +427,20 @@ jce.describe(() => {
     ['object', 'failure - strict, optional, array'],
     4,
     () => {
-      const validator = tva.object({
-        prop1: tva.array(
-          tva.object({
-            prop11: tva.undefined,
-            prop12: tva.object({
-              prop121: tva.optional(
-                tva.array(
-                  tva.strict(42)
+      const validator = ig.object({
+        prop1: ig.array(
+          ig.object({
+            prop11: ig.undefined,
+            prop12: ig.object({
+              prop121: ig.optional(
+                ig.array(
+                  ig.strict(42)
                 )
               )
             })
           })
         ),
-        prop2: tva.number
+        prop2: ig.number
       });
 
       const isValid = validator.isValid({
@@ -483,7 +484,7 @@ jce.describe(() => {
       }
 
       expect(
-        () => tva.object<ErrorReason>({ prop: tva.number }).validate(new ErrorReason())
+        () => ig.object<ErrorReason>({ prop: ig.number }).validate(new ErrorReason())
       ).toThrow('simple error');
 
       class MessageReason {
@@ -498,7 +499,7 @@ jce.describe(() => {
       }
 
       expect(
-        () => tva.object<MessageReason>({ prop: tva.number }).validate(new MessageReason())
+        () => ig.object<MessageReason>({ prop: ig.number }).validate(new MessageReason())
       ).toThrow('message error');
 
       class UnknownReason {
@@ -513,7 +514,7 @@ jce.describe(() => {
       }
 
       expect(
-        () => tva.object<UnknownReason>({ prop: tva.number }).validate(new UnknownReason())
+        () => ig.object<UnknownReason>({ prop: ig.number }).validate(new UnknownReason())
       ).toThrow('unknown error');
     }
   );

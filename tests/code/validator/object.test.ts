@@ -1,7 +1,8 @@
 import { JestClassExtended } from 'jest-class-extended';
-import tva from '../../../src';
+import { InspectorGadget } from '../../../src/inspectorGadget';
 import { ObjectValidator } from '../../../src/validator/object';
 
+const ig = new InspectorGadget();
 const jce = new JestClassExtended(ObjectValidator);
 
 jce.describe(() => {
@@ -10,18 +11,18 @@ jce.describe(() => {
     2,
     () => {
       expect(
-        tva.object({
-          stringProperty: tva.string,
-          numberProperty: tva.number,
-          arrayProperty: tva.array(tva.boolean),
-          unionProperty: tva.union(tva.undefined, tva.date),
-          dateProperty: tva.date,
-          methodProperty: tva.method(),
-          strictStringProperty: tva.strict('world')
+        ig.object({
+          stringProperty: ig.string,
+          numberProperty: ig.number,
+          arrayProperty: ig.array(ig.boolean),
+          unionProperty: ig.union(ig.undefined, ig.date),
+          dateProperty: ig.date,
+          methodProperty: ig.method(),
+          strictStringProperty: ig.strict('world')
         }).isValid({
           stringProperty: 'hello',
           numberProperty: 42,
-          arrayProperty: [ true, false, false, true, false ],
+          arrayProperty: [true, false, false, true, false],
           unionProperty: undefined,
           dateProperty: new Date('1970-01-01'),
           methodProperty: () => null,
@@ -29,7 +30,7 @@ jce.describe(() => {
         })
       ).toBe(true);
 
-      expect(tva.object({ test: tva.string }).isValid({ test: 'hello', test2: 'world' })).toBe(true);
+      expect(ig.object({ test: ig.string }).isValid({ test: 'hello', test2: 'world' })).toBe(true);
     }
   );
 
@@ -38,18 +39,18 @@ jce.describe(() => {
     13,
     () => {
       expect(
-        tva.object({
-          stringProperty: tva.string,
-          numberProperty: tva.number,
-          arrayProperty: tva.array(tva.boolean),
-          unionProperty: tva.union(tva.undefined, tva.date),
-          dateProperty: tva.date,
-          methodProperty: tva.method(),
-          strictStringProperty: tva.strict('world')
+        ig.object({
+          stringProperty: ig.string,
+          numberProperty: ig.number,
+          arrayProperty: ig.array(ig.boolean),
+          unionProperty: ig.union(ig.undefined, ig.date),
+          dateProperty: ig.date,
+          methodProperty: ig.method(),
+          strictStringProperty: ig.strict('world')
         }).isValid({
           stringProperty: 42,
           numberProperty: 42,
-          arrayProperty: [ true, false, false, true, false ],
+          arrayProperty: [true, false, false, true, false],
           unionProperty: undefined,
           dateProperty: new Date('1970-01-01'),
           methodProperty: () => null,
@@ -58,18 +59,18 @@ jce.describe(() => {
       ).toBe(false);
 
       expect(
-        tva.object({
-          stringProperty: tva.string,
-          numberProperty: tva.number,
-          arrayProperty: tva.array(tva.boolean),
-          unionProperty: tva.union(tva.undefined, tva.date),
-          dateProperty: tva.date,
-          methodProperty: tva.method(),
-          strictStringProperty: tva.strict('world')
+        ig.object({
+          stringProperty: ig.string,
+          numberProperty: ig.number,
+          arrayProperty: ig.array(ig.boolean),
+          unionProperty: ig.union(ig.undefined, ig.date),
+          dateProperty: ig.date,
+          methodProperty: ig.method(),
+          strictStringProperty: ig.strict('world')
         }).isValid({
           stringProperty: 'hello',
           numberProperty: 'hello',
-          arrayProperty: [ true, false, false, true, false ],
+          arrayProperty: [true, false, false, true, false],
           unionProperty: undefined,
           dateProperty: new Date('1970-01-01'),
           methodProperty: () => null,
@@ -78,18 +79,18 @@ jce.describe(() => {
       ).toBe(false);
 
       expect(
-        tva.object({
-          stringProperty: tva.string,
-          numberProperty: tva.number,
-          arrayProperty: tva.array(tva.boolean),
-          unionProperty: tva.union(tva.undefined, tva.date),
-          dateProperty: tva.date,
-          methodProperty: tva.method(),
-          strictStringProperty: tva.strict('world')
+        ig.object({
+          stringProperty: ig.string,
+          numberProperty: ig.number,
+          arrayProperty: ig.array(ig.boolean),
+          unionProperty: ig.union(ig.undefined, ig.date),
+          dateProperty: ig.date,
+          methodProperty: ig.method(),
+          strictStringProperty: ig.strict('world')
         }).isValid({
           stringProperty: 'hello',
           numberProperty: 42,
-          arrayProperty: [ true, false, false, 1, false ],
+          arrayProperty: [true, false, false, 1, false],
           unionProperty: undefined,
           dateProperty: new Date('1970-01-01'),
           methodProperty: () => null,
@@ -98,18 +99,18 @@ jce.describe(() => {
       ).toBe(false);
 
       expect(
-        tva.object({
-          stringProperty: tva.string,
-          numberProperty: tva.number,
-          arrayProperty: tva.array(tva.boolean),
-          unionProperty: tva.union(tva.undefined, tva.date),
-          dateProperty: tva.date,
-          methodProperty: tva.method(),
-          strictStringProperty: tva.strict('world')
+        ig.object({
+          stringProperty: ig.string,
+          numberProperty: ig.number,
+          arrayProperty: ig.array(ig.boolean),
+          unionProperty: ig.union(ig.undefined, ig.date),
+          dateProperty: ig.date,
+          methodProperty: ig.method(),
+          strictStringProperty: ig.strict('world')
         }).isValid({
           stringProperty: 'hello',
           numberProperty: 42,
-          arrayProperty: [ true, false, false, true, false ],
+          arrayProperty: [true, false, false, true, false],
           unionProperty: null,
           dateProperty: new Date('1970-01-01'),
           methodProperty: () => null,
@@ -118,18 +119,18 @@ jce.describe(() => {
       ).toBe(false);
 
       expect(
-        tva.object({
-          stringProperty: tva.string,
-          numberProperty: tva.number,
-          arrayProperty: tva.array(tva.boolean),
-          unionProperty: tva.union(tva.undefined, tva.date),
-          dateProperty: tva.date,
-          methodProperty: tva.method(),
-          strictStringProperty: tva.strict('world')
+        ig.object({
+          stringProperty: ig.string,
+          numberProperty: ig.number,
+          arrayProperty: ig.array(ig.boolean),
+          unionProperty: ig.union(ig.undefined, ig.date),
+          dateProperty: ig.date,
+          methodProperty: ig.method(),
+          strictStringProperty: ig.strict('world')
         }).isValid({
           stringProperty: 'hello',
           numberProperty: 42,
-          arrayProperty: [ true, false, false, true, false ],
+          arrayProperty: [true, false, false, true, false],
           unionProperty: undefined,
           dateProperty: Date.now(),
           methodProperty: () => null,
@@ -138,18 +139,18 @@ jce.describe(() => {
       ).toBe(false);
 
       expect(
-        tva.object({
-          stringProperty: tva.string,
-          numberProperty: tva.number,
-          arrayProperty: tva.array(tva.boolean),
-          unionProperty: tva.union(tva.undefined, tva.date),
-          dateProperty: tva.date,
-          methodProperty: tva.method(),
-          strictStringProperty: tva.strict('world')
+        ig.object({
+          stringProperty: ig.string,
+          numberProperty: ig.number,
+          arrayProperty: ig.array(ig.boolean),
+          unionProperty: ig.union(ig.undefined, ig.date),
+          dateProperty: ig.date,
+          methodProperty: ig.method(),
+          strictStringProperty: ig.strict('world')
         }).isValid({
           stringProperty: 'hello',
           numberProperty: 42,
-          arrayProperty: [ true, false, false, true, false ],
+          arrayProperty: [true, false, false, true, false],
           unionProperty: undefined,
           dateProperty: new Date('1970-01-01'),
           methodProperty: {},
@@ -158,18 +159,18 @@ jce.describe(() => {
       ).toBe(false);
 
       expect(
-        tva.object({
-          stringProperty: tva.string,
-          numberProperty: tva.number,
-          arrayProperty: tva.array(tva.boolean),
-          unionProperty: tva.union(tva.undefined, tva.date),
-          dateProperty: tva.date,
-          methodProperty: tva.method(),
-          strictStringProperty: tva.strict('world')
+        ig.object({
+          stringProperty: ig.string,
+          numberProperty: ig.number,
+          arrayProperty: ig.array(ig.boolean),
+          unionProperty: ig.union(ig.undefined, ig.date),
+          dateProperty: ig.date,
+          methodProperty: ig.method(),
+          strictStringProperty: ig.strict('world')
         }).isValid({
           stringProperty: 'hello',
           numberProperty: 42,
-          arrayProperty: [ true, false, false, true, false ],
+          arrayProperty: [true, false, false, true, false],
           unionProperty: undefined,
           dateProperty: new Date('1970-01-01'),
           methodProperty: () => null,
@@ -178,22 +179,22 @@ jce.describe(() => {
       ).toBe(false);
 
       expect(
-        tva.object({
-          stringProperty: tva.string,
-          numberProperty: tva.number,
-          arrayProperty: tva.array(tva.boolean),
-          unionProperty: tva.union(tva.undefined, tva.date),
-          dateProperty: tva.date,
-          methodProperty: tva.method(),
-          strictStringProperty: tva.strict('world')
+        ig.object({
+          stringProperty: ig.string,
+          numberProperty: ig.number,
+          arrayProperty: ig.array(ig.boolean),
+          unionProperty: ig.union(ig.undefined, ig.date),
+          dateProperty: ig.date,
+          methodProperty: ig.method(),
+          strictStringProperty: ig.strict('world')
         }).isValid({})
       ).toBe(false);
 
-      expect(tva.object({}).isValid(undefined)).toBe(false);
-      expect(tva.object({}).isValid(1)).toBe(false);
-      expect(tva.object({}).isValid(() => true)).toBe(false);
-      expect(tva.object({}).isValid(ObjectValidator)).toBe(false);
-      expect(tva.object({}).isValid(null)).toBe(false);
+      expect(ig.object({}).isValid(undefined)).toBe(false);
+      expect(ig.object({}).isValid(1)).toBe(false);
+      expect(ig.object({}).isValid(() => true)).toBe(false);
+      expect(ig.object({}).isValid(ObjectValidator)).toBe(false);
+      expect(ig.object({}).isValid(null)).toBe(false);
     }
   );
 
@@ -201,7 +202,7 @@ jce.describe(() => {
     ['isValid', 'correct conditions'],
     1,
     () => {
-      expect(tva.object({ p1: tva.string }).noOverload.isValid({ p1: 'hello' })).toBe(true);
+      expect(ig.object({ p1: ig.string }).noOverload.isValid({ p1: 'hello' })).toBe(true);
     }
   );
 
@@ -209,7 +210,7 @@ jce.describe(() => {
     ['isValid', 'incorrect conditions'],
     1,
     () => {
-      expect(tva.object({ p1: tva.string }).noOverload.isValid({ p1: 'hello', p2: 'world' })).toBe(false);
+      expect(ig.object({ p1: ig.string }).noOverload.isValid({ p1: 'hello', p2: 'world' })).toBe(false);
     }
   );
 
@@ -218,18 +219,18 @@ jce.describe(() => {
     2,
     () => {
       expect(
-        () => tva.object({
-          stringProperty: tva.string,
-          numberProperty: tva.number,
-          arrayProperty: tva.array(tva.boolean),
-          unionProperty: tva.union(tva.undefined, tva.date),
-          dateProperty: tva.date,
-          methodProperty: tva.method(),
-          strictStringProperty: tva.strict('world')
+        () => ig.object({
+          stringProperty: ig.string,
+          numberProperty: ig.number,
+          arrayProperty: ig.array(ig.boolean),
+          unionProperty: ig.union(ig.undefined, ig.date),
+          dateProperty: ig.date,
+          methodProperty: ig.method(),
+          strictStringProperty: ig.strict('world')
         }).validate({
           stringProperty: 'hello',
           numberProperty: 42,
-          arrayProperty: [ true, false, false, true, false ],
+          arrayProperty: [true, false, false, true, false],
           unionProperty: undefined,
           dateProperty: new Date('1970-01-01'),
           methodProperty: () => null,
@@ -238,8 +239,8 @@ jce.describe(() => {
       ).not.toThrow();
 
       expect(
-        () => tva.object({
-          test: tva.string
+        () => ig.object({
+          test: ig.string
         }).isValid({
           test: 'hello',
           test2: 'world'
@@ -253,18 +254,18 @@ jce.describe(() => {
     8,
     () => {
       expect(
-        () => tva.object({
-          stringProperty: tva.string,
-          numberProperty: tva.number,
-          arrayProperty: tva.array(tva.boolean),
-          unionProperty: tva.union(tva.undefined, tva.date),
-          dateProperty: tva.date,
-          methodProperty: tva.method(),
-          strictStringProperty: tva.strict('world')
+        () => ig.object({
+          stringProperty: ig.string,
+          numberProperty: ig.number,
+          arrayProperty: ig.array(ig.boolean),
+          unionProperty: ig.union(ig.undefined, ig.date),
+          dateProperty: ig.date,
+          methodProperty: ig.method(),
+          strictStringProperty: ig.strict('world')
         }).validate({
           stringProperty: 42,
           numberProperty: 42,
-          arrayProperty: [ true, false, false, true, false ],
+          arrayProperty: [true, false, false, true, false],
           unionProperty: undefined,
           dateProperty: new Date('1970-01-01'),
           methodProperty: () => null,
@@ -273,18 +274,18 @@ jce.describe(() => {
       ).toThrow('value is not a string');
 
       expect(
-        () => tva.object({
-          stringProperty: tva.string,
-          numberProperty: tva.number,
-          arrayProperty: tva.array(tva.boolean),
-          unionProperty: tva.union(tva.undefined, tva.date),
-          dateProperty: tva.date,
-          methodProperty: tva.method(),
-          strictStringProperty: tva.strict('world')
+        () => ig.object({
+          stringProperty: ig.string,
+          numberProperty: ig.number,
+          arrayProperty: ig.array(ig.boolean),
+          unionProperty: ig.union(ig.undefined, ig.date),
+          dateProperty: ig.date,
+          methodProperty: ig.method(),
+          strictStringProperty: ig.strict('world')
         }).validate({
           stringProperty: 'hello',
           numberProperty: 'hello',
-          arrayProperty: [ true, false, false, true, false ],
+          arrayProperty: [true, false, false, true, false],
           unionProperty: undefined,
           dateProperty: new Date('1970-01-01'),
           methodProperty: () => null,
@@ -293,18 +294,18 @@ jce.describe(() => {
       ).toThrow('value is not a number');
 
       expect(
-        () => tva.object({
-          stringProperty: tva.string,
-          numberProperty: tva.number,
-          arrayProperty: tva.array(tva.boolean),
-          unionProperty: tva.union(tva.undefined, tva.date),
-          dateProperty: tva.date,
-          methodProperty: tva.method(),
-          strictStringProperty: tva.strict('world')
+        () => ig.object({
+          stringProperty: ig.string,
+          numberProperty: ig.number,
+          arrayProperty: ig.array(ig.boolean),
+          unionProperty: ig.union(ig.undefined, ig.date),
+          dateProperty: ig.date,
+          methodProperty: ig.method(),
+          strictStringProperty: ig.strict('world')
         }).validate({
           stringProperty: 'hello',
           numberProperty: 42,
-          arrayProperty: [ true, false, false, 1, false ],
+          arrayProperty: [true, false, false, 1, false],
           unionProperty: undefined,
           dateProperty: new Date('1970-01-01'),
           methodProperty: () => null,
@@ -313,18 +314,18 @@ jce.describe(() => {
       ).toThrow('value is not a boolean');
 
       expect(
-        () => tva.object({
-          stringProperty: tva.string,
-          numberProperty: tva.number,
-          arrayProperty: tva.array(tva.boolean),
-          unionProperty: tva.union(tva.undefined, tva.date),
-          dateProperty: tva.date,
-          methodProperty: tva.method(),
-          strictStringProperty: tva.strict('world')
+        () => ig.object({
+          stringProperty: ig.string,
+          numberProperty: ig.number,
+          arrayProperty: ig.array(ig.boolean),
+          unionProperty: ig.union(ig.undefined, ig.date),
+          dateProperty: ig.date,
+          methodProperty: ig.method(),
+          strictStringProperty: ig.strict('world')
         }).validate({
           stringProperty: 'hello',
           numberProperty: 42,
-          arrayProperty: [ true, false, false, true, false ],
+          arrayProperty: [true, false, false, true, false],
           unionProperty: null,
           dateProperty: new Date('1970-01-01'),
           methodProperty: () => null,
@@ -333,18 +334,18 @@ jce.describe(() => {
       ).toThrow('value does not match any of the possible types');
 
       expect(
-        () => tva.object({
-          stringProperty: tva.string,
-          numberProperty: tva.number,
-          arrayProperty: tva.array(tva.boolean),
-          unionProperty: tva.union(tva.undefined, tva.date),
-          dateProperty: tva.date,
-          methodProperty: tva.method(),
-          strictStringProperty: tva.strict('world')
+        () => ig.object({
+          stringProperty: ig.string,
+          numberProperty: ig.number,
+          arrayProperty: ig.array(ig.boolean),
+          unionProperty: ig.union(ig.undefined, ig.date),
+          dateProperty: ig.date,
+          methodProperty: ig.method(),
+          strictStringProperty: ig.strict('world')
         }).validate({
           stringProperty: 'hello',
           numberProperty: 42,
-          arrayProperty: [ true, false, false, true, false ],
+          arrayProperty: [true, false, false, true, false],
           unionProperty: undefined,
           dateProperty: Date.now(),
           methodProperty: () => null,
@@ -353,18 +354,18 @@ jce.describe(() => {
       ).toThrow('value is not a date');
 
       expect(
-        () => tva.object({
-          stringProperty: tva.string,
-          numberProperty: tva.number,
-          arrayProperty: tva.array(tva.boolean),
-          unionProperty: tva.union(tva.undefined, tva.date),
-          dateProperty: tva.date,
-          methodProperty: tva.method(),
-          strictStringProperty: tva.strict('world')
+        () => ig.object({
+          stringProperty: ig.string,
+          numberProperty: ig.number,
+          arrayProperty: ig.array(ig.boolean),
+          unionProperty: ig.union(ig.undefined, ig.date),
+          dateProperty: ig.date,
+          methodProperty: ig.method(),
+          strictStringProperty: ig.strict('world')
         }).validate({
           stringProperty: 'hello',
           numberProperty: 42,
-          arrayProperty: [ true, false, false, true, false ],
+          arrayProperty: [true, false, false, true, false],
           unionProperty: undefined,
           dateProperty: new Date('1970-01-01'),
           methodProperty: {},
@@ -373,18 +374,18 @@ jce.describe(() => {
       ).toThrow('value is not a method');
 
       expect(
-        () => tva.object({
-          stringProperty: tva.string,
-          numberProperty: tva.number,
-          arrayProperty: tva.array(tva.boolean),
-          unionProperty: tva.union(tva.undefined, tva.date),
-          dateProperty: tva.date,
-          methodProperty: tva.method(),
-          strictStringProperty: tva.strict('world')
+        () => ig.object({
+          stringProperty: ig.string,
+          numberProperty: ig.number,
+          arrayProperty: ig.array(ig.boolean),
+          unionProperty: ig.union(ig.undefined, ig.date),
+          dateProperty: ig.date,
+          methodProperty: ig.method(),
+          strictStringProperty: ig.strict('world')
         }).validate({
           stringProperty: 'hello',
           numberProperty: 42,
-          arrayProperty: [ true, false, false, true, false ],
+          arrayProperty: [true, false, false, true, false],
           unionProperty: undefined,
           dateProperty: new Date('1970-01-01'),
           methodProperty: () => null,
@@ -393,14 +394,14 @@ jce.describe(() => {
       ).toThrow('no equality found');
 
       expect(
-        () => tva.object({
-          stringProperty: tva.string,
-          numberProperty: tva.number,
-          arrayProperty: tva.array(tva.boolean),
-          unionProperty: tva.union(tva.undefined, tva.date),
-          dateProperty: tva.date,
-          methodProperty: tva.method(),
-          strictStringProperty: tva.strict('world')
+        () => ig.object({
+          stringProperty: ig.string,
+          numberProperty: ig.number,
+          arrayProperty: ig.array(ig.boolean),
+          unionProperty: ig.union(ig.undefined, ig.date),
+          dateProperty: ig.date,
+          methodProperty: ig.method(),
+          strictStringProperty: ig.strict('world')
         }).validate({})
       ).toThrow('value is not a string');
     }

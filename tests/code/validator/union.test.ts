@@ -1,7 +1,8 @@
 import { JestClassExtended } from 'jest-class-extended';
-import tva from '../../../src';
+import { InspectorGadget } from '../../../src/inspectorGadget';
 import { UnionValidator } from '../../../src/validator/union';
 
+const ig = new InspectorGadget();
 const jce = new JestClassExtended(UnionValidator);
 
 jce.describe(() => {
@@ -9,10 +10,10 @@ jce.describe(() => {
     ['isValid', 'success'],
     4,
     () => {
-      expect(tva.union(tva.string, tva.number).isValid(42)).toBe(true);
-      expect(tva.union(tva.string, tva.number).isValid('42')).toBe(true);
-      expect(tva.union(tva.string, tva.string.allowEmpty).isValid('')).toBe(true);
-      expect(tva.union(tva.number, tva.number.allowNaN).isValid(NaN)).toBe(true);
+      expect(ig.union(ig.string, ig.number).isValid(42)).toBe(true);
+      expect(ig.union(ig.string, ig.number).isValid('42')).toBe(true);
+      expect(ig.union(ig.string, ig.string).isValid('')).toBe(true);
+      expect(ig.union(ig.number, ig.number).isValid(NaN)).toBe(true);
     }
   );
 
@@ -20,10 +21,10 @@ jce.describe(() => {
     ['isValid', 'failure'],
     4,
     () => {
-      expect(tva.union(tva.string, tva.number).isValid(undefined)).toBe(false);
-      expect(tva.union(tva.string, tva.number).isValid(null)).toBe(false);
-      expect(tva.union(tva.string, tva.string).isValid(42)).toBe(false);
-      expect(tva.union(tva.string, tva.number).isValid(NaN)).toBe(false);
+      expect(ig.union(ig.string, ig.number).isValid(undefined)).toBe(false);
+      expect(ig.union(ig.string, ig.number).isValid(null)).toBe(false);
+      expect(ig.union(ig.string, ig.string).isValid(42)).toBe(false);
+      expect(ig.union(ig.string, ig.number.rejectNaN).isValid(NaN)).toBe(false);
     }
   );
 });

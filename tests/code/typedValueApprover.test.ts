@@ -1,14 +1,15 @@
 import { JestClassExtended } from 'jest-class-extended';
-import tva, { TypedValueApprover } from '../../src';
+import { InspectorGadget } from '../../src/inspectorGadget';
 
-const jce = new JestClassExtended(TypedValueApprover);
+const ig = new InspectorGadget();
+const jce = new JestClassExtended(InspectorGadget);
 
 jce.describe(() => {
   jce.test(
     'boolean',
     1,
     () => {
-      expect(tva.boolean === tva.boolean).toBe(false);
+      expect(ig.boolean === ig.boolean).toBe(false);
     }
   );
 
@@ -16,23 +17,23 @@ jce.describe(() => {
     'number',
     1,
     () => {
-      expect(tva.number === tva.number).toBe(false);
+      expect(ig.number === ig.number).toBe(false);
     }
   );
 
-  // jce.test(
-  //   'string',
-  //   1,
-  //   () => {
-  //     expect(tva.string === tva.string).toBe(false);
-  //   }
-  // );
+  jce.test(
+    'string',
+    1,
+    () => {
+      expect(ig.string === ig.string).toBe(false);
+    }
+  );
 
   jce.test(
     'method',
     1,
     () => {
-      expect(tva.method() === tva.method()).toBe(false);
+      expect(ig.method() === ig.method()).toBe(false);
     }
   );
 
@@ -40,7 +41,7 @@ jce.describe(() => {
     'date',
     1,
     () => {
-      expect(tva.date === tva.date).toBe(false);
+      expect(ig.date === ig.date).toBe(false);
     }
   );
 
@@ -48,7 +49,7 @@ jce.describe(() => {
     'undefined',
     1,
     () => {
-      expect(tva.undefined === tva.undefined).toBe(false);
+      expect(ig.undefined === ig.undefined).toBe(false);
     }
   );
 
@@ -56,7 +57,7 @@ jce.describe(() => {
     'array',
     1,
     () => {
-      expect(tva.array(tva.any) === tva.array(tva.any)).toBe(false);
+      expect(ig.array(ig.any) === ig.array(ig.any)).toBe(false);
     }
   );
 
@@ -64,7 +65,7 @@ jce.describe(() => {
     'strict',
     1,
     () => {
-      expect(tva.strict(tva.any) === tva.strict(tva.any)).toBe(false);
+      expect(ig.strict(ig.any) === ig.strict(ig.any)).toBe(false);
     }
   );
 
@@ -72,7 +73,7 @@ jce.describe(() => {
     'union',
     1,
     () => {
-      expect(tva.union(tva.any, tva.any) === tva.union(tva.any, tva.any)).toBe(false);
+      expect(ig.union(ig.any, ig.any) === ig.union(ig.any, ig.any)).toBe(false);
     }
   );
 
@@ -80,7 +81,7 @@ jce.describe(() => {
     'object',
     1,
     () => {
-      expect(tva.object({}) === tva.object({})).toBe(false);
+      expect(ig.object({}) === ig.object({})).toBe(false);
     }
   );
 
@@ -88,7 +89,7 @@ jce.describe(() => {
     'dictionary',
     1,
     () => {
-      expect(tva.dictionary(tva.any) === tva.dictionary(tva.any)).toBe(false);
+      expect(ig.dictionary(ig.any) === ig.dictionary(ig.any)).toBe(false);
     }
   );
 
@@ -96,7 +97,7 @@ jce.describe(() => {
     'any',
     1,
     () => {
-      expect(tva.any === tva.any).toBe(false);
+      expect(ig.any === ig.any).toBe(false);
     }
   );
 
@@ -104,7 +105,7 @@ jce.describe(() => {
     'optional',
     1,
     () => {
-      expect(tva.optional(tva.any) === tva.optional(tva.any)).toBe(false);
+      expect(ig.optional(ig.any) === ig.optional(ig.any)).toBe(false);
     }
   );
 });

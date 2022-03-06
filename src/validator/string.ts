@@ -1,6 +1,6 @@
-import { Validator } from '.';
 import { email, uri } from '@sideway/address';
 import { URL } from 'url';
+import { Validator } from '.';
 
 /**
  * Validator for string values.
@@ -13,6 +13,7 @@ export class StringValidator extends Validator<string> {
   /**
    * define minimum string length
    *
+   * @since 1.0.0
    * @param {number} min_
    * @return {*}  {this}
    * @memberof StringValidator
@@ -24,6 +25,7 @@ export class StringValidator extends Validator<string> {
   /**
    * define maximum string length
    *
+   * @since 1.0.0
    * @param {number} max_
    * @return {*}  {this}
    * @memberof StringValidator
@@ -35,17 +37,19 @@ export class StringValidator extends Validator<string> {
   /**
    * define accepted values or patterns
    *
+   * @since 1.0.0
    * @param {(...ReadonlyArray<(string | RegExp)>)} accepted_
    * @return {*}  {this}
    * @memberof StringValidator
    */
   public accept(...accepted_: ReadonlyArray<(string | RegExp)>): this {
-    return this.setupCondition(value_ => this.checkAccept(value_, accepted_));
+    return this.setupCondition(value_ => this.checkAccepted(value_, accepted_));
   }
 
   /**
    * define rejected values or patterns
    *
+   * @since 1.0.0
    * @param {(...ReadonlyArray<(string | RegExp)>)} rejected_
    * @return {*}  {this}
    * @memberof StringValidator
@@ -57,6 +61,7 @@ export class StringValidator extends Validator<string> {
   /**
    * specify exact string length
    *
+   * @since 1.0.0
    * @param {number} length_
    * @return {*}  {this}
    * @memberof StringValidator
@@ -68,6 +73,7 @@ export class StringValidator extends Validator<string> {
   /**
    * reject empty string
    *
+   * @since 1.0.0
    * @readonly
    * @type {this}
    * @memberof StringValidator
@@ -79,6 +85,7 @@ export class StringValidator extends Validator<string> {
   /**
    * value has to be a base64 encoded string
    *
+   * @since 1.0.0
    * @readonly
    * @type {this}
    * @memberof StringValidator
@@ -89,7 +96,9 @@ export class StringValidator extends Validator<string> {
 
   /**
    * value has to be a json string (stringified instance)
+   * HINT: This check uses try-catch on JSON.parse. Keep this in mind for performance reasons (multiple parsing)
    *
+   * @since 1.0.0
    * @readonly
    * @type {this}
    * @memberof StringValidator
@@ -101,6 +110,7 @@ export class StringValidator extends Validator<string> {
   /**
    * string has to be a valid ISO8601 date string
    *
+   * @since 1.0.0
    * @readonly
    * @type {this}
    * @memberof StringValidator
@@ -112,6 +122,7 @@ export class StringValidator extends Validator<string> {
   /**
    * string has to be convertable to a number
    *
+   * @since 1.0.0
    * @readonly
    * @type {this}
    * @memberof StringValidator
@@ -121,8 +132,9 @@ export class StringValidator extends Validator<string> {
   }
 
   /**
-   * string has to be an uuid
+   * string has to be an uuid (e.g. db91dc9f-9481-4843-a74b-4d027114102e)
    *
+   * @since 1.0.0
    * @readonly
    * @type {this}
    * @memberof StringValidator
@@ -133,111 +145,56 @@ export class StringValidator extends Validator<string> {
 
   /**
    * string has to be an email.
-   * HINT: this validation is not perfect. False negative results may occure.
    *
+   * @since 1.0.0
    * @readonly
    * @type {this}
    * @memberof StringValidator
    */
   public get email(): this {
-    this._mail = true;
-    return this;
+    return this.setupCondition(value_ => this.checkEmail(value_));
   }
 
+  /**
+   * string has to be an uri
+   *
+   * @since 1.0.0
+   * @readonly
+   * @type {this}
+   * @memberof StringValidator
+   */
   public get uri(): this {
-    this._uri = true;
-    return this;
+    return this.setupCondition(value_ => this.checkUri(value_));
   }
 
+  /**
+   * string has to be an uri
+   *
+   * @since 1.0.0
+   * @requires "WebWorker" lib when used in frontend web application
+   * @readonly
+   * @type {this}
+   * @memberof StringValidator
+   */
   public get url(): this {
-    this._url = true;
-    return this;
+    return this.setupCondition(value_ => this.checkUrl(value_));
+  }
+
+  /**
+   * string has to contain hexadecimal characters only
+   *
+   * @since 1.0.0
+   * @readonly
+   * @type {this}
+   * @memberof StringValidator
+   */
+  public get hex(): this {
+    return this.setupCondition(value_ => this.checkHex(value_));
   }
 
   protected validateBaseType(value_: unknown): string {
     if (typeof value_ !== 'string') {
       this.throwValidationError('value is not a string');
-    }
-
-    if (!this._allowEmpty && value_ === '') {
-      this.throwValidationError('string is empty');
-    }
-
-    if (this._length !== undefined && value_.length !== this._length) {
-      this.throwValidationError('string has invalid length');
-    }
-
-    if (this._min && value_.length < this._min) {
-      this.throwValidationError('string length is too short');
-    }
-
-    if (this._max && value_.length > this._max) {
-      this.throwValidationError('string length is too long');
-    }
-
-    if (this._allowed) {
-      let matched = false;
-
-      for (let i = 0; i < this._allowed.length; i++) {
-        if (this.matches(this._allowed[i], value_)) {
-          matched = true;
-          break;
-        }
-      }
-
-      if (!matched) {
-        this.throwValidationError('string is not allowed');
-      }
-    }
-
-    if (this._denied) {
-      for (let i = 0; i < this._denied.length; i++) {
-        if (this.matches(this._denied[i], value_)) {
-          this.throwValidationError('string is denied');
-        }
-      }
-    }
-
-    if (
-      this._base64
-      && !/^([0-9a-zA-Z+\/]{4})*(([0-9a-zA-Z+\/]{2}==)|([0-9a-zA-Z+\/]{3}=))?$/.test(value_)
-    ) {
-      this.throwValidationError('string is not base64 encoded');
-    }
-
-    if (this._json && !this.isJsonString(value_)) {
-      this.throwValidationError('string is not a json string');
-    }
-
-    if (this._date && isNaN(new Date(value_).getTime())) {
-      this.throwValidationError('string is not iso 8601 date');
-    }
-
-    if (this._numeric && isNaN(Number(value_))) {
-      this.throwValidationError('string is not numeric');
-    }
-
-    if (
-      this._uuid
-      && !/^[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}$/.test(value_)
-    ) {
-      this.throwValidationError('string is not an uuid');
-    }
-
-    if (this._mail && !email.isValid(value_)) {
-      this.throwValidationError('string is not an email');
-    }
-
-    if (this._uri && !uri.regex({ allowQuerySquareBrackets: true }).regex.test(value_)) {
-      this.throwValidationError('string is not a uri');
-    }
-
-    if (this._url) {
-      try {
-        new URL(value_); // requires WebWorkers in browser
-      } catch {
-        this.throwValidationError('string is not a url');
-      }
     }
 
     return value_;
@@ -259,5 +216,107 @@ export class StringValidator extends Validator<string> {
     }
 
     return true;
+  }
+
+  private checkEmpty(value_: string): void {
+    if (value_ === '') {
+      this.throwValidationError('string is empty');
+    }
+  }
+
+  private checkShortest(value_: string, shortest_: number): void {
+    if (value_.length < shortest_) {
+      this.throwValidationError('string length is too short');
+    }
+  }
+
+  private checkLongest(value_: string, longest_: number): void {
+    if (value_.length > longest_) {
+      this.throwValidationError('string length is too long');
+    }
+  }
+
+  private checkLength(value_: string, length_: number): void {
+    if (value_.length !== length_) {
+      this.throwValidationError('string has invalid length');
+    }
+  }
+
+  private checkAccepted(value_: string, accepted_: ReadonlyArray<(string | RegExp)>): void {
+    for (let i = 0; i < accepted_.length; i++) {
+      if (this.matches(accepted_[i], value_)) {
+        return;
+      }
+    }
+
+    this.throwValidationError('string is not accepted');
+  }
+
+  private checkRejected(value_: string, rejected_: ReadonlyArray<(string | RegExp)>): void {
+    for (let i = 0; i < rejected_.length; i++) {
+      if (this.matches(rejected_[i], value_)) {
+        this.throwValidationError('string is rejected');
+      }
+    }
+  }
+
+  private checkBase64(value_: string): void {
+    if (!/^([0-9a-zA-Z+\/]{4})*(([0-9a-zA-Z+\/]{2}==)|([0-9a-zA-Z+\/]{3}=))?$/.test(value_)) {
+      this.throwValidationError('string is not base64 encoded');
+    }
+  }
+
+  private checkJson(value_: string): void {
+    if (!this.isJsonString(value_)) {
+      this.throwValidationError('string is not a valid json string');
+    }
+  }
+
+  private checkDate(value_: string): void {
+    if (isNaN(new Date(value_).getTime())) {
+      this.throwValidationError('string is not iso 8601 date string');
+    }
+  }
+
+  private checkNumeric(value_: string): void {
+    if (!isFinite(Number(value_))) {
+      this.throwValidationError('string is not numeric');
+    }
+  }
+
+  private checkUuid(value_: string): void {
+    if (!/^[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}$/.test(value_)) {
+      this.throwValidationError('string is not an uuid');
+    }
+  }
+
+  private checkHex(value_: string): void {
+    if (!/^[0-9a-fA-F]+$/.test(value_)) {
+      this.throwValidationError('string is not a hexadecimal value');
+    }
+  }
+
+  private checkEmail(value_: string): void {
+    if (!email.isValid(value_)) {
+      this.throwValidationError('string is not an email address');
+    }
+  }
+
+  private checkUri(value_: string): void {
+    if (!uri.regex({ allowQuerySquareBrackets: true }).regex.test(value_)) {
+      this.throwValidationError('string is not a uri');
+    }
+  }
+
+  private checkUrl(value_: string): void {
+    if (!URL) {
+      this.throwValidationError('URL is not defined! Please use "Webworker" lib for frontend web applications');
+    }
+
+    try {
+      new URL(value_); // requires WebWorkers in browser
+    } catch {
+      this.throwValidationError('string is not a url');
+    }
   }
 }

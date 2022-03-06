@@ -1,7 +1,8 @@
 import { JestClassExtended } from 'jest-class-extended';
-import tva from '../../../src';
+import { InspectorGadget } from '../../../src/inspectorGadget';
 import { DateValidator } from '../../../src/validator/date';
 
+const ig = new InspectorGadget();
 const jce = new JestClassExtended(DateValidator);
 
 const dateString1 = '2020-01-02';
@@ -16,9 +17,9 @@ jce.describe(() => {
     ['isValid', 'success'],
     3,
     () => {
-      expect(tva.date.isValid(new Date())).toBe(true);
-      expect(tva.date.isValid(date1)).toBe(true);
-      expect(tva.date.isValid(date2)).toBe(true);
+      expect(ig.date.isValid(new Date())).toBe(true);
+      expect(ig.date.isValid(date1)).toBe(true);
+      expect(ig.date.isValid(date2)).toBe(true);
     }
   );
 
@@ -26,15 +27,15 @@ jce.describe(() => {
     ['isValid', 'failure'],
     9,
     () => {
-      expect(tva.date.isValid(undefined)).toBe(false);
-      expect(tva.date.isValid(null)).toBe(false);
-      expect(tva.date.isValid(Date.now())).toBe(false);
-      expect(tva.date.isValid(new Date('nonsense'))).toBe(false);
-      expect(tva.date.isValid('42')).toBe(false);
-      expect(tva.date.isValid(42)).toBe(false);
-      expect(tva.date.isValid({ oh: 'no'})).toBe(false);
-      expect(tva.date.isValid(/.*oh.*no:+/)).toBe(false);
-      expect(tva.date.isValid(() => ({ oh: 'no'}))).toBe(false);
+      expect(ig.date.isValid(undefined)).toBe(false);
+      expect(ig.date.isValid(null)).toBe(false);
+      expect(ig.date.isValid(Date.now())).toBe(false);
+      expect(ig.date.isValid(new Date('nonsense'))).toBe(false);
+      expect(ig.date.isValid('42')).toBe(false);
+      expect(ig.date.isValid(42)).toBe(false);
+      expect(ig.date.isValid({ oh: 'no' })).toBe(false);
+      expect(ig.date.isValid(/.*oh.*no:+/)).toBe(false);
+      expect(ig.date.isValid(() => ({ oh: 'no' }))).toBe(false);
     }
   );
 
@@ -42,29 +43,29 @@ jce.describe(() => {
     ['isValid', 'correct conditions'],
     21,
     () => {
-      expect(tva.date.min(date1).max(date2).isValid(date1)).toBe(true);
-      expect(tva.date.min(date1).max(date2).isValid(date2)).toBe(true);
-      expect(tva.date.allow(date1, date2).isValid(date1)).toBe(true);
-      expect(tva.date.allow(date1, date2).isValid(date2)).toBe(true);
-      expect(tva.date.deny(date1).isValid(date2)).toBe(true);
-      expect(tva.date.deny(date2).isValid(date1)).toBe(true);
-      expect(tva.date.custom(value_ => value_ === date1 ? undefined : 'invalid').isValid(date1)).toBe(true);
+      expect(ig.date.earliest(date1).latest(date2).isValid(date1)).toBe(true);
+      expect(ig.date.earliest(date1).latest(date2).isValid(date2)).toBe(true);
+      expect(ig.date.accept(date1, date2).isValid(date1)).toBe(true);
+      expect(ig.date.accept(date1, date2).isValid(date2)).toBe(true);
+      expect(ig.date.reject(date1).isValid(date2)).toBe(true);
+      expect(ig.date.reject(date2).isValid(date1)).toBe(true);
+      expect(ig.date.custom(value_ => value_ === date1 ? undefined : 'invalid').isValid(date1)).toBe(true);
 
-      expect(tva.date.min(dateNumber1).max(dateNumber2).isValid(date1)).toBe(true);
-      expect(tva.date.min(dateNumber1).max(dateNumber2).isValid(date2)).toBe(true);
-      expect(tva.date.allow(dateNumber1, dateNumber2).isValid(date1)).toBe(true);
-      expect(tva.date.allow(dateNumber1, dateNumber2).isValid(date2)).toBe(true);
-      expect(tva.date.deny(dateNumber1).isValid(date2)).toBe(true);
-      expect(tva.date.deny(dateNumber2).isValid(date1)).toBe(true);
+      expect(ig.date.earliest(dateNumber1).latest(dateNumber2).isValid(date1)).toBe(true);
+      expect(ig.date.earliest(dateNumber1).latest(dateNumber2).isValid(date2)).toBe(true);
+      expect(ig.date.accept(dateNumber1, dateNumber2).isValid(date1)).toBe(true);
+      expect(ig.date.accept(dateNumber1, dateNumber2).isValid(date2)).toBe(true);
+      expect(ig.date.reject(dateNumber1).isValid(date2)).toBe(true);
+      expect(ig.date.reject(dateNumber2).isValid(date1)).toBe(true);
 
-      expect(tva.date.min(dateString1).max(dateString2).isValid(date1)).toBe(true);
-      expect(tva.date.min(dateString1).max(dateString2).isValid(date2)).toBe(true);
-      expect(tva.date.allow(dateString1, dateString2).isValid(date1)).toBe(true);
-      expect(tva.date.allow(dateString1, dateString2).isValid(date2)).toBe(true);
-      expect(tva.date.deny(dateString1).isValid(date2)).toBe(true);
-      expect(tva.date.deny(dateString2).isValid(date1)).toBe(true);
-      expect(tva.date.min('invalid date string').max(dateString2).isValid(date1)).toBe(true);
-      expect(tva.date.min(dateString1).max('invalid date string').isValid(date1)).toBe(true);
+      expect(ig.date.earliest(dateString1).latest(dateString2).isValid(date1)).toBe(true);
+      expect(ig.date.earliest(dateString1).latest(dateString2).isValid(date2)).toBe(true);
+      expect(ig.date.accept(dateString1, dateString2).isValid(date1)).toBe(true);
+      expect(ig.date.accept(dateString1, dateString2).isValid(date2)).toBe(true);
+      expect(ig.date.reject(dateString1).isValid(date2)).toBe(true);
+      expect(ig.date.reject(dateString2).isValid(date1)).toBe(true);
+      expect(ig.date.earliest('invalid date string').latest(dateString2).isValid(date1)).toBe(true);
+      expect(ig.date.earliest(dateString1).latest('invalid date string').isValid(date1)).toBe(true);
     }
   );
 
@@ -72,29 +73,29 @@ jce.describe(() => {
     ['isValid', 'incorrect conditions'],
     20,
     () => {
-      expect(tva.date.min(date2).max(date1).isValid(date1)).toBe(false);
-      expect(tva.date.min(date2).max(date1).isValid(date2)).toBe(false);
-      expect(tva.date.allow(date2).isValid(date1)).toBe(false);
-      expect(tva.date.allow(date1).isValid(date2)).toBe(false);
-      expect(tva.date.deny(date1).isValid(date1)).toBe(false);
-      expect(tva.date.deny(date2).isValid(date2)).toBe(false);
-      expect(tva.date.custom(value_ => value_ === date2 ? undefined : 'invalid').isValid(date1)).toBe(false);
+      expect(ig.date.earliest(date2).latest(date1).isValid(date1)).toBe(false);
+      expect(ig.date.earliest(date2).latest(date1).isValid(date2)).toBe(false);
+      expect(ig.date.accept(date2).isValid(date1)).toBe(false);
+      expect(ig.date.accept(date1).isValid(date2)).toBe(false);
+      expect(ig.date.reject(date1).isValid(date1)).toBe(false);
+      expect(ig.date.reject(date2).isValid(date2)).toBe(false);
+      expect(ig.date.custom(value_ => value_ === date2 ? undefined : 'invalid').isValid(date1)).toBe(false);
 
-      expect(tva.date.min(dateNumber2).max(dateNumber1).isValid(date1)).toBe(false);
-      expect(tva.date.min(dateNumber2).max(dateNumber1).isValid(date2)).toBe(false);
-      expect(tva.date.allow(dateNumber2).isValid(date1)).toBe(false);
-      expect(tva.date.allow(dateNumber1).isValid(date2)).toBe(false);
-      expect(tva.date.deny(dateNumber1).isValid(date1)).toBe(false);
-      expect(tva.date.deny(dateNumber2).isValid(date2)).toBe(false);
+      expect(ig.date.earliest(dateNumber2).latest(dateNumber1).isValid(date1)).toBe(false);
+      expect(ig.date.earliest(dateNumber2).latest(dateNumber1).isValid(date2)).toBe(false);
+      expect(ig.date.accept(dateNumber2).isValid(date1)).toBe(false);
+      expect(ig.date.accept(dateNumber1).isValid(date2)).toBe(false);
+      expect(ig.date.reject(dateNumber1).isValid(date1)).toBe(false);
+      expect(ig.date.reject(dateNumber2).isValid(date2)).toBe(false);
 
-      expect(tva.date.min(dateString2).max(dateString1).isValid(date1)).toBe(false);
-      expect(tva.date.min(dateString2).max(dateString1).isValid(date2)).toBe(false);
-      expect(tva.date.allow(dateString2).isValid(date1)).toBe(false);
-      expect(tva.date.allow(dateString1).isValid(date2)).toBe(false);
-      expect(tva.date.deny(dateString1).isValid(date1)).toBe(false);
-      expect(tva.date.deny(dateString2).isValid(date2)).toBe(false);
+      expect(ig.date.earliest(dateString2).latest(dateString1).isValid(date1)).toBe(false);
+      expect(ig.date.earliest(dateString2).latest(dateString1).isValid(date2)).toBe(false);
+      expect(ig.date.accept(dateString2).isValid(date1)).toBe(false);
+      expect(ig.date.accept(dateString1).isValid(date2)).toBe(false);
+      expect(ig.date.reject(dateString1).isValid(date1)).toBe(false);
+      expect(ig.date.reject(dateString2).isValid(date2)).toBe(false);
 
-      expect(tva.date.allow('invalid date string').isValid(date1)).toBe(false);
+      expect(ig.date.accept('invalid date string').isValid(date1)).toBe(false);
     }
   );
 });

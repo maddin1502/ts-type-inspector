@@ -3,7 +3,7 @@ import { Validator } from '.';
 import type { ArrayItemValidator, ArrayItemValidatorArray } from '../types';
 
 /**
- * Validator for array-like values
+ * Validator for array values
  *
  * @since 1.0.0
  * @export

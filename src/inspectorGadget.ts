@@ -1,7 +1,7 @@
 import type { Dictionary, DictionaryValue } from 'ts-lib-extended';
 import type {
   ArrayItemValidator,
-  ArrayItemValidatorArray, MethodLike,
+  ArrayItemValidatorArray, CustomValidation, MethodLike,
   ObjectLike,
   PropertyValidators,
   StrictValues,
@@ -13,6 +13,7 @@ import type {
 import { AnyValidator } from './validator/any';
 import { ArrayValidator } from './validator/array';
 import { BooleanValidator } from './validator/boolean';
+import { CustomValidator } from './validator/custom';
 import { DateValidator } from './validator/date';
 import { DictionaryValidator } from './validator/dictionary';
 import { MethodValidator } from './validator/method';
@@ -25,14 +26,21 @@ import { StringValidator } from './validator/string';
 import { UndefinedValidator } from './validator/undefined';
 import { UnionValidator } from './validator/union';
 
-export class TypedValueApprover {
+/**
+ * Collection of gadgets for type inspection
+ *
+ * @summary Go Go Gadget 😉
+ * @export
+ * @class InspectorGadget
+ */
+export class InspectorGadget {
   /**
    * Validate string values.
    *
    * @since 1.0.0
    * @readonly
    * @type {StringValidator}
-   * @memberof TypedValueApprover
+   * @memberof InspectorGadget
    */
   public get string(): StringValidator { return new StringValidator(); }
 
@@ -42,7 +50,7 @@ export class TypedValueApprover {
    * @since 1.0.0
    * @readonly
    * @type {NumberValidator}
-   * @memberof TypedValueApprover
+   * @memberof InspectorGadget
    */
   public get number(): NumberValidator { return new NumberValidator(); }
 
@@ -52,7 +60,7 @@ export class TypedValueApprover {
    * @since 1.0.0
    * @readonly
    * @type {BooleanValidator}
-   * @memberof TypedValueApprover
+   * @memberof InspectorGadget
    */
   public get boolean(): BooleanValidator { return new BooleanValidator(); }
 
@@ -63,7 +71,7 @@ export class TypedValueApprover {
    * @since 1.0.0
    * @template V
    * @return {*}  {MethodValidator<V>}
-   * @memberof TypedValueApprover
+   * @memberof InspectorGadget
    */
   public method<V extends MethodLike>(): MethodValidator<V> {
     return new MethodValidator<V>();
@@ -75,7 +83,7 @@ export class TypedValueApprover {
    * @since 1.0.0
    * @readonly
    * @type {DateValidator}
-   * @memberof TypedValueApprover
+   * @memberof InspectorGadget
    */
   public get date(): DateValidator { return new DateValidator(); }
 
@@ -85,7 +93,7 @@ export class TypedValueApprover {
    * @since 1.0.0
    * @readonly
    * @type {UndefinedValidator}
-   * @memberof TypedValueApprover
+   * @memberof InspectorGadget
    */
   public get undefined(): UndefinedValidator { return new UndefinedValidator(); }
 
@@ -95,7 +103,7 @@ export class TypedValueApprover {
    * @since 1.0.0
    * @readonly
    * @type {NullValidator}
-   * @memberof TypedValueApprover
+   * @memberof InspectorGadget
    */
   public get null(): NullValidator { return new NullValidator(); }
 
@@ -105,31 +113,27 @@ export class TypedValueApprover {
    * @since 1.0.0
    * @template V
    * @template S
-   * @param {...S} values_
+   * @param {...S} values_ List of values that are accepted
    * @return {*}  {StrictValidator<V, S>}
-   * @memberof TypedValueApprover
+   * @memberof InspectorGadget
    */
   public strict<V extends StrictValuesItem<S>, S extends StrictValues = StrictValues<V>>(...values_: S): StrictValidator<V, S> {
     return new StrictValidator<V, S>(...values_);
   }
 
   /**
-   * Validate array-like values
+   * Validate array values
    *
    * @since 1.0.0
    * @template A
    * @template V
-   * @param {V} itemValidator_
+   * @param {V} itemValidator_ Validator for array items
    * @return {*}  {ArrayValidator<A>}
-   * @memberof TypedValueApprover
+   * @memberof InspectorGadget
    */
   public array<A extends ArrayItemValidatorArray<V>, V extends ArrayItemValidator = ArrayItemValidator<A>>(itemValidator_: V): ArrayValidator<A> {
     return new ArrayValidator<A>(itemValidator_);
   }
-
-  // public arrayLike<A extends ArrayLikeItemValidatorArray<V>, V extends ArrayLikeItemValidator = ArrayLikeItemValidator<A>>(itemValidator_: V): ArrayLikeValidator<A> {
-  //   return new ArrayLikeValidator<A>(itemValidator_);
-  // }
 
   /**
    * Validate union types like "string | number" or optional properties.
@@ -138,9 +142,9 @@ export class TypedValueApprover {
    * @since 1.0.0
    * @template V
    * @template U
-   * @param {...U} validators_
+   * @param {...U} validators_ Validators for each part of the union type
    * @return {*}  {UnionValidator<V>}
-   * @memberof TypedValueApprover
+   * @memberof InspectorGadget
    */
   public union<V extends UnitedValidatorsItem<U>, U extends UnitedValidators = UnitedValidators<V>>(
     ...validators_: U
@@ -153,9 +157,9 @@ export class TypedValueApprover {
    *
    * @since 1.0.0
    * @template V
-   * @param {PropertyValidators<V>} propertyValidators_
+   * @param {PropertyValidators<V>} propertyValidators_ Validators for each object property
    * @return {*}  {ObjectValidator<V>}
-   * @memberof TypedValueApprover
+   * @memberof InspectorGadget
    */
   public object<V extends ObjectLike>(propertyValidators_: PropertyValidators<V>): ObjectValidator<V> {
     return new ObjectValidator<V>(propertyValidators_);
@@ -166,9 +170,9 @@ export class TypedValueApprover {
    *
    * @since 1.0.0
    * @template V
-   * @param {Validatable<DictionaryValue<V>>} itemValidator_
+   * @param {Validatable<DictionaryValue<V>>} itemValidator_ Validator for dictionary values
    * @return {*}  {DictionaryValidator<V>}
-   * @memberof TypedValueApprover
+   * @memberof InspectorGadget
    */
   public dictionary<V extends Dictionary>(itemValidator_: Validatable<DictionaryValue<V>>): DictionaryValidator<V> {
     return new DictionaryValidator<V>(itemValidator_);
@@ -180,7 +184,7 @@ export class TypedValueApprover {
    * @since 1.0.0
    * @readonly
    * @type {AnyValidator}
-   * @memberof TypedValueApprover
+   * @memberof InspectorGadget
    */
   public get any(): AnyValidator {
     return new AnyValidator();
@@ -191,11 +195,24 @@ export class TypedValueApprover {
    *
    * @since 1.0.0
    * @template V
-   * @param {Validatable<V>} validator_
+   * @param {Validatable<V>} validator_ Validator for the non-optional part
    * @return {*}  {OptionalValidator<V>}
-   * @memberof TypedValueApprover
+   * @memberof InspectorGadget
    */
   public optional<V>(validator_: Validatable<V>): OptionalValidator<V> {
     return new OptionalValidator(validator_);
+  }
+
+  /**
+   * Validator for custom value validation
+   *
+   * @since 1.0.0
+   * @template V
+   * @param {CustomValidation<unknown>} validationCallback_ Return an error message if validation fails; else undefined
+   * @return {*}  {CustomValidator<V>}
+   * @memberof InspectorGadget
+   */
+  public custom<V>(validationCallback_: CustomValidation<unknown>): CustomValidator<V> {
+    return new CustomValidator(validationCallback_);
   }
 }
