@@ -1,8 +1,8 @@
 import { JestClassExtended } from 'jest-class-extended';
-import { InspectorGadget } from '../../../src/inspectorGadget';
+import { TypeInspector } from '../../../src/inspector';
 import { UndefinedValidator } from '../../../src/validator/undefined';
 
-const ig = new InspectorGadget();
+const ti = new TypeInspector();
 const jce = new JestClassExtended(UndefinedValidator);
 
 jce.describe(() => {
@@ -10,7 +10,7 @@ jce.describe(() => {
     ['isValid', 'success'],
     1,
     () => {
-      expect(ig.undefined.isValid(undefined)).toBe(true);
+      expect(ti.undefined.isValid(undefined)).toBe(true);
     }
   );
 
@@ -18,14 +18,14 @@ jce.describe(() => {
     ['isValid', 'failure'],
     8,
     () => {
-      expect(ig.undefined.isValid(null)).toBe(false);
-      expect(ig.undefined.isValid(Date.now())).toBe(false);
-      expect(ig.undefined.isValid(new Date('nonsense'))).toBe(false);
-      expect(ig.undefined.isValid('42')).toBe(false);
-      expect(ig.undefined.isValid(42)).toBe(false);
-      expect(ig.undefined.isValid({ oh: 'no' })).toBe(false);
-      expect(ig.undefined.isValid(/.*oh.*no:+/)).toBe(false);
-      expect(ig.undefined.isValid(() => ({ oh: 'no' }))).toBe(false);
+      expect(ti.undefined.isValid(null)).toBe(false);
+      expect(ti.undefined.isValid(Date.now())).toBe(false);
+      expect(ti.undefined.isValid(new Date('nonsense'))).toBe(false);
+      expect(ti.undefined.isValid('42')).toBe(false);
+      expect(ti.undefined.isValid(42)).toBe(false);
+      expect(ti.undefined.isValid({ oh: 'no' })).toBe(false);
+      expect(ti.undefined.isValid(/.*oh.*no:+/)).toBe(false);
+      expect(ti.undefined.isValid(() => ({ oh: 'no' }))).toBe(false);
     }
   );
 });

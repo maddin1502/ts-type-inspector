@@ -1,7 +1,11 @@
-import type { Dictionary, DictionaryValue } from 'ts-lib-extended';
+import type { Dictionary, DictionaryValue, Enumerable } from 'ts-lib-extended';
 import type {
   ArrayItemValidator,
-  ArrayItemValidatorArray, CustomValidation, MethodLike,
+  ArrayItemValidatorArray,
+  CustomValidation,
+  EnumerableMapValue,
+  EnumerableValue,
+  MethodLike,
   ObjectLike,
   PropertyValidators,
   StrictValues,
@@ -16,8 +20,10 @@ import { BooleanValidator } from './validator/boolean';
 import { CustomValidator } from './validator/custom';
 import { DateValidator } from './validator/date';
 import { DictionaryValidator } from './validator/dictionary';
+import { EnumValidator } from './validator/enum';
 import { MethodValidator } from './validator/method';
 import { NullValidator } from './validator/null';
+import { NullishValidator } from './validator/nullish';
 import { NumberValidator } from './validator/number';
 import { ObjectValidator } from './validator/object';
 import { OptionalValidator } from './validator/optional';
@@ -29,18 +35,17 @@ import { UnionValidator } from './validator/union';
 /**
  * Collection of gadgets for type inspection
  *
- * @summary Go Go Gadget 😉
  * @export
- * @class InspectorGadget
+ * @class TypeInspector
  */
-export class InspectorGadget {
+export class TypeInspector {
   /**
    * Validate string values.
    *
    * @since 1.0.0
    * @readonly
    * @type {StringValidator}
-   * @memberof InspectorGadget
+   * @memberof TypeInspector
    */
   public get string(): StringValidator { return new StringValidator(); }
 
@@ -50,7 +55,7 @@ export class InspectorGadget {
    * @since 1.0.0
    * @readonly
    * @type {NumberValidator}
-   * @memberof InspectorGadget
+   * @memberof TypeInspector
    */
   public get number(): NumberValidator { return new NumberValidator(); }
 
@@ -60,7 +65,7 @@ export class InspectorGadget {
    * @since 1.0.0
    * @readonly
    * @type {BooleanValidator}
-   * @memberof InspectorGadget
+   * @memberof TypeInspector
    */
   public get boolean(): BooleanValidator { return new BooleanValidator(); }
 
@@ -69,12 +74,12 @@ export class InspectorGadget {
    * Unfortunately (for technical reasons), this validator can only validate the number of parameters.
    *
    * @since 1.0.0
-   * @template V
-   * @return {*}  {MethodValidator<V>}
-   * @memberof InspectorGadget
+   * @readonly
+   * @type {MethodValidator<MethodLike>}
+   * @memberof TypeInspector
    */
-  public method<V extends MethodLike>(): MethodValidator<V> {
-    return new MethodValidator<V>();
+  public get method(): MethodValidator<MethodLike> {
+    return new MethodValidator<MethodLike>();
   }
 
   /**
@@ -83,7 +88,7 @@ export class InspectorGadget {
    * @since 1.0.0
    * @readonly
    * @type {DateValidator}
-   * @memberof InspectorGadget
+   * @memberof TypeInspector
    */
   public get date(): DateValidator { return new DateValidator(); }
 
@@ -93,7 +98,7 @@ export class InspectorGadget {
    * @since 1.0.0
    * @readonly
    * @type {UndefinedValidator}
-   * @memberof InspectorGadget
+   * @memberof TypeInspector
    */
   public get undefined(): UndefinedValidator { return new UndefinedValidator(); }
 
@@ -103,9 +108,18 @@ export class InspectorGadget {
    * @since 1.0.0
    * @readonly
    * @type {NullValidator}
-   * @memberof InspectorGadget
+   * @memberof TypeInspector
    */
   public get null(): NullValidator { return new NullValidator(); }
+
+  /**
+   * Validate nullish values
+   *
+   * @readonly
+   * @type {NullishValidator}
+   * @memberof TypeInspector
+   */
+  public get nullish(): NullishValidator { return new NullishValidator(); }
 
   /**
    * Validate values through strict equality (===). Keep in mind that objects are compared by reference
@@ -115,7 +129,7 @@ export class InspectorGadget {
    * @template S
    * @param {...S} values_ List of values that are accepted
    * @return {*}  {StrictValidator<V, S>}
-   * @memberof InspectorGadget
+   * @memberof TypeInspector
    */
   public strict<V extends StrictValuesItem<S>, S extends StrictValues = StrictValues<V>>(...values_: S): StrictValidator<V, S> {
     return new StrictValidator<V, S>(...values_);
@@ -129,7 +143,7 @@ export class InspectorGadget {
    * @template V
    * @param {V} itemValidator_ Validator for array items
    * @return {*}  {ArrayValidator<A>}
-   * @memberof InspectorGadget
+   * @memberof TypeInspector
    */
   public array<A extends ArrayItemValidatorArray<V>, V extends ArrayItemValidator = ArrayItemValidator<A>>(itemValidator_: V): ArrayValidator<A> {
     return new ArrayValidator<A>(itemValidator_);
@@ -144,7 +158,7 @@ export class InspectorGadget {
    * @template U
    * @param {...U} validators_ Validators for each part of the union type
    * @return {*}  {UnionValidator<V>}
-   * @memberof InspectorGadget
+   * @memberof TypeInspector
    */
   public union<V extends UnitedValidatorsItem<U>, U extends UnitedValidators = UnitedValidators<V>>(
     ...validators_: U
@@ -159,7 +173,7 @@ export class InspectorGadget {
    * @template V
    * @param {PropertyValidators<V>} propertyValidators_ Validators for each object property
    * @return {*}  {ObjectValidator<V>}
-   * @memberof InspectorGadget
+   * @memberof TypeInspector
    */
   public object<V extends ObjectLike>(propertyValidators_: PropertyValidators<V>): ObjectValidator<V> {
     return new ObjectValidator<V>(propertyValidators_);
@@ -172,7 +186,7 @@ export class InspectorGadget {
    * @template V
    * @param {Validatable<DictionaryValue<V>>} itemValidator_ Validator for dictionary values
    * @return {*}  {DictionaryValidator<V>}
-   * @memberof InspectorGadget
+   * @memberof TypeInspector
    */
   public dictionary<V extends Dictionary>(itemValidator_: Validatable<DictionaryValue<V>>): DictionaryValidator<V> {
     return new DictionaryValidator<V>(itemValidator_);
@@ -184,35 +198,54 @@ export class InspectorGadget {
    * @since 1.0.0
    * @readonly
    * @type {AnyValidator}
-   * @memberof InspectorGadget
+   * @memberof TypeInspector
    */
   public get any(): AnyValidator {
     return new AnyValidator();
   }
 
   /**
-   * Validator for optional properties/values
+   * Validate for optional properties/values
    *
    * @since 1.0.0
    * @template V
    * @param {Validatable<V>} validator_ Validator for the non-optional part
    * @return {*}  {OptionalValidator<V>}
-   * @memberof InspectorGadget
+   * @memberof TypeInspector
    */
   public optional<V>(validator_: Validatable<V>): OptionalValidator<V> {
     return new OptionalValidator(validator_);
   }
 
   /**
-   * Validator for custom value validation
+   * Validate with custom validation
    *
    * @since 1.0.0
    * @template V
    * @param {CustomValidation<unknown>} validationCallback_ Return an error message if validation fails; else undefined
    * @return {*}  {CustomValidator<V>}
-   * @memberof InspectorGadget
+   * @memberof TypeInspector
    */
   public custom<V>(validationCallback_: CustomValidation<unknown>): CustomValidator<V> {
     return new CustomValidator(validationCallback_);
+  }
+
+  /**
+   * Validate enum values
+   *
+   * @since 1.0.0
+   * @template V
+   * @template E
+   * @template TValue
+   * @param {E} enum_
+   * @param {Validatable<EnumerableMapValue<TValue>>} [validator_] validator for additional base type validation
+   * @return {*}  {EnumValidator<T, TEnum, TValue>}
+   * @memberof TypeInspector
+   */
+  public enum<V, E extends Enumerable<V>, TValue extends EnumerableValue<V, E>>(
+    enum_: E,
+    validator_?: Validatable<EnumerableMapValue<TValue>>
+  ): EnumValidator<V, E, TValue> {
+    return new EnumValidator(enum_, validator_);
   }
 }

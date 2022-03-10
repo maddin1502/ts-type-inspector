@@ -4,6 +4,7 @@ import type { Validatable } from '../types';
 /**
  * Validator for optional (maybe undefined) properties/values
  *
+ * @since 1.0.0
  * @export
  * @class OptionalValidator
  * @extends {(Validator<undefined | V>)}

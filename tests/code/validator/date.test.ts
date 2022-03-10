@@ -1,8 +1,8 @@
 import { JestClassExtended } from 'jest-class-extended';
-import { InspectorGadget } from '../../../src/inspectorGadget';
+import { TypeInspector } from '../../../src/inspector';
 import { DateValidator } from '../../../src/validator/date';
 
-const ig = new InspectorGadget();
+const ti = new TypeInspector();
 const jce = new JestClassExtended(DateValidator);
 
 const dateString1 = '2020-01-02';
@@ -17,9 +17,9 @@ jce.describe(() => {
     ['isValid', 'success'],
     3,
     () => {
-      expect(ig.date.isValid(new Date())).toBe(true);
-      expect(ig.date.isValid(date1)).toBe(true);
-      expect(ig.date.isValid(date2)).toBe(true);
+      expect(ti.date.isValid(new Date())).toBe(true);
+      expect(ti.date.isValid(date1)).toBe(true);
+      expect(ti.date.isValid(date2)).toBe(true);
     }
   );
 
@@ -27,15 +27,15 @@ jce.describe(() => {
     ['isValid', 'failure'],
     9,
     () => {
-      expect(ig.date.isValid(undefined)).toBe(false);
-      expect(ig.date.isValid(null)).toBe(false);
-      expect(ig.date.isValid(Date.now())).toBe(false);
-      expect(ig.date.isValid(new Date('nonsense'))).toBe(false);
-      expect(ig.date.isValid('42')).toBe(false);
-      expect(ig.date.isValid(42)).toBe(false);
-      expect(ig.date.isValid({ oh: 'no' })).toBe(false);
-      expect(ig.date.isValid(/.*oh.*no:+/)).toBe(false);
-      expect(ig.date.isValid(() => ({ oh: 'no' }))).toBe(false);
+      expect(ti.date.isValid(undefined)).toBe(false);
+      expect(ti.date.isValid(null)).toBe(false);
+      expect(ti.date.isValid(Date.now())).toBe(false);
+      expect(ti.date.isValid(new Date('nonsense'))).toBe(false);
+      expect(ti.date.isValid('42')).toBe(false);
+      expect(ti.date.isValid(42)).toBe(false);
+      expect(ti.date.isValid({ oh: 'no' })).toBe(false);
+      expect(ti.date.isValid(/.*oh.*no:+/)).toBe(false);
+      expect(ti.date.isValid(() => ({ oh: 'no' }))).toBe(false);
     }
   );
 
@@ -43,29 +43,29 @@ jce.describe(() => {
     ['isValid', 'correct conditions'],
     21,
     () => {
-      expect(ig.date.earliest(date1).latest(date2).isValid(date1)).toBe(true);
-      expect(ig.date.earliest(date1).latest(date2).isValid(date2)).toBe(true);
-      expect(ig.date.accept(date1, date2).isValid(date1)).toBe(true);
-      expect(ig.date.accept(date1, date2).isValid(date2)).toBe(true);
-      expect(ig.date.reject(date1).isValid(date2)).toBe(true);
-      expect(ig.date.reject(date2).isValid(date1)).toBe(true);
-      expect(ig.date.custom(value_ => value_ === date1 ? undefined : 'invalid').isValid(date1)).toBe(true);
+      expect(ti.date.earliest(date1).latest(date2).isValid(date1)).toBe(true);
+      expect(ti.date.earliest(date1).latest(date2).isValid(date2)).toBe(true);
+      expect(ti.date.accept(date1, date2).isValid(date1)).toBe(true);
+      expect(ti.date.accept(date1, date2).isValid(date2)).toBe(true);
+      expect(ti.date.reject(date1).isValid(date2)).toBe(true);
+      expect(ti.date.reject(date2).isValid(date1)).toBe(true);
+      expect(ti.date.custom(value_ => value_ === date1 ? undefined : 'invalid').isValid(date1)).toBe(true);
 
-      expect(ig.date.earliest(dateNumber1).latest(dateNumber2).isValid(date1)).toBe(true);
-      expect(ig.date.earliest(dateNumber1).latest(dateNumber2).isValid(date2)).toBe(true);
-      expect(ig.date.accept(dateNumber1, dateNumber2).isValid(date1)).toBe(true);
-      expect(ig.date.accept(dateNumber1, dateNumber2).isValid(date2)).toBe(true);
-      expect(ig.date.reject(dateNumber1).isValid(date2)).toBe(true);
-      expect(ig.date.reject(dateNumber2).isValid(date1)).toBe(true);
+      expect(ti.date.earliest(dateNumber1).latest(dateNumber2).isValid(date1)).toBe(true);
+      expect(ti.date.earliest(dateNumber1).latest(dateNumber2).isValid(date2)).toBe(true);
+      expect(ti.date.accept(dateNumber1, dateNumber2).isValid(date1)).toBe(true);
+      expect(ti.date.accept(dateNumber1, dateNumber2).isValid(date2)).toBe(true);
+      expect(ti.date.reject(dateNumber1).isValid(date2)).toBe(true);
+      expect(ti.date.reject(dateNumber2).isValid(date1)).toBe(true);
 
-      expect(ig.date.earliest(dateString1).latest(dateString2).isValid(date1)).toBe(true);
-      expect(ig.date.earliest(dateString1).latest(dateString2).isValid(date2)).toBe(true);
-      expect(ig.date.accept(dateString1, dateString2).isValid(date1)).toBe(true);
-      expect(ig.date.accept(dateString1, dateString2).isValid(date2)).toBe(true);
-      expect(ig.date.reject(dateString1).isValid(date2)).toBe(true);
-      expect(ig.date.reject(dateString2).isValid(date1)).toBe(true);
-      expect(ig.date.earliest('invalid date string').latest(dateString2).isValid(date1)).toBe(true);
-      expect(ig.date.earliest(dateString1).latest('invalid date string').isValid(date1)).toBe(true);
+      expect(ti.date.earliest(dateString1).latest(dateString2).isValid(date1)).toBe(true);
+      expect(ti.date.earliest(dateString1).latest(dateString2).isValid(date2)).toBe(true);
+      expect(ti.date.accept(dateString1, dateString2).isValid(date1)).toBe(true);
+      expect(ti.date.accept(dateString1, dateString2).isValid(date2)).toBe(true);
+      expect(ti.date.reject(dateString1).isValid(date2)).toBe(true);
+      expect(ti.date.reject(dateString2).isValid(date1)).toBe(true);
+      expect(ti.date.earliest('invalid date string').latest(dateString2).isValid(date1)).toBe(true);
+      expect(ti.date.earliest(dateString1).latest('invalid date string').isValid(date1)).toBe(true);
     }
   );
 
@@ -73,29 +73,29 @@ jce.describe(() => {
     ['isValid', 'incorrect conditions'],
     20,
     () => {
-      expect(ig.date.earliest(date2).latest(date1).isValid(date1)).toBe(false);
-      expect(ig.date.earliest(date2).latest(date1).isValid(date2)).toBe(false);
-      expect(ig.date.accept(date2).isValid(date1)).toBe(false);
-      expect(ig.date.accept(date1).isValid(date2)).toBe(false);
-      expect(ig.date.reject(date1).isValid(date1)).toBe(false);
-      expect(ig.date.reject(date2).isValid(date2)).toBe(false);
-      expect(ig.date.custom(value_ => value_ === date2 ? undefined : 'invalid').isValid(date1)).toBe(false);
+      expect(ti.date.earliest(date2).latest(date1).isValid(date1)).toBe(false);
+      expect(ti.date.earliest(date2).latest(date1).isValid(date2)).toBe(false);
+      expect(ti.date.accept(date2).isValid(date1)).toBe(false);
+      expect(ti.date.accept(date1).isValid(date2)).toBe(false);
+      expect(ti.date.reject(date1).isValid(date1)).toBe(false);
+      expect(ti.date.reject(date2).isValid(date2)).toBe(false);
+      expect(ti.date.custom(value_ => value_ === date2 ? undefined : 'invalid').isValid(date1)).toBe(false);
 
-      expect(ig.date.earliest(dateNumber2).latest(dateNumber1).isValid(date1)).toBe(false);
-      expect(ig.date.earliest(dateNumber2).latest(dateNumber1).isValid(date2)).toBe(false);
-      expect(ig.date.accept(dateNumber2).isValid(date1)).toBe(false);
-      expect(ig.date.accept(dateNumber1).isValid(date2)).toBe(false);
-      expect(ig.date.reject(dateNumber1).isValid(date1)).toBe(false);
-      expect(ig.date.reject(dateNumber2).isValid(date2)).toBe(false);
+      expect(ti.date.earliest(dateNumber2).latest(dateNumber1).isValid(date1)).toBe(false);
+      expect(ti.date.earliest(dateNumber2).latest(dateNumber1).isValid(date2)).toBe(false);
+      expect(ti.date.accept(dateNumber2).isValid(date1)).toBe(false);
+      expect(ti.date.accept(dateNumber1).isValid(date2)).toBe(false);
+      expect(ti.date.reject(dateNumber1).isValid(date1)).toBe(false);
+      expect(ti.date.reject(dateNumber2).isValid(date2)).toBe(false);
 
-      expect(ig.date.earliest(dateString2).latest(dateString1).isValid(date1)).toBe(false);
-      expect(ig.date.earliest(dateString2).latest(dateString1).isValid(date2)).toBe(false);
-      expect(ig.date.accept(dateString2).isValid(date1)).toBe(false);
-      expect(ig.date.accept(dateString1).isValid(date2)).toBe(false);
-      expect(ig.date.reject(dateString1).isValid(date1)).toBe(false);
-      expect(ig.date.reject(dateString2).isValid(date2)).toBe(false);
+      expect(ti.date.earliest(dateString2).latest(dateString1).isValid(date1)).toBe(false);
+      expect(ti.date.earliest(dateString2).latest(dateString1).isValid(date2)).toBe(false);
+      expect(ti.date.accept(dateString2).isValid(date1)).toBe(false);
+      expect(ti.date.accept(dateString1).isValid(date2)).toBe(false);
+      expect(ti.date.reject(dateString1).isValid(date1)).toBe(false);
+      expect(ti.date.reject(dateString2).isValid(date2)).toBe(false);
 
-      expect(ig.date.accept('invalid date string').isValid(date1)).toBe(false);
+      expect(ti.date.accept('invalid date string').isValid(date1)).toBe(false);
     }
   );
 });

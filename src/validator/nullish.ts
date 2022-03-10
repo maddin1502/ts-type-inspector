@@ -3,6 +3,7 @@ import { Validator } from '.';
 /**
  * Validator for nullish values (null or undefined)
  *
+ * @since 1.0.0
  * @export
  * @class NullishValidator
  * @extends {Validator<undefined>}

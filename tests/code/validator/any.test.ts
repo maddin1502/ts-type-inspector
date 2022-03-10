@@ -1,32 +1,36 @@
 import { JestClassExtended } from 'jest-class-extended';
 import { AnyValidator } from '../../../src/validator/any';
-import { InspectorGadget } from '../../../src/inspectorGadget';
+import { TypeInspector } from '../../../src/inspector';
 
-const ig = new InspectorGadget();
+const ti = new TypeInspector();
 const jce = new JestClassExtended(AnyValidator);
 
 jce.describe(() => {
   jce.test(
     ['isValid', 'success'],
-    8,
+    10,
     () => {
-      expect(ig.any.isValid(undefined)).toBe(true);
-      expect(ig.any.isValid({})).toBe(true);
-      expect(ig.any.isValid(null)).toBe(true);
-      expect(ig.any.isValid([])).toBe(true);
-      expect(ig.any.isValid(42)).toBe(true);
-      expect(ig.any.isValid('hello')).toBe(true);
-      expect(ig.any.isValid(() => true)).toBe(true);
-      expect(ig.any.isValid(true)).toBe(true);
+      expect(ti.any.isValid(undefined)).toBe(true);
+      expect(ti.any.isValid({})).toBe(true);
+      expect(ti.any.isValid(null)).toBe(true);
+      expect(ti.any.isValid([])).toBe(true);
+      expect(ti.any.isValid(42)).toBe(true);
+      expect(ti.any.isValid('hello')).toBe(true);
+      expect(ti.any.isValid(() => true)).toBe(true);
+      expect(ti.any.isValid(true)).toBe(true);
+      expect(ti.any.isValid('')).toBe(true);
+      expect(ti.any.isValid(NaN)).toBe(true);
     }
   );
 
   jce.test(
     ['isValid', 'incorrect conditions'],
-    2,
+    4,
     () => {
-      expect(ig.any.notNullish.isValid(undefined)).toBe(false);
-      expect(ig.any.notNullish.isValid(null)).toBe(false);
+      expect(ti.any.notNullish.isValid(undefined)).toBe(false);
+      expect(ti.any.notNullish.isValid(null)).toBe(false);
+      expect(ti.any.notFalsy.isValid('')).toBe(false);
+      expect(ti.any.notFalsy.isValid(NaN)).toBe(false);
     }
   );
 });

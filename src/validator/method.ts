@@ -5,6 +5,7 @@ import type { MethodLike } from '../types';
  * Validator for method-like values.
  * Unfortunately (for technical reasons), this validator can only validate the number of parameters.
  *
+ * @since 1.0.0
  * @export
  * @class MethodValidator
  * @extends {Validator<V>}

@@ -5,6 +5,7 @@ import type { AnyLike, StrictValues, StrictValuesItem } from '../types';
  * Validator for precisely defined values (not just of specific type)
  * Keep in mind that object are compaired by reference (equality)
  *
+ * @since 1.0.0
  * @export
  * @class StrictValidator
  * @extends {Validator<V>}

@@ -14,8 +14,9 @@
     "reset-modules": "npx --quiet rimraf node_modules/ package-lock.json",
     "reset-creation": "npx --quiet rimraf dist/ tests/reports/",
     "reset": "npm run reset-creation && npm run reset-modules",
-    "init": "npm run reset && npm i && npm run build && npm run test",
-    "create": "npm run reset-creation && npm run build && npm run test"
+    "validate": "npm run reset && npm i && npm run build && npm test",
+    "create": "npm run reset-creation && npm run build && npm test",
+		"produce": "npm run validate && npm i --only=prod"
   },
   "repository": {
     "type": "git",
@@ -42,7 +43,7 @@
     "jest-html-reporters": "^2.1.6",
     "jest-junit": "^13.0.0",
     "ts-jest": "^27.1.0",
-    "ts-node": "10.4.0",
+    "ts-node": "^10.4.0",
     "typescript": "^4.5.2"
   },
   "dependencies": {

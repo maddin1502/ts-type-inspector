@@ -3,6 +3,7 @@ import { Validator } from '.';
 /**
  * This validator should only be used when a value is indeterminate or when you want to bypass deep validation of an object
  *
+ * @since 1.0.0
  * @export
  * @class AnyValidator
  * @extends {Validator<any>}

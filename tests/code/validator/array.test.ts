@@ -1,8 +1,8 @@
 import { JestClassExtended } from 'jest-class-extended';
-import { InspectorGadget } from '../../../src/inspectorGadget';
+import { TypeInspector } from '../../../src/inspector';
 import { ArrayValidator } from '../../../src/validator/array';
 
-const ig = new InspectorGadget();
+const ti = new TypeInspector();
 const jce = new JestClassExtended(ArrayValidator);
 
 jce.describe(() => {
@@ -10,9 +10,9 @@ jce.describe(() => {
     ['isValid', 'success'],
     3,
     () => {
-      expect(ig.array(ig.number).isValid([1, 2, 42])).toBe(true);
-      expect(ig.array(ig.string).isValid(['1', '2', '42'])).toBe(true);
-      expect(ig.array(ig.undefined).isValid([])).toBe(true);
+      expect(ti.array(ti.number).isValid([1, 2, 42])).toBe(true);
+      expect(ti.array(ti.string).isValid(['1', '2', '42'])).toBe(true);
+      expect(ti.array(ti.undefined).isValid([])).toBe(true);
     }
   );
 
@@ -20,12 +20,12 @@ jce.describe(() => {
     ['isValid', 'failure'],
     6,
     () => {
-      expect(ig.array(ig.number).isValid(['1', '2', '42'])).toBe(false);
-      expect(ig.array(ig.number).isValid([1, 2, '42'])).toBe(false);
-      expect(ig.array(ig.string).isValid([1, 2, 42])).toBe(false);
-      expect(ig.array(ig.string).isValid(['1', '2', 42])).toBe(false);
-      expect(ig.array(ig.undefined).isValid(['1', 2])).toBe(false);
-      expect(ig.array(ig.number).isValid(43)).toBe(false);
+      expect(ti.array(ti.number).isValid(['1', '2', '42'])).toBe(false);
+      expect(ti.array(ti.number).isValid([1, 2, '42'])).toBe(false);
+      expect(ti.array(ti.string).isValid([1, 2, 42])).toBe(false);
+      expect(ti.array(ti.string).isValid(['1', '2', 42])).toBe(false);
+      expect(ti.array(ti.undefined).isValid(['1', 2])).toBe(false);
+      expect(ti.array(ti.number).isValid(43)).toBe(false);
     }
   );
 
@@ -33,11 +33,11 @@ jce.describe(() => {
     ['isValid', 'correct conditions'],
     5,
     () => {
-      expect(ig.array(ig.number).length(1).isValid([42])).toBe(true);
-      expect(ig.array(ig.string).length(3).isValid(['1', '2', '42'])).toBe(true);
-      expect(ig.array(ig.string).min(2).max(4).isValid(['1', '2', '42'])).toBe(true);
-      expect(ig.array(ig.string).accept('1', '2', '42').isValid(['1', '2', '42'])).toBe(true);
-      expect(ig.array(ig.string).reject('3', '4', '24').isValid(['1', '2', '42'])).toBe(true);
+      expect(ti.array(ti.number).length(1).isValid([42])).toBe(true);
+      expect(ti.array(ti.string).length(3).isValid(['1', '2', '42'])).toBe(true);
+      expect(ti.array(ti.string).min(2).max(4).isValid(['1', '2', '42'])).toBe(true);
+      expect(ti.array(ti.string).accept('1', '2', '42').isValid(['1', '2', '42'])).toBe(true);
+      expect(ti.array(ti.string).reject('3', '4', '24').isValid(['1', '2', '42'])).toBe(true);
     }
   );
 
@@ -45,13 +45,13 @@ jce.describe(() => {
     ['isValid', 'incorrect conditions'],
     7,
     () => {
-      expect(ig.array(ig.number).length(3).isValid([42])).toBe(false);
-      expect(ig.array(ig.string).length(1).isValid(['1', '2', '42'])).toBe(false);
-      expect(ig.array(ig.string).min(2).isValid(['42'])).toBe(false);
-      expect(ig.array(ig.string).max(2).isValid(['1', '2', '42'])).toBe(false);
-      expect(ig.array(ig.string).accept('1', '2', '24').isValid(['1', '2', '42'])).toBe(false);
-      expect(ig.array(ig.string).reject('3', '4', '42').isValid(['1', '2', '42'])).toBe(false);
-      expect(ig.array(ig.string).isValid({ length: 2 })).toBe(false);
+      expect(ti.array(ti.number).length(3).isValid([42])).toBe(false);
+      expect(ti.array(ti.string).length(1).isValid(['1', '2', '42'])).toBe(false);
+      expect(ti.array(ti.string).min(2).isValid(['42'])).toBe(false);
+      expect(ti.array(ti.string).max(2).isValid(['1', '2', '42'])).toBe(false);
+      expect(ti.array(ti.string).accept('1', '2', '24').isValid(['1', '2', '42'])).toBe(false);
+      expect(ti.array(ti.string).reject('3', '4', '42').isValid(['1', '2', '42'])).toBe(false);
+      expect(ti.array(ti.string).isValid({ length: 2 })).toBe(false);
     }
   );
 });

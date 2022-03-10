@@ -5,6 +5,7 @@ import type { Validatable } from '../types';
 /**
  * Validator for dictionary objects
  *
+ * @since 1.0.0
  * @export
  * @class DictionaryValidator
  * @extends {Validator<V>}

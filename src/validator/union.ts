@@ -4,6 +4,7 @@ import { Validator } from './index';
 /**
  * Validator for union type values (like "string | number")
  *
+ * @since 1.0.0
  * @export
  * @class UnionValidator
  * @extends {Validator<V>}

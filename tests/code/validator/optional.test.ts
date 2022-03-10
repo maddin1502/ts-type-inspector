@@ -1,8 +1,8 @@
 import { JestClassExtended } from 'jest-class-extended';
-import { InspectorGadget } from '../../../src/inspectorGadget';
+import { TypeInspector } from '../../../src/inspector';
 import { OptionalValidator } from '../../../src/validator/optional';
 
-const ig = new InspectorGadget();
+const ti = new TypeInspector();
 const jce = new JestClassExtended(OptionalValidator);
 
 jce.describe(() => {
@@ -10,8 +10,8 @@ jce.describe(() => {
     ['isValid', 'success'],
     2,
     () => {
-      expect(ig.optional(ig.number).isValid(42)).toBe(true);
-      expect(ig.optional(ig.number).isValid(undefined)).toBe(true);
+      expect(ti.optional(ti.number).isValid(42)).toBe(true);
+      expect(ti.optional(ti.number).isValid(undefined)).toBe(true);
     }
   );
 
@@ -19,8 +19,8 @@ jce.describe(() => {
     ['isValid', 'failure'],
     2,
     () => {
-      expect(ig.optional(ig.number).isValid('42')).toBe(false);
-      expect(ig.optional(ig.number).isValid(null)).toBe(false);
+      expect(ti.optional(ti.number).isValid('42')).toBe(false);
+      expect(ti.optional(ti.number).isValid(null)).toBe(false);
     }
   );
 });

@@ -3,6 +3,7 @@ import { Validator } from '.';
 /**
  * Validator for boolean values
  *
+ * @since 1.0.0
  * @export
  * @class BooleanValidator
  * @extends {Validator<boolean>}

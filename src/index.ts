@@ -1,4 +1,4 @@
-import { InspectorGadget } from './inspectorGadget';
+import { TypeInspector } from './inspector';
 export type {
   AnyLike,
   ArrayItemValidator,
@@ -15,7 +15,7 @@ export type {
   ValidationCondition
 } from './types';
 export {
-  InspectorGadget
+  TypeInspector
 };
 
-export default new InspectorGadget();
+export default new TypeInspector();

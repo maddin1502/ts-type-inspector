@@ -4,6 +4,7 @@ import type { ObjectLike, PropertyValidators } from '../types';
 /**
  * Validator for object based values. Each property has to match its specified validator
  *
+ * @since 1.0.0
  * @export
  * @class ObjectValidator
  * @extends {Validator<V>}

@@ -1,8 +1,8 @@
 import { JestClassExtended } from 'jest-class-extended';
-import { InspectorGadget } from '../../../src/inspectorGadget';
+import { TypeInspector } from '../../../src/inspector';
 import { BooleanValidator } from '../../../src/validator/boolean';
 
-const ig = new InspectorGadget();
+const ti = new TypeInspector();
 const jce = new JestClassExtended(BooleanValidator);
 
 jce.describe(() => {
@@ -10,8 +10,8 @@ jce.describe(() => {
     ['isValid', 'success'],
     2,
     () => {
-      expect(ig.boolean.isValid(true)).toBe(true);
-      expect(ig.boolean.isValid(false)).toBe(true);
+      expect(ti.boolean.isValid(true)).toBe(true);
+      expect(ti.boolean.isValid(false)).toBe(true);
     }
   );
 
@@ -19,13 +19,13 @@ jce.describe(() => {
     ['isValid', 'failure'],
     7,
     () => {
-      expect(ig.boolean.isValid(null)).toBe(false);
-      expect(ig.boolean.isValid(undefined)).toBe(false);
-      expect(ig.boolean.isValid('42')).toBe(false);
-      expect(ig.boolean.isValid(42)).toBe(false);
-      expect(ig.boolean.isValid({ oh: 'no' })).toBe(false);
-      expect(ig.boolean.isValid(/.*oh.*no:+/)).toBe(false);
-      expect(ig.boolean.isValid(() => ({ oh: 'no' }))).toBe(false);
+      expect(ti.boolean.isValid(null)).toBe(false);
+      expect(ti.boolean.isValid(undefined)).toBe(false);
+      expect(ti.boolean.isValid('42')).toBe(false);
+      expect(ti.boolean.isValid(42)).toBe(false);
+      expect(ti.boolean.isValid({ oh: 'no' })).toBe(false);
+      expect(ti.boolean.isValid(/.*oh.*no:+/)).toBe(false);
+      expect(ti.boolean.isValid(() => ({ oh: 'no' }))).toBe(false);
     }
   );
 
@@ -33,8 +33,8 @@ jce.describe(() => {
     ['isValid', 'correct conditions'],
     2,
     () => {
-      expect(ig.boolean.true.isValid(true)).toBe(true);
-      expect(ig.boolean.false.isValid(false)).toBe(true);
+      expect(ti.boolean.true.isValid(true)).toBe(true);
+      expect(ti.boolean.false.isValid(false)).toBe(true);
     }
   );
 
@@ -42,10 +42,10 @@ jce.describe(() => {
     ['isValid', 'incorrect conditions'],
     4,
     () => {
-      expect(ig.boolean.true.isValid(false)).toBe(false);
-      expect(ig.boolean.false.isValid(true)).toBe(false);
-      expect(ig.boolean.true.false.isValid(false)).toBe(false);
-      expect(ig.boolean.true.false.isValid(true)).toBe(false);
+      expect(ti.boolean.true.isValid(false)).toBe(false);
+      expect(ti.boolean.false.isValid(true)).toBe(false);
+      expect(ti.boolean.true.false.isValid(false)).toBe(false);
+      expect(ti.boolean.true.false.isValid(true)).toBe(false);
     }
   );
 });

@@ -1,8 +1,8 @@
 import { JestClassExtended } from 'jest-class-extended';
-import { InspectorGadget } from '../../../src/inspectorGadget';
+import { TypeInspector } from '../../../src/inspector';
 import { ObjectValidator } from '../../../src/validator/object';
 
-const ig = new InspectorGadget();
+const ti = new TypeInspector();
 const jce = new JestClassExtended(ObjectValidator);
 
 jce.describe(() => {
@@ -11,14 +11,14 @@ jce.describe(() => {
     2,
     () => {
       expect(
-        ig.object({
-          stringProperty: ig.string,
-          numberProperty: ig.number,
-          arrayProperty: ig.array(ig.boolean),
-          unionProperty: ig.union(ig.undefined, ig.date),
-          dateProperty: ig.date,
-          methodProperty: ig.method(),
-          strictStringProperty: ig.strict('world')
+        ti.object({
+          stringProperty: ti.string,
+          numberProperty: ti.number,
+          arrayProperty: ti.array(ti.boolean),
+          unionProperty: ti.union(ti.undefined, ti.date),
+          dateProperty: ti.date,
+          methodProperty: ti.method,
+          strictStringProperty: ti.strict('world')
         }).isValid({
           stringProperty: 'hello',
           numberProperty: 42,
@@ -30,7 +30,7 @@ jce.describe(() => {
         })
       ).toBe(true);
 
-      expect(ig.object({ test: ig.string }).isValid({ test: 'hello', test2: 'world' })).toBe(true);
+      expect(ti.object({ test: ti.string }).isValid({ test: 'hello', test2: 'world' })).toBe(true);
     }
   );
 
@@ -39,14 +39,14 @@ jce.describe(() => {
     13,
     () => {
       expect(
-        ig.object({
-          stringProperty: ig.string,
-          numberProperty: ig.number,
-          arrayProperty: ig.array(ig.boolean),
-          unionProperty: ig.union(ig.undefined, ig.date),
-          dateProperty: ig.date,
-          methodProperty: ig.method(),
-          strictStringProperty: ig.strict('world')
+        ti.object({
+          stringProperty: ti.string,
+          numberProperty: ti.number,
+          arrayProperty: ti.array(ti.boolean),
+          unionProperty: ti.union(ti.undefined, ti.date),
+          dateProperty: ti.date,
+          methodProperty: ti.method,
+          strictStringProperty: ti.strict('world')
         }).isValid({
           stringProperty: 42,
           numberProperty: 42,
@@ -59,14 +59,14 @@ jce.describe(() => {
       ).toBe(false);
 
       expect(
-        ig.object({
-          stringProperty: ig.string,
-          numberProperty: ig.number,
-          arrayProperty: ig.array(ig.boolean),
-          unionProperty: ig.union(ig.undefined, ig.date),
-          dateProperty: ig.date,
-          methodProperty: ig.method(),
-          strictStringProperty: ig.strict('world')
+        ti.object({
+          stringProperty: ti.string,
+          numberProperty: ti.number,
+          arrayProperty: ti.array(ti.boolean),
+          unionProperty: ti.union(ti.undefined, ti.date),
+          dateProperty: ti.date,
+          methodProperty: ti.method,
+          strictStringProperty: ti.strict('world')
         }).isValid({
           stringProperty: 'hello',
           numberProperty: 'hello',
@@ -79,14 +79,14 @@ jce.describe(() => {
       ).toBe(false);
 
       expect(
-        ig.object({
-          stringProperty: ig.string,
-          numberProperty: ig.number,
-          arrayProperty: ig.array(ig.boolean),
-          unionProperty: ig.union(ig.undefined, ig.date),
-          dateProperty: ig.date,
-          methodProperty: ig.method(),
-          strictStringProperty: ig.strict('world')
+        ti.object({
+          stringProperty: ti.string,
+          numberProperty: ti.number,
+          arrayProperty: ti.array(ti.boolean),
+          unionProperty: ti.union(ti.undefined, ti.date),
+          dateProperty: ti.date,
+          methodProperty: ti.method,
+          strictStringProperty: ti.strict('world')
         }).isValid({
           stringProperty: 'hello',
           numberProperty: 42,
@@ -99,14 +99,14 @@ jce.describe(() => {
       ).toBe(false);
 
       expect(
-        ig.object({
-          stringProperty: ig.string,
-          numberProperty: ig.number,
-          arrayProperty: ig.array(ig.boolean),
-          unionProperty: ig.union(ig.undefined, ig.date),
-          dateProperty: ig.date,
-          methodProperty: ig.method(),
-          strictStringProperty: ig.strict('world')
+        ti.object({
+          stringProperty: ti.string,
+          numberProperty: ti.number,
+          arrayProperty: ti.array(ti.boolean),
+          unionProperty: ti.union(ti.undefined, ti.date),
+          dateProperty: ti.date,
+          methodProperty: ti.method,
+          strictStringProperty: ti.strict('world')
         }).isValid({
           stringProperty: 'hello',
           numberProperty: 42,
@@ -119,14 +119,14 @@ jce.describe(() => {
       ).toBe(false);
 
       expect(
-        ig.object({
-          stringProperty: ig.string,
-          numberProperty: ig.number,
-          arrayProperty: ig.array(ig.boolean),
-          unionProperty: ig.union(ig.undefined, ig.date),
-          dateProperty: ig.date,
-          methodProperty: ig.method(),
-          strictStringProperty: ig.strict('world')
+        ti.object({
+          stringProperty: ti.string,
+          numberProperty: ti.number,
+          arrayProperty: ti.array(ti.boolean),
+          unionProperty: ti.union(ti.undefined, ti.date),
+          dateProperty: ti.date,
+          methodProperty: ti.method,
+          strictStringProperty: ti.strict('world')
         }).isValid({
           stringProperty: 'hello',
           numberProperty: 42,
@@ -139,14 +139,14 @@ jce.describe(() => {
       ).toBe(false);
 
       expect(
-        ig.object({
-          stringProperty: ig.string,
-          numberProperty: ig.number,
-          arrayProperty: ig.array(ig.boolean),
-          unionProperty: ig.union(ig.undefined, ig.date),
-          dateProperty: ig.date,
-          methodProperty: ig.method(),
-          strictStringProperty: ig.strict('world')
+        ti.object({
+          stringProperty: ti.string,
+          numberProperty: ti.number,
+          arrayProperty: ti.array(ti.boolean),
+          unionProperty: ti.union(ti.undefined, ti.date),
+          dateProperty: ti.date,
+          methodProperty: ti.method,
+          strictStringProperty: ti.strict('world')
         }).isValid({
           stringProperty: 'hello',
           numberProperty: 42,
@@ -159,14 +159,14 @@ jce.describe(() => {
       ).toBe(false);
 
       expect(
-        ig.object({
-          stringProperty: ig.string,
-          numberProperty: ig.number,
-          arrayProperty: ig.array(ig.boolean),
-          unionProperty: ig.union(ig.undefined, ig.date),
-          dateProperty: ig.date,
-          methodProperty: ig.method(),
-          strictStringProperty: ig.strict('world')
+        ti.object({
+          stringProperty: ti.string,
+          numberProperty: ti.number,
+          arrayProperty: ti.array(ti.boolean),
+          unionProperty: ti.union(ti.undefined, ti.date),
+          dateProperty: ti.date,
+          methodProperty: ti.method,
+          strictStringProperty: ti.strict('world')
         }).isValid({
           stringProperty: 'hello',
           numberProperty: 42,
@@ -179,22 +179,22 @@ jce.describe(() => {
       ).toBe(false);
 
       expect(
-        ig.object({
-          stringProperty: ig.string,
-          numberProperty: ig.number,
-          arrayProperty: ig.array(ig.boolean),
-          unionProperty: ig.union(ig.undefined, ig.date),
-          dateProperty: ig.date,
-          methodProperty: ig.method(),
-          strictStringProperty: ig.strict('world')
+        ti.object({
+          stringProperty: ti.string,
+          numberProperty: ti.number,
+          arrayProperty: ti.array(ti.boolean),
+          unionProperty: ti.union(ti.undefined, ti.date),
+          dateProperty: ti.date,
+          methodProperty: ti.method,
+          strictStringProperty: ti.strict('world')
         }).isValid({})
       ).toBe(false);
 
-      expect(ig.object({}).isValid(undefined)).toBe(false);
-      expect(ig.object({}).isValid(1)).toBe(false);
-      expect(ig.object({}).isValid(() => true)).toBe(false);
-      expect(ig.object({}).isValid(ObjectValidator)).toBe(false);
-      expect(ig.object({}).isValid(null)).toBe(false);
+      expect(ti.object({}).isValid(undefined)).toBe(false);
+      expect(ti.object({}).isValid(1)).toBe(false);
+      expect(ti.object({}).isValid(() => true)).toBe(false);
+      expect(ti.object({}).isValid(ObjectValidator)).toBe(false);
+      expect(ti.object({}).isValid(null)).toBe(false);
     }
   );
 
@@ -202,7 +202,7 @@ jce.describe(() => {
     ['isValid', 'correct conditions'],
     1,
     () => {
-      expect(ig.object({ p1: ig.string }).noOverload.isValid({ p1: 'hello' })).toBe(true);
+      expect(ti.object({ p1: ti.string }).noOverload.isValid({ p1: 'hello' })).toBe(true);
     }
   );
 
@@ -210,7 +210,7 @@ jce.describe(() => {
     ['isValid', 'incorrect conditions'],
     1,
     () => {
-      expect(ig.object({ p1: ig.string }).noOverload.isValid({ p1: 'hello', p2: 'world' })).toBe(false);
+      expect(ti.object({ p1: ti.string }).noOverload.isValid({ p1: 'hello', p2: 'world' })).toBe(false);
     }
   );
 
@@ -219,14 +219,14 @@ jce.describe(() => {
     2,
     () => {
       expect(
-        () => ig.object({
-          stringProperty: ig.string,
-          numberProperty: ig.number,
-          arrayProperty: ig.array(ig.boolean),
-          unionProperty: ig.union(ig.undefined, ig.date),
-          dateProperty: ig.date,
-          methodProperty: ig.method(),
-          strictStringProperty: ig.strict('world')
+        () => ti.object({
+          stringProperty: ti.string,
+          numberProperty: ti.number,
+          arrayProperty: ti.array(ti.boolean),
+          unionProperty: ti.union(ti.undefined, ti.date),
+          dateProperty: ti.date,
+          methodProperty: ti.method,
+          strictStringProperty: ti.strict('world')
         }).validate({
           stringProperty: 'hello',
           numberProperty: 42,
@@ -239,8 +239,8 @@ jce.describe(() => {
       ).not.toThrow();
 
       expect(
-        () => ig.object({
-          test: ig.string
+        () => ti.object({
+          test: ti.string
         }).isValid({
           test: 'hello',
           test2: 'world'
@@ -254,14 +254,14 @@ jce.describe(() => {
     8,
     () => {
       expect(
-        () => ig.object({
-          stringProperty: ig.string,
-          numberProperty: ig.number,
-          arrayProperty: ig.array(ig.boolean),
-          unionProperty: ig.union(ig.undefined, ig.date),
-          dateProperty: ig.date,
-          methodProperty: ig.method(),
-          strictStringProperty: ig.strict('world')
+        () => ti.object({
+          stringProperty: ti.string,
+          numberProperty: ti.number,
+          arrayProperty: ti.array(ti.boolean),
+          unionProperty: ti.union(ti.undefined, ti.date),
+          dateProperty: ti.date,
+          methodProperty: ti.method,
+          strictStringProperty: ti.strict('world')
         }).validate({
           stringProperty: 42,
           numberProperty: 42,
@@ -274,14 +274,14 @@ jce.describe(() => {
       ).toThrow('value is not a string');
 
       expect(
-        () => ig.object({
-          stringProperty: ig.string,
-          numberProperty: ig.number,
-          arrayProperty: ig.array(ig.boolean),
-          unionProperty: ig.union(ig.undefined, ig.date),
-          dateProperty: ig.date,
-          methodProperty: ig.method(),
-          strictStringProperty: ig.strict('world')
+        () => ti.object({
+          stringProperty: ti.string,
+          numberProperty: ti.number,
+          arrayProperty: ti.array(ti.boolean),
+          unionProperty: ti.union(ti.undefined, ti.date),
+          dateProperty: ti.date,
+          methodProperty: ti.method,
+          strictStringProperty: ti.strict('world')
         }).validate({
           stringProperty: 'hello',
           numberProperty: 'hello',
@@ -294,14 +294,14 @@ jce.describe(() => {
       ).toThrow('value is not a number');
 
       expect(
-        () => ig.object({
-          stringProperty: ig.string,
-          numberProperty: ig.number,
-          arrayProperty: ig.array(ig.boolean),
-          unionProperty: ig.union(ig.undefined, ig.date),
-          dateProperty: ig.date,
-          methodProperty: ig.method(),
-          strictStringProperty: ig.strict('world')
+        () => ti.object({
+          stringProperty: ti.string,
+          numberProperty: ti.number,
+          arrayProperty: ti.array(ti.boolean),
+          unionProperty: ti.union(ti.undefined, ti.date),
+          dateProperty: ti.date,
+          methodProperty: ti.method,
+          strictStringProperty: ti.strict('world')
         }).validate({
           stringProperty: 'hello',
           numberProperty: 42,
@@ -314,14 +314,14 @@ jce.describe(() => {
       ).toThrow('value is not a boolean');
 
       expect(
-        () => ig.object({
-          stringProperty: ig.string,
-          numberProperty: ig.number,
-          arrayProperty: ig.array(ig.boolean),
-          unionProperty: ig.union(ig.undefined, ig.date),
-          dateProperty: ig.date,
-          methodProperty: ig.method(),
-          strictStringProperty: ig.strict('world')
+        () => ti.object({
+          stringProperty: ti.string,
+          numberProperty: ti.number,
+          arrayProperty: ti.array(ti.boolean),
+          unionProperty: ti.union(ti.undefined, ti.date),
+          dateProperty: ti.date,
+          methodProperty: ti.method,
+          strictStringProperty: ti.strict('world')
         }).validate({
           stringProperty: 'hello',
           numberProperty: 42,
@@ -334,14 +334,14 @@ jce.describe(() => {
       ).toThrow('value does not match any of the possible types');
 
       expect(
-        () => ig.object({
-          stringProperty: ig.string,
-          numberProperty: ig.number,
-          arrayProperty: ig.array(ig.boolean),
-          unionProperty: ig.union(ig.undefined, ig.date),
-          dateProperty: ig.date,
-          methodProperty: ig.method(),
-          strictStringProperty: ig.strict('world')
+        () => ti.object({
+          stringProperty: ti.string,
+          numberProperty: ti.number,
+          arrayProperty: ti.array(ti.boolean),
+          unionProperty: ti.union(ti.undefined, ti.date),
+          dateProperty: ti.date,
+          methodProperty: ti.method,
+          strictStringProperty: ti.strict('world')
         }).validate({
           stringProperty: 'hello',
           numberProperty: 42,
@@ -354,14 +354,14 @@ jce.describe(() => {
       ).toThrow('value is not a date');
 
       expect(
-        () => ig.object({
-          stringProperty: ig.string,
-          numberProperty: ig.number,
-          arrayProperty: ig.array(ig.boolean),
-          unionProperty: ig.union(ig.undefined, ig.date),
-          dateProperty: ig.date,
-          methodProperty: ig.method(),
-          strictStringProperty: ig.strict('world')
+        () => ti.object({
+          stringProperty: ti.string,
+          numberProperty: ti.number,
+          arrayProperty: ti.array(ti.boolean),
+          unionProperty: ti.union(ti.undefined, ti.date),
+          dateProperty: ti.date,
+          methodProperty: ti.method,
+          strictStringProperty: ti.strict('world')
         }).validate({
           stringProperty: 'hello',
           numberProperty: 42,
@@ -374,14 +374,14 @@ jce.describe(() => {
       ).toThrow('value is not a method');
 
       expect(
-        () => ig.object({
-          stringProperty: ig.string,
-          numberProperty: ig.number,
-          arrayProperty: ig.array(ig.boolean),
-          unionProperty: ig.union(ig.undefined, ig.date),
-          dateProperty: ig.date,
-          methodProperty: ig.method(),
-          strictStringProperty: ig.strict('world')
+        () => ti.object({
+          stringProperty: ti.string,
+          numberProperty: ti.number,
+          arrayProperty: ti.array(ti.boolean),
+          unionProperty: ti.union(ti.undefined, ti.date),
+          dateProperty: ti.date,
+          methodProperty: ti.method,
+          strictStringProperty: ti.strict('world')
         }).validate({
           stringProperty: 'hello',
           numberProperty: 42,
@@ -394,14 +394,14 @@ jce.describe(() => {
       ).toThrow('no equality found');
 
       expect(
-        () => ig.object({
-          stringProperty: ig.string,
-          numberProperty: ig.number,
-          arrayProperty: ig.array(ig.boolean),
-          unionProperty: ig.union(ig.undefined, ig.date),
-          dateProperty: ig.date,
-          methodProperty: ig.method(),
-          strictStringProperty: ig.strict('world')
+        () => ti.object({
+          stringProperty: ti.string,
+          numberProperty: ti.number,
+          arrayProperty: ti.array(ti.boolean),
+          unionProperty: ti.union(ti.undefined, ti.date),
+          dateProperty: ti.date,
+          methodProperty: ti.method,
+          strictStringProperty: ti.strict('world')
         }).validate({})
       ).toThrow('value is not a string');
     }

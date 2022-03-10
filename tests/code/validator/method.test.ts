@@ -1,8 +1,8 @@
 import { JestClassExtended } from 'jest-class-extended';
-import { InspectorGadget } from '../../../src/inspectorGadget';
+import { TypeInspector } from '../../../src/inspector';
 import { MethodValidator } from '../../../src/validator/method';
 
-const ig = new InspectorGadget();
+const ti = new TypeInspector();
 const jce = new JestClassExtended(MethodValidator);
 
 const methodDummy = (x_: number, y_: number) => {
@@ -40,12 +40,12 @@ jce.describe(() => {
     ['isValid', 'success'],
     5,
     () => {
-      expect(ig.method().isValid(methodDummy)).toBe(true);
-      expect(ig.method().isValid(methodDummy2)).toBe(true);
+      expect(ti.method.isValid(methodDummy)).toBe(true);
+      expect(ti.method.isValid(methodDummy2)).toBe(true);
       const container = new DummyMethodContainer();
-      expect(ig.method().isValid(container.one.bind(container))).toBe(true);
-      expect(ig.method().isValid(container.two.bind(container))).toBe(true);
-      expect(ig.method().isValid(container.three.bind(container))).toBe(true);
+      expect(ti.method.isValid(container.one.bind(container))).toBe(true);
+      expect(ti.method.isValid(container.two.bind(container))).toBe(true);
+      expect(ti.method.isValid(container.three.bind(container))).toBe(true);
     }
   );
 
@@ -53,13 +53,13 @@ jce.describe(() => {
     ['isValid', 'failure'],
     7,
     () => {
-      expect(ig.method().isValid(undefined)).toBe(false);
-      expect(ig.method().isValid(null)).toBe(false);
-      expect(ig.method().isValid('42')).toBe(false);
-      expect(ig.method().isValid(42)).toBe(false);
-      expect(ig.method().isValid({ oh: 'no' })).toBe(false);
-      expect(ig.method().isValid(/.*oh.*no:+/)).toBe(false);
-      expect(ig.method().isValid(true)).toBe(false);
+      expect(ti.method.isValid(undefined)).toBe(false);
+      expect(ti.method.isValid(null)).toBe(false);
+      expect(ti.method.isValid('42')).toBe(false);
+      expect(ti.method.isValid(42)).toBe(false);
+      expect(ti.method.isValid({ oh: 'no' })).toBe(false);
+      expect(ti.method.isValid(/.*oh.*no:+/)).toBe(false);
+      expect(ti.method.isValid(true)).toBe(false);
     }
   );
 
@@ -67,12 +67,12 @@ jce.describe(() => {
     ['isValid', 'correct conditions'],
     5,
     () => {
-      expect(ig.method().count(2).isValid(methodDummy)).toBe(true);
-      expect(ig.method().count(2).isValid(methodDummy2)).toBe(true);
+      expect(ti.method.count(2).isValid(methodDummy)).toBe(true);
+      expect(ti.method.count(2).isValid(methodDummy2)).toBe(true);
       const container = new DummyMethodContainer();
-      expect(ig.method().count(2).isValid(container.two.bind(container))).toBe(true);
-      expect(ig.method().max(2).isValid(container.two.bind(container))).toBe(true);
-      expect(ig.method().min(3).isValid(container.three.bind(container))).toBe(true);
+      expect(ti.method.count(2).isValid(container.two.bind(container))).toBe(true);
+      expect(ti.method.max(2).isValid(container.two.bind(container))).toBe(true);
+      expect(ti.method.min(3).isValid(container.three.bind(container))).toBe(true);
     }
   );
 
@@ -80,12 +80,12 @@ jce.describe(() => {
     ['isValid', 'incorrect conditions'],
     5,
     () => {
-      expect(ig.method().count(3).isValid(methodDummy)).toBe(false);
-      expect(ig.method().count(1).isValid(methodDummy2)).toBe(false);
+      expect(ti.method.count(3).isValid(methodDummy)).toBe(false);
+      expect(ti.method.count(1).isValid(methodDummy2)).toBe(false);
       const container = new DummyMethodContainer();
-      expect(ig.method().count(2).isValid(container.one.bind(container))).toBe(false);
-      expect(ig.method().max(2).isValid(container.three.bind(container))).toBe(false);
-      expect(ig.method().min(3).isValid(container.two.bind(container))).toBe(false);
+      expect(ti.method.count(2).isValid(container.one.bind(container))).toBe(false);
+      expect(ti.method.max(2).isValid(container.three.bind(container))).toBe(false);
+      expect(ti.method.min(3).isValid(container.two.bind(container))).toBe(false);
     }
   );
 });

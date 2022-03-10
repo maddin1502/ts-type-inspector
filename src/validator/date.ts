@@ -5,6 +5,7 @@ type DateLike = string | number | Date;
 /**
  * Validator for date objects
  *
+ * @since 1.0.0
  * @export
  * @class DateValidator
  * @extends {Validator<Date>}

@@ -4,6 +4,7 @@ import { CustomValidation } from '../types';
 /**
  * Validator for custom value validation.
  *
+ * @since 1.0.0
  * @export
  * @class CustomValidator
  * @extends {Validator<V>}

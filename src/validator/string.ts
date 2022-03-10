@@ -5,6 +5,7 @@ import { Validator } from '.';
 /**
  * Validator for string values.
  *
+ * @since 1.0.0
  * @export
  * @class StringValidator
  * @extends {Validator<string>}

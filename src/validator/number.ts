@@ -3,6 +3,7 @@ import { Validator } from '.';
 /**
  * Validator for numeric values
  *
+ * @since 1.0.0
  * @export
  * @class NumberValidator
  * @extends {RangeValidator<number>}
