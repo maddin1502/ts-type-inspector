@@ -33,7 +33,7 @@ Parameter | Description
 --- | ---
 `<VALIDATOR>` | There are various validators that can be used for validation of diverse value-types (string, number, date, object, ...)
 `<VALIDATION_PARAMS>` | Some validators need configuration parameters to work correctly (array -> item validator, object -> property validators, ...)
-`<CONDITION>` | The TypeInstector uses method-chaining to define special validation conditions. These are additional checks that evaluate the incoming value more precisely
+`<CONDITION>` | The TypeInspector uses method-chaining to define special validation conditions. These are additional checks that evaluate the incoming value more precisely
 ### Validation modes
 
 All validators provide **two** validation modes:
@@ -44,7 +44,7 @@ Both modes perform the same validation, but their result outputs are different.
 
 #### isValid()
 
-This mode uses the [type predicate](https://www.typescriptlang.org/docs/handbook/advanced-types.html#using-type-predicates) feature of Typescript and therefore returns a boolean value as validation result. This assigns an exact type to the (successfully) validated value based on the validator used.
+This mode uses the [type predicate](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates) feature of Typescript and therefore returns a boolean value as validation result. This assigns an exact type to the (successfully) validated value based on the validator used.
 
 ```ts
 import ti from 'ts-type-inspector';
@@ -422,7 +422,7 @@ ti.custom(value_ => {
 })
 ```
 
-> Return en error message if validation fails. Don't throw your own error!
+> Return an error message if validation fails. Don't throw your own error!
 
 #### Enum
 
