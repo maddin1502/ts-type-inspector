@@ -1,4 +1,4 @@
-import type { ArrayItem, Enumerable, MinArray } from 'ts-lib-extended';
+import type { ArrayItem, MinArray } from 'ts-lib-extended';
 import { ValidationError } from './error';
 
 export type MethodLike = (...args_: any[]) => any;
@@ -30,17 +30,3 @@ export type ArrayItemValidatorArray<A extends ArrayItemValidator>
     : never;
 
 export type ValidationCondition<V> = (value_: V) => void | never;
-export type EnumerableValue<T, TEnum extends Enumerable<T>>
-  = TEnum extends Record<infer K, infer V>
-    ? K extends string
-      ? V
-      : never
-    : never;
-export type EnumerableMapValue<T>
-  = T extends string
-    ? T extends number
-      ? string | number
-      : string
-    : T extends number
-      ? number
-      : never;

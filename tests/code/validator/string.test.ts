@@ -1,4 +1,5 @@
 import { JestClassExtended } from 'jest-class-extended';
+import url from 'url';
 import { TypeInspector } from '../../../src/inspector';
 import { StringValidator } from '../../../src/validator/string';
 
@@ -32,7 +33,7 @@ jce.describe(() => {
 
   jce.test(
     ['isValid', 'correct conditions'],
-    31,
+    32,
     () => {
       expect(ti.string.length(5).isValid('hello')).toBe(true);
       expect(ti.string.length(5).longest(6).isValid('hello')).toBe(true);
@@ -47,6 +48,7 @@ jce.describe(() => {
       expect(ti.string.date.isValid('2021-01-01')).toBe(true);
       expect(ti.string.numeric.isValid('42')).toBe(true);
       expect(ti.string.uuid.isValid('0cceef42-6b9b-4150-828a-501ef1299578')).toBe(true);
+      expect(ti.string.hex.isValid('789789424ab89032ab438409ff')).toBe(true);
 
       // just a few simple tests... @sideway/address will do the job
 
@@ -75,7 +77,7 @@ jce.describe(() => {
 
   jce.test(
     ['isValid', 'incorrect conditions'],
-    23,
+    24,
     () => {
       expect(ti.string.length(6).isValid('hello')).toBe(false);
       expect(ti.string.length(5).longest(4).isValid('hello')).toBe(false);
@@ -91,6 +93,7 @@ jce.describe(() => {
       expect(ti.string.numeric.isValid('42+42')).toBe(false);
       expect(ti.string.uuid.isValid('0cceef42-6b9b-4150828a-501ef1299578')).toBe(false);
       expect(ti.string.rejectEmpty.isValid('')).toBe(false);
+      expect(ti.string.hex.isValid('789789424abxx032ab438409ff')).toBe(false);
 
       // just a few simple tests... @sideway/address will do the job
 
@@ -105,6 +108,17 @@ jce.describe(() => {
       expect(ti.string.uri.isValid('newscomp.infosystems.www.servers.unix')).toBe(false);
       expect(ti.string.uri.isValid('tel+1-816-555-1212')).toBe(false);
       expect(ti.string.uri.isValid('telnet//192.0.2.16:80/')).toBe(false);
+    }
+  );
+
+  jce.test(
+    { name: 'URL' },
+    1,
+    () => {
+      Reflect.set(global, 'URL', undefined);
+      Reflect.set(url, 'URL', undefined);
+
+      expect(ti.string.url.isValid('https://github.com/sideway/address')).toBe(false);
     }
   );
 });

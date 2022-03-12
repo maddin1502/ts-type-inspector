@@ -52,7 +52,7 @@ export abstract class Validator<V> implements Validatable<V> {
    * @memberof Validator
    */
   public validate(value_: unknown): V {
-    const value = this.validateBaseType?.(value_) ?? value_ as V;
+    const value = this.validateBaseType(value_) ?? value_ as V;
 
     for (let i = 0; i < this._conditions.length; i++) {
       this._conditions[i](value);

@@ -1,5 +1,5 @@
 {
-  "name": "type-inspector",
+  "name": "ts-type-inspector",
   "version": "1.0.0",
   "description": "Template for node packages",
   "files": [
@@ -16,11 +16,11 @@
     "reset": "npm run reset-creation && npm run reset-modules",
     "validate": "npm run reset && npm i && npm run build && npm test",
     "create": "npm run reset-creation && npm run build && npm test",
-		"produce": "npm run validate && npm i --only=prod"
+    "produce": "npm run validate && npm i --only=prod"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/maddin1502/type-inspector.git"
+    "url": "git+https://github.com/maddin1502/ts-type-inspector.git"
   },
   "keywords": [
     "typescript",
@@ -29,9 +29,9 @@
   "author": "maddin1502",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/maddin1502/type-inspector/issues"
+    "url": "https://github.com/maddin1502/ts-type-inspector/issues"
   },
-  "homepage": "https://github.com/maddin1502/type-inspector#readme",
+  "homepage": "https://github.com/maddin1502/ts-type-inspector#readme",
   "devDependencies": {
     "@types/jest": "^27.0.3",
     "@types/node": "^16.11.11",
@@ -48,6 +48,6 @@
   },
   "dependencies": {
     "@sideway/address": "^4.1.2",
-    "ts-lib-extended": "^1.1.4"
+    "ts-lib-extended": "^1.1.5"
   }
 }

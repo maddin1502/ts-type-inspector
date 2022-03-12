@@ -125,7 +125,7 @@ export class NumberValidator extends Validator<number> {
    * @return {*}  {this}
    * @memberof NumberValidator
    */
-  public deny(...numbers_: ReadonlyArray<number>): this {
+  public reject(...numbers_: ReadonlyArray<number>): this {
     return this.setupCondition(value_ => this.checkRejected(value_, numbers_));
   }
 

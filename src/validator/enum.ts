@@ -1,6 +1,6 @@
-import { Enumerable } from 'ts-lib-extended';
+import { Enumerable, EnumerableBase, EnumerableValue } from 'ts-lib-extended';
 import { Validator } from '.';
-import { EnumerableMapValue, EnumerableValue, Validatable } from '../types';
+import { Validatable } from '../types';
 
 /**
  * Validator for enum values
@@ -8,28 +8,25 @@ import { EnumerableMapValue, EnumerableValue, Validatable } from '../types';
  * @since 1.0.0
  * @export
  * @class EnumValidator
- * @extends {Validator<TValue>}
- * @template T
- * @template TEnum
- * @template TValue
+ * @extends {Validator<EnumerableValue<E>>}
+ * @template E
  */
-export class EnumValidator<T, TEnum extends Enumerable<T>, TValue extends EnumerableValue<T, TEnum>>
-  extends Validator<TValue>
+export class EnumValidator<E extends Enumerable<unknown>>
+  extends Validator<EnumerableValue<E>>
 {
   /**
-   * Creates an instance of EnumValidator.
-   * @param {TEnum} _enum
+   * @param {E} _enum
    * @param {Validatable<EnumerableMapValue<TValue>>} [_validator] validator for additional base type validation
    * @memberof EnumValidator
    */
   constructor(
-    private readonly _enum: TEnum,
-    private readonly _validator?: Validatable<EnumerableMapValue<TValue>>
+    private readonly _enum: E,
+    private readonly _validator?: Validatable<EnumerableBase<EnumerableValue<E>>>
   ) {
     super();
   }
 
-  protected validateBaseType(value_: unknown): TValue {
+  protected validateBaseType(value_: unknown): EnumerableValue<E> {
     if (this._validator && !this._validator.isValid(value_)) {
       this.throwValidationError('value does not match enums base type');
     }
@@ -41,11 +38,17 @@ export class EnumValidator<T, TEnum extends Enumerable<T>, TValue extends Enumer
     return value_;
   }
 
-  private isEnumValue(enum_: TEnum, value_: unknown): value_ is TValue {
-    const enumValues = Object.values(enum_);
+  private isEnumValue(enum_: E, value_: unknown): value_ is EnumerableValue<E> {
+    const entries = Object.entries(enum_);
 
-    for (let i = 0; i < enumValues.length; i++) {
-      if (enumValues[i] === value_) {
+    for (let i = 0; i < entries.length; i++) {
+      const [key, value] = entries[i];
+
+      if (/^[0-9]$/.exec(key)) {
+        continue;
+      }
+
+      if (value === value_) {
         return true;
       }
     }
