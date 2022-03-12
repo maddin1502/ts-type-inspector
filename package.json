@@ -1,7 +1,7 @@
 {
   "name": "ts-type-inspector",
   "version": "1.0.0",
-  "description": "Template for node packages",
+  "description": "Type safe tool for value validation",
   "files": [
     "dist"
   ],
@@ -24,7 +24,10 @@
   },
   "keywords": [
     "typescript",
-    "template"
+    "validation",
+    "type-safe",
+    "validator",
+    "schema"
   ],
   "author": "maddin1502",
   "license": "MIT",
