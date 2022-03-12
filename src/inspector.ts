@@ -1,4 +1,4 @@
-import type { Dictionary, DictionaryValue, Enumerable, EnumerableBase, EnumerableValue } from 'ts-lib-extended';
+import type { Dictionary, DictionaryValue, Enumerable } from 'ts-lib-extended';
 import type {
   ArrayItemValidator,
   ArrayItemValidatorArray,
@@ -231,17 +231,13 @@ export class TypeInspector {
   /**
    * Validate enum values
    *
-   * @since 1.0.0
+   * @since 1.0.2
    * @template E
-   * @param {E} enum_
-   * @param {Validatable<EnumerableBase<E>>} [validator_] validator for additional base type validation
+   * @param {E} enum_ the enum instance itself, NOT a value from enum
    * @return {*}  {EnumValidator<E>}
    * @memberof TypeInspector
    */
-  public enum<E extends Enumerable<unknown>>(
-    enum_: E,
-    validator_?: Validatable<EnumerableBase<EnumerableValue<E>>>
-  ): EnumValidator<E> {
-    return new EnumValidator(enum_, validator_);
+  public enum<E extends Enumerable<unknown>>(enum_: E): EnumValidator<E> {
+    return new EnumValidator(enum_);
   }
 }

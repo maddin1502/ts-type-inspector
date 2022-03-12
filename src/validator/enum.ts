@@ -5,7 +5,7 @@ import { Validatable } from '../types';
 /**
  * Validator for enum values
  *
- * @since 1.0.0
+ * @since 1.0.2
  * @export
  * @class EnumValidator
  * @extends {Validator<EnumerableValue<E>>}
@@ -14,23 +14,25 @@ import { Validatable } from '../types';
 export class EnumValidator<E extends Enumerable<unknown>>
   extends Validator<EnumerableValue<E>>
 {
-  /**
-   * @param {E} _enum
-   * @param {Validatable<EnumerableMapValue<TValue>>} [_validator] validator for additional base type validation
-   * @memberof EnumValidator
-   */
   constructor(
-    private readonly _enum: E,
-    private readonly _validator?: Validatable<EnumerableBase<EnumerableValue<E>>>
+    private readonly _enum: E
   ) {
     super();
   }
 
-  protected validateBaseType(value_: unknown): EnumerableValue<E> {
-    if (this._validator && !this._validator.isValid(value_)) {
-      this.throwValidationError('value does not match enums base type');
-    }
+  /**
+   * additional base type validation for enum values
+   *
+   * @since 1.0.2
+   * @param {Validatable<EnumerableBase<EnumerableValue<E>>>} validator_
+   * @return {*}  {this}
+   * @memberof EnumValidator
+   */
+  public values(validator_: Validatable<EnumerableBase<EnumerableValue<E>>>): this {
+    return this.setupCondition(value_ => this.checkValues(value_, validator_));
+  }
 
+  protected validateBaseType(value_: unknown): EnumerableValue<E> {
     if (!this.isEnumValue(this._enum, value_)) {
       this.throwValidationError('value does not exist in enum');
     }
@@ -54,5 +56,11 @@ export class EnumValidator<E extends Enumerable<unknown>>
     }
 
     return false;
+  }
+
+  private checkValues(value_: EnumerableValue<E>, validator_: Validatable<EnumerableBase<EnumerableValue<E>>>): void {
+    if (!validator_.isValid(value_)) {
+      this.throwValidationError('value does not match enums base type');
+    }
   }
 }

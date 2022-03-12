@@ -123,7 +123,7 @@ const <VALUE> = ti.object({
 })
 
 /*
-  <VALUE> will assume the following type:
+  <VALUE> will assert the following type:
   {
     greeting: string;
     greeting2: 'hello' | 'hi'
@@ -132,6 +132,8 @@ const <VALUE> = ti.object({
 ```
 
 #### String
+
+> since 1.0.0
 
 Validator for string values.
 
@@ -155,6 +157,8 @@ Validator for string values.
 
 #### Number
 
+> since 1.0.0
+
 Validator for number values.
 
 | Condition | Description |
@@ -172,6 +176,8 @@ Validator for number values.
 
 #### Boolean
 
+> since 1.0.0
+
 Validator for boolean values.
 
 | Condition | Description |
@@ -181,17 +187,25 @@ Validator for boolean values.
 
 #### Undefined
 
+> since 1.0.0
+
 This validator rejects all values that are defined (!== undefined).
 
 #### Null
+
+> since 1.0.0
 
 This validator rejects all values that are not null.
 
 #### Nullish
 
+> since 1.0.0
+
 This validator rejects all values that are not null or undefined.
 
 #### Object
+
+> since 1.0.0
 
 Validator for object based values.
 - `null` is rejected
@@ -215,6 +229,8 @@ ti.object<DataInterface>({
 ```
 
 #### Dictionary
+
+> since 1.0.0
 
 Validator for dictionary objects
 
@@ -243,6 +259,8 @@ ti.dictionary<DictionaryDataInterface>(
 ```
 
 #### Array
+
+> since 1.0.0
 
 Validator for array values.
 
@@ -274,6 +292,8 @@ ti.array<DataArrayType>(
 
 #### Date
 
+> since 1.0.0
+
 Validator for date objects.
 - invalid date objects (`isNaN(date.getTime())`) are rejected
 
@@ -288,6 +308,8 @@ Validator for date objects.
 
 #### Method
 
+> since 1.0.0
+
 Validator for method-like values.
 
 Unfortunately (for technical reasons), this validator can only validate the number of parameters.
@@ -301,6 +323,8 @@ Unfortunately (for technical reasons), this validator can only validate the numb
 | reject | reject methods with specific params count |
 
 #### Union
+
+> since 1.0.0
 
 Validator for union type values (like "string | number")
 
@@ -319,6 +343,8 @@ ti.union<UnionDataType>(
 
 #### Strict
 
+> since 1.0.0
+
 Validator for precisely defined values (not just of specific type).
 
 ```ts
@@ -332,6 +358,8 @@ const <VALUE> = ti.strict<StrictType>('hello', 'world');
 > In contrast to `union` the strict validator validates the exact value and not just the value type. The resulting `<VALUE>` will be of type `'hello' | 'world'` (and not just `string`)
 
 #### Optional
+
+> since 1.0.0
 
 Validator for optional values.
 - `undefined` is valid by default
@@ -369,6 +397,8 @@ ti.object<MoreDataInterface>(
 
 #### Any
 
+> since 1.0.0
+
 This validator should only be used when a value is indeterminate or when you want to bypass deep validation of an object.
 
 | Condition | Description |
@@ -377,6 +407,8 @@ This validator should only be used when a value is indeterminate or when you wan
 | notFalsy | reject null, undefined, 0, '', false, NaN, ... |
 
 #### Custom
+
+> since 1.0.0
 
 Provide a validation callback to this validator to process a custom validation.
 
@@ -394,12 +426,12 @@ ti.custom(value_ => {
 
 #### Enum
 
+> since 1.0.2
+
 Validator for enum values.
 
 ```ts
 import ti from 'ts-type-inspector';
-
-ti.enum(<ENUM>, [<BASE_VALIDATOR>];)
 
 enum NumberEnum {
   foo,
@@ -412,11 +444,9 @@ enum StringEnum {
 }
 
 ti.enum(NumberEnum);
-ti.enum(StringEnum, ti.string.reject(StringEnum.bar));
+ti.enum(StringEnum).values(ti.string.reject(StringEnum.bar));
 ```
 
-| Parameter | Description |
+| Condition | Description |
 |---|---|
-| `<ENUM>` | provide the enum-object itself |
-| `<BASE_VALIDATOR>` | [optional] add validator for addition base type validation |
-
+| values | add validator for additional base type validation |
