@@ -1,7 +1,8 @@
-import { Example } from '../../src';
+import ti, { TypeInspector } from '../../src';
 
-describe('root', () => {
-  test('exports', () => {
-    expect(Example).toBeDefined();
+describe('root export', () => {
+  test('default', () => {
+    expect.assertions(1);
+    expect(ti).toBeInstanceOf(TypeInspector);
   });
 });
