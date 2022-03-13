@@ -8,11 +8,11 @@ import type { ArrayItemValidator, ArrayItemValidatorArray } from '../types';
  * @since 1.0.0
  * @export
  * @class ArrayValidator
- * @extends {Validator<A>}
- * @template A
+ * @extends {Validator<Out>}
+ * @template Out
  * @template V
  */
-export class ArrayValidator<A extends ArrayItemValidatorArray<V>, V extends ArrayItemValidator = ArrayItemValidator<A>> extends Validator<A> {
+export class ArrayValidator<Out extends ArrayItemValidatorArray<V>, V extends ArrayItemValidator = ArrayItemValidator<Out>> extends Validator<Out> {
   constructor(
     private readonly _itemValidator: V
   ) {
@@ -59,11 +59,11 @@ export class ArrayValidator<A extends ArrayItemValidatorArray<V>, V extends Arra
    * define accepted values
    *
    * @since 1.0.0
-   * @param {...ReadonlyArray<ArrayItem<A>>} items_
+   * @param {...ReadonlyArray<ArrayItem<Out>>} items_
    * @return {*}  {this}
    * @memberof ArrayValidator
    */
-  public accept(...items_: ReadonlyArray<ArrayItem<A>>): this {
+  public accept(...items_: ReadonlyArray<ArrayItem<Out>>): this {
     return this.setupCondition(value_ => this.checkAccepted(value_, items_));
   }
 
@@ -71,15 +71,15 @@ export class ArrayValidator<A extends ArrayItemValidatorArray<V>, V extends Arra
    * define rejected values
    *
    * @since 1.0.0
-   * @param {...ReadonlyArray<ArrayItem<A>>} items_
+   * @param {...ReadonlyArray<ArrayItem<Out>>} items_
    * @return {*}  {this}
    * @memberof ArrayValidator
    */
-  public reject(...items_: ReadonlyArray<ArrayItem<A>>): this {
+  public reject(...items_: ReadonlyArray<ArrayItem<Out>>): this {
     return this.setupCondition(value_ => this.checkRejected(value_, items_));
   }
 
-  protected validateBaseType(value_: unknown): A {
+  protected validateBaseType(value_: unknown): Out {
     if (!Array.isArray(value_)) {
       this.throwValidationError('value is not an array');
     }
@@ -92,28 +92,28 @@ export class ArrayValidator<A extends ArrayItemValidatorArray<V>, V extends Arra
       }
     }
 
-    return value_ as A;
+    return value_ as Out;
   }
 
-  private checkLength(value_: A, length_: number): void {
+  private checkLength(value_: Out, length_: number): void {
     if (value_.length !== length_) {
       this.throwValidationError('deviant length');
     }
   }
 
-  private checkMin(value_: A, min_: number): void {
+  private checkMin(value_: Out, min_: number): void {
     if (value_.length < min_) {
       this.throwValidationError('too few items');
     }
   }
 
-  private checkMax(value_: A, max_: number): void {
+  private checkMax(value_: Out, max_: number): void {
     if (value_.length > max_) {
       this.throwValidationError('too many items');
     }
   }
 
-  private checkAccepted(value_: A, acceptedItems_: ReadonlyArray<any>): void {
+  private checkAccepted(value_: Out, acceptedItems_: ReadonlyArray<any>): void {
     for (let i = 0; i < value_.length; i++) {
       if (!acceptedItems_.includes(value_[i])) {
         this.throwValidationError('item is not accepted');
@@ -121,7 +121,7 @@ export class ArrayValidator<A extends ArrayItemValidatorArray<V>, V extends Arra
     }
   }
 
-  private checkRejected(value_: A, rejectedItems_: ReadonlyArray<any>): void {
+  private checkRejected(value_: Out, rejectedItems_: ReadonlyArray<any>): void {
     for (let i = 0; i < value_.length; i++) {
       if (rejectedItems_.includes(value_[i])) {
         this.throwValidationError('item is rejected');

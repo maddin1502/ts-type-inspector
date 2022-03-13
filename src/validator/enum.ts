@@ -11,9 +11,7 @@ import { Validatable } from '../types';
  * @extends {Validator<EnumerableValue<E>>}
  * @template E
  */
-export class EnumValidator<E extends Enumerable<unknown>>
-  extends Validator<EnumerableValue<E>>
-{
+export class EnumValidator<E extends Enumerable<unknown>> extends Validator<EnumerableValue<E>> {
   constructor(
     private readonly _enum: E
   ) {

@@ -15,7 +15,7 @@ export class DateValidator extends Validator<Date> {
    * define earliest accepted date
    *
    * @since 1.0.0
-   * @param {DateLike} min_
+   * @param {DateLike} earliest_
    * @return {*}  {this}
    * @memberof DateValidator
    */
@@ -27,7 +27,7 @@ export class DateValidator extends Validator<Date> {
    * define latest accepted date
    *
    * @since 1.0.0
-   * @param {DateLike} max_
+   * @param {DateLike} latest_
    * @return {*}  {this}
    * @memberof DateValidator
    */

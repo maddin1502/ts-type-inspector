@@ -8,10 +8,10 @@ import type { MethodLike } from '../types';
  * @since 1.0.0
  * @export
  * @class MethodValidator
- * @extends {Validator<V>}
- * @template V
+ * @extends {Validator<Out>}
+ * @template Out
  */
-export class MethodValidator<V extends MethodLike> extends Validator<V> {
+export class MethodValidator<Out extends MethodLike> extends Validator<Out> {
   /**
    * validate exact params count
    *
@@ -48,27 +48,27 @@ export class MethodValidator<V extends MethodLike> extends Validator<V> {
     return this.setupCondition(value_ => this.checkMax(value_, max_));
   }
 
-  protected validateBaseType(value_: unknown): V {
+  protected validateBaseType(value_: unknown): Out {
     if (typeof value_ !== 'function') {
       this.throwValidationError('value is not a method');
     }
 
-    return value_ as V;
+    return value_ as Out;
   }
 
-  private checkCount(value_: V, count_: number): void {
+  private checkCount(value_: Out, count_: number): void {
     if (count_ !== value_.length) {
       this.throwValidationError('incorrect params count');
     }
   }
 
-  private checkMin(value_: V, min_: number): void {
+  private checkMin(value_: Out, min_: number): void {
     if (value_.length < min_) {
       this.throwValidationError('too few parameters');
     }
   }
 
-  private checkMax(value_: V, max_: number): void {
+  private checkMax(value_: Out, max_: number): void {
     if (value_.length > max_) {
       this.throwValidationError('too many parameters');
     }
