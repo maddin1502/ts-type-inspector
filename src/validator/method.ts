@@ -1,5 +1,26 @@
 import { Validator } from '.';
-import type { MethodLike } from '../types';
+import type { MethodLike, Validatable } from '../types';
+
+export type MethodValidatable<Out extends MethodLike> = Validatable<Out> & {
+  /**
+   * validate exact params count
+   *
+   * @since 1.0.0
+   */
+  count(count_: number): MethodValidatable<Out>;
+  /**
+   * validate minimum params count
+   *
+   * @since 1.0.0
+   */
+  min(min_: number): MethodValidatable<Out>;
+  /**
+   * validate maximum params count
+   *
+   * @since 1.0.0
+   */
+  max(max_: number): MethodValidatable<Out>;
+};
 
 /**
  * Validator for method-like values.
@@ -9,42 +30,22 @@ import type { MethodLike } from '../types';
  * @export
  * @class MethodValidator
  * @extends {Validator<Out>}
+ * @implements {MethodValidatable<Out>}
  * @template Out
  */
-export class MethodValidator<Out extends MethodLike> extends Validator<Out> {
-  /**
-   * validate exact params count
-   *
-   * @since 1.0.0
-   * @param {number} count_
-   * @return {*}  {this}
-   * @memberof MethodValidator
-   */
-  public count(count_: number): this {
+export class MethodValidator<Out extends MethodLike>
+  extends Validator<Out>
+  implements MethodValidatable<Out>
+{
+  public count(count_: number): MethodValidatable<Out> {
     return this.setupCondition(value_ => this.checkCount(value_, count_));
   }
 
-  /**
-   * validate minimum params count
-   *
-   * @since 1.0.0
-   * @param {number} min_
-   * @return {*}  {this}
-   * @memberof MethodValidator
-   */
-  public min(min_: number): this {
+  public min(min_: number): MethodValidatable<Out> {
     return this.setupCondition(value_ => this.checkMin(value_, min_));
   }
 
-  /**
-   * validate maximum params count
-   *
-   * @since 1.0.0
-   * @param {number} max_
-   * @return {*}  {this}
-   * @memberof MethodValidator
-   */
-  public max(max_: number): this {
+  public max(max_: number): MethodValidatable<Out> {
     return this.setupCondition(value_ => this.checkMax(value_, max_));
   }
 

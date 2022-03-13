@@ -1,6 +1,40 @@
 import type { ArrayItem } from 'ts-lib-extended';
 import { Validator } from '.';
-import type { ArrayItemValidator, ArrayItemValidatorArray } from '../types';
+import type { ArrayItemValidator, ArrayItemValidatorArray, Validatable } from '../types';
+
+export type ArrayValidatable<Out extends ArrayItemValidatorArray<V>, V extends ArrayItemValidator = ArrayItemValidator<Out>>
+  = Validatable<Out> & {
+    /**
+     * validate exact array length
+     *
+     * @since 1.0.0
+     */
+    length(length_: number): ArrayValidatable<Out, V>;
+    /**
+     * validate minimum array length
+     *
+     * @since 1.0.0
+     */
+    min(min_: number): ArrayValidatable<Out, V>;
+    /**
+     * validate maximum array length
+     *
+     * @since 1.0.0
+     */
+    max(max_: number): ArrayValidatable<Out, V>;
+    /**
+     * define accepted values
+     *
+     * @since 1.0.0
+     */
+    accept(...items_: ReadonlyArray<ArrayItem<Out>>): ArrayValidatable<Out, V>;
+    /**
+     * define rejected values
+     *
+     * @since 1.0.0
+     */
+    reject(...items_: ReadonlyArray<ArrayItem<Out>>): ArrayValidatable<Out, V>;
+  };
 
 /**
  * Validator for array values
@@ -9,73 +43,37 @@ import type { ArrayItemValidator, ArrayItemValidatorArray } from '../types';
  * @export
  * @class ArrayValidator
  * @extends {Validator<Out>}
+ * @implements {ArrayValidatable<Out, V>}
  * @template Out
  * @template V
  */
-export class ArrayValidator<Out extends ArrayItemValidatorArray<V>, V extends ArrayItemValidator = ArrayItemValidator<Out>> extends Validator<Out> {
+export class ArrayValidator<Out extends ArrayItemValidatorArray<V>, V extends ArrayItemValidator = ArrayItemValidator<Out>>
+  extends Validator<Out>
+  implements ArrayValidatable<Out, V>
+{
   constructor(
     private readonly _itemValidator: V
   ) {
     super();
   }
 
-  /**
-   * validate exact array length
-   *
-   * @since 1.0.0
-   * @param {number} length_
-   * @return {*}  {this}
-   * @memberof ArrayValidator
-   */
-  public length(length_: number): this {
+  public length(length_: number): ArrayValidatable<Out, V> {
     return this.setupCondition(value_ => this.checkLength(value_, length_));
   }
 
-  /**
-   * validate minimum array length
-   *
-   * @since 1.0.0
-   * @param {number} min_
-   * @return {*}  {this}
-   * @memberof ArrayValidator
-   */
-  public min(min_: number): this {
+  public min(min_: number): ArrayValidatable<Out, V> {
     return this.setupCondition(value_ => this.checkMin(value_, min_));
   }
 
-  /**
-   * validate maximum array length
-   *
-   * @since 1.0.0
-   * @param {number} max_
-   * @return {*}  {this}
-   * @memberof ArrayValidator
-   */
-  public max(max_: number): this {
+  public max(max_: number): ArrayValidatable<Out, V> {
     return this.setupCondition(value_ => this.checkMax(value_, max_));
   }
 
-  /**
-   * define accepted values
-   *
-   * @since 1.0.0
-   * @param {...ReadonlyArray<ArrayItem<Out>>} items_
-   * @return {*}  {this}
-   * @memberof ArrayValidator
-   */
-  public accept(...items_: ReadonlyArray<ArrayItem<Out>>): this {
+  public accept(...items_: ReadonlyArray<ArrayItem<Out>>): ArrayValidatable<Out, V> {
     return this.setupCondition(value_ => this.checkAccepted(value_, items_));
   }
 
-  /**
-   * define rejected values
-   *
-   * @since 1.0.0
-   * @param {...ReadonlyArray<ArrayItem<Out>>} items_
-   * @return {*}  {this}
-   * @memberof ArrayValidator
-   */
-  public reject(...items_: ReadonlyArray<ArrayItem<Out>>): this {
+  public reject(...items_: ReadonlyArray<ArrayItem<Out>>): ArrayValidatable<Out, V> {
     return this.setupCondition(value_ => this.checkRejected(value_, items_));
   }
 

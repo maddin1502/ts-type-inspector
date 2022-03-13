@@ -1,6 +1,8 @@
 import { Validator } from '.';
 import type { Validatable } from '../types';
 
+export type OptionalValidatable<V> = Validatable<undefined | V>;
+
 /**
  * Validator for optional (maybe undefined) properties/values
  *
@@ -8,9 +10,13 @@ import type { Validatable } from '../types';
  * @export
  * @class OptionalValidator
  * @extends {(Validator<undefined | V>)}
+ * @implements {OptionalValidatable<V>}
  * @template V
  */
-export class OptionalValidator<V> extends Validator<undefined | V> {
+export class OptionalValidator<V>
+  extends Validator<undefined | V>
+  implements OptionalValidatable<V>
+{
   constructor(
     private readonly _validator: Validatable<V>
   ) {

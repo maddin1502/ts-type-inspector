@@ -30,3 +30,4 @@ export type ArrayItemValidatorArray<A extends ArrayItemValidator>
     : never;
 
 export type ValidationCondition<V> = (value_: V) => void | never;
+export type DateLike = string | number | Date;

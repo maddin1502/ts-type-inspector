@@ -1,6 +1,15 @@
-import { Enumerable, EnumerableBase, EnumerableValue } from 'ts-lib-extended';
+import type { Enumerable, EnumerableBase, EnumerableValue } from 'ts-lib-extended';
 import { Validator } from '.';
-import { Validatable } from '../types';
+import type { Validatable } from '../types';
+
+export type EnumValidatable<E extends Enumerable<unknown>> = Validatable<EnumerableValue<E>> & {
+  /**
+   * additional base type validation for enum values
+   *
+   * @since 1.0.2
+   */
+  values(validator_: Validatable<EnumerableBase<EnumerableValue<E>>>): EnumValidatable<E>;
+};
 
 /**
  * Validator for enum values
@@ -9,24 +18,20 @@ import { Validatable } from '../types';
  * @export
  * @class EnumValidator
  * @extends {Validator<EnumerableValue<E>>}
+ * @implements {EnumValidatable<E>}
  * @template E
  */
-export class EnumValidator<E extends Enumerable<unknown>> extends Validator<EnumerableValue<E>> {
+export class EnumValidator<E extends Enumerable<unknown>>
+  extends Validator<EnumerableValue<E>>
+  implements EnumValidatable<E>
+{
   constructor(
     private readonly _enum: E
   ) {
     super();
   }
 
-  /**
-   * additional base type validation for enum values
-   *
-   * @since 1.0.2
-   * @param {Validatable<EnumerableBase<EnumerableValue<E>>>} validator_
-   * @return {*}  {this}
-   * @memberof EnumValidator
-   */
-  public values(validator_: Validatable<EnumerableBase<EnumerableValue<E>>>): this {
+  public values(validator_: Validatable<EnumerableBase<EnumerableValue<E>>>): EnumValidatable<E> {
     return this.setupCondition(value_ => this.checkValues(value_, validator_));
   }
 

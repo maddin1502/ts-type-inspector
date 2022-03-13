@@ -1,5 +1,7 @@
 import { Validator } from '.';
-import { CustomValidation } from '../types';
+import type { CustomValidation, Validatable } from '../types';
+
+export type CustomValidatable<Out> = Validatable<Out>;
 
 /**
  * Validator for custom value validation.
@@ -8,9 +10,13 @@ import { CustomValidation } from '../types';
  * @export
  * @class CustomValidator
  * @extends {Validator<Out>}
+ * @implements {CustomValidatable<Out>}
  * @template Out
  */
-export class CustomValidator<Out> extends Validator<Out> {
+export class CustomValidator<Out>
+  extends Validator<Out>
+  implements CustomValidatable<Out>
+{
   /**
    * @param {CustomValidation<Out>} _validationCallback Return an error message if validation fails; else undefined
    * @memberof CustomValidator
