@@ -1,11 +1,11 @@
 import { ValidationError, VALIDATION_ERROR_MARKER } from '../error';
 import type { CustomValidation, Validatable, ValidationCondition } from '../types';
 
-export abstract class Validator<V> implements Validatable<V> {
+export abstract class Validator<Out extends In, In = unknown> implements Validatable<Out, In> {
   private _validationError: ValidationError | undefined;
-  private _customValidation: CustomValidation<V> | undefined;
+  private _customValidation: CustomValidation<Out> | undefined;
   private _customErrorMessage: string | undefined | (() => string);
-  private _conditions: ValidationCondition<V>[];
+  private _conditions: ValidationCondition<Out>[];
 
   constructor() {
     this._conditions = [];
@@ -23,11 +23,11 @@ export abstract class Validator<V> implements Validatable<V> {
   /**
    * add a custom validation; return a error message if validation fails
    *
-   * @param {CustomValidation<V>} evaluation_
+   * @param {CustomValidation<Out>} evaluation_
    * @return {*}  {this}
    * @memberof Validator
    */
-  public custom(evaluation_: CustomValidation<V>): this {
+  public custom(evaluation_: CustomValidation<Out>): this {
     this._customValidation = evaluation_;
     return this;
   }
@@ -47,12 +47,12 @@ export abstract class Validator<V> implements Validatable<V> {
   /**
    * validate value
    *
-   * @param {unknown} value_
+   * @param {In} value_
    * @return {*}  {V}
    * @memberof Validator
    */
-  public validate(value_: unknown): V {
-    const value = this.validateBaseType(value_) ?? value_ as V;
+  public validate(value_: In): Out {
+    const value = this.validateBaseType(value_);
 
     for (let i = 0; i < this._conditions.length; i++) {
       this._conditions[i](value);
@@ -69,11 +69,11 @@ export abstract class Validator<V> implements Validatable<V> {
   /**
    * validate value
    *
-   * @param {unknown} value_
+   * @param {In} value_
    * @return {*}  {value_ is V} true if valid; false if invalid; this is a type predicate - asserted type will be associated to value if true
    * @memberof Validator
    */
-  public isValid(value_: unknown): value_ is V {
+  public isValid(value_: In): value_ is Out {
     try {
       this.validate(value_);
       return true;
@@ -82,7 +82,7 @@ export abstract class Validator<V> implements Validatable<V> {
     }
   }
 
-  protected abstract validateBaseType(value_: unknown): V;
+  protected abstract validateBaseType(value_: In): Out;
 
   protected detectError(reason_: unknown, propertyTraces_?: PropertyKey[]): Error {
     if (this.isValidationError(reason_)) {
@@ -127,7 +127,7 @@ export abstract class Validator<V> implements Validatable<V> {
     throw this._validationError = new ValidationError(errorMessage, propertyTrace_, subErrors_);
   }
 
-  protected setupCondition(condition_: ValidationCondition<V>): this {
+  protected setupCondition(condition_: ValidationCondition<Out>): this {
     this._conditions.push(condition_);
     return this;
   }

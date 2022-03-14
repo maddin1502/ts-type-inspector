@@ -1,5 +1,7 @@
 import { Validator } from '.';
-import { CustomValidation } from '../types';
+import type { CustomValidation, Validatable } from '../types';
+
+export type CustomValidatable<Out> = Validatable<Out>;
 
 /**
  * Validator for custom value validation.
@@ -7,14 +9,16 @@ import { CustomValidation } from '../types';
  * @since 1.0.0
  * @export
  * @class CustomValidator
- * @extends {Validator<V>}
- * @template V
+ * @extends {Validator<Out>}
+ * @implements {CustomValidatable<Out>}
+ * @template Out
  */
-export class CustomValidator<V> extends Validator<V> {
+export class CustomValidator<Out>
+  extends Validator<Out>
+  implements CustomValidatable<Out>
+{
   /**
-   * Creates an instance of CustomValidator.
-   *
-   * @param {CustomValidation<V>} _validationCallback Return an error message if validation fails; else undefined
+   * @param {CustomValidation<Out>} _validationCallback Return an error message if validation fails; else undefined
    * @memberof CustomValidator
    */
   constructor(
@@ -23,13 +27,13 @@ export class CustomValidator<V> extends Validator<V> {
     super();
   }
 
-  protected validateBaseType(value_: unknown): V {
+  protected validateBaseType(value_: unknown): Out {
     const result = this._validationCallback(value_);
 
     if (result !== undefined) {
       this.throwValidationError(result);
     }
 
-    return value_ as V;
+    return value_ as Out;
   }
 }

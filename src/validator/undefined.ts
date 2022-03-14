@@ -1,4 +1,7 @@
 import { Validator } from '.';
+import type { Validatable } from '../types';
+
+export type UndefinedValidatable = Validatable<undefined>;
 
 /**
  * Validator for undefined values
@@ -7,8 +10,12 @@ import { Validator } from '.';
  * @export
  * @class UndefinedValidator
  * @extends {Validator<undefined>}
+ * @implements {UndefinedValidatable}
  */
-export class UndefinedValidator extends Validator<undefined> {
+export class UndefinedValidator
+  extends Validator<undefined>
+  implements UndefinedValidatable
+{
   protected validateBaseType(value_: unknown): undefined {
     if (value_ !== undefined) {
       this.throwValidationError('value is defined');

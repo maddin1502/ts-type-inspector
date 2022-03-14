@@ -450,3 +450,32 @@ ti.enum(StringEnum).values(ti.string.reject(StringEnum.bar));
 | Condition | Description |
 |---|---|
 | values | add validator for additional base type validation |
+
+#### Exclude
+
+> since 1.1.0
+
+This validator is able to validate if a type **doesn't** exist in a **KNOWN** union type.
+
+The generics "Out" and "In" have to be set. "In" describes the incoming union type and "Out" the desired output type. The passed validator checks whether the undesired types (= In - Out) exist in the value.
+
+```ts
+import ti from 'ts-type-inspector';
+
+type Input = string | number | boolean;
+
+function filter(input_: Input): string | boolean {
+  return ti.exclude<string | boolean, Input>(
+    ti.number
+  ).validate(input_);
+}
+
+function filter2(input_: Input): string {
+  return ti.exclude<string, Input>(
+    ti.union(
+      ti.number,
+      ti.boolean
+    )
+  ).validate(input_);
+}
+```

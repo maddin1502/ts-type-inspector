@@ -1,4 +1,68 @@
 import { Validator } from '.';
+import type { Validatable } from '../types';
+
+export type NumberValidatable = Validatable<number> & {
+  /**
+   * accept positive values only (zero is not positive)
+   *
+   * @since 1.0.0
+   */
+  get positive(): NumberValidatable;
+  /**
+   * accept negative values only (zero is not negative)
+   *
+   * @since 1.0.0
+   */
+  get negative(): NumberValidatable;
+  /**
+   * reject NaN and Infinity
+   *
+   * @since 1.0.0
+   */
+  get finite(): NumberValidatable;
+  /**
+   * reject NaN
+   *
+   * @since 1.0.0
+   */
+  get rejectNaN(): NumberValidatable;
+  /**
+   * reject Infinity
+   *
+   * @since 1.0.0
+   */
+  get rejectInfinity(): NumberValidatable;
+  /**
+   * reject 0
+   *
+   * @since 1.0.0
+   */
+  get rejectZero(): NumberValidatable;
+  /**
+   * validate minimum value
+   *
+   * @since 1.0.0
+   */
+  min(min_: number): NumberValidatable;
+  /**
+   * validate maximum value
+   *
+   * @since 1.0.0
+   */
+  max(max_: number): NumberValidatable;
+  /**
+   * define accepted numbers
+   *
+   * @since 1.0.0
+   */
+  accept(...numbers_: ReadonlyArray<number>): NumberValidatable;
+  /**
+   * define rejected numbers
+   *
+   * @since 1.0.0
+   */
+  reject(...numbers_: ReadonlyArray<number>): NumberValidatable;
+};
 
 /**
  * Validator for numeric values
@@ -9,123 +73,47 @@ import { Validator } from '.';
  * @extends {RangeValidator<number>}
  * @implements {NumberValidatorInterface}
  */
-export class NumberValidator extends Validator<number> {
-  /**
-   * accept positive values only (zero is not positive)
-   *
-   * @since 1.0.0
-   * @readonly
-   * @type {this}
-   * @memberof NumberValidator
-   */
-  public get positive(): this {
+export class NumberValidator
+  extends Validator<number>
+  implements NumberValidatable
+{
+  public get positive(): NumberValidatable {
     return this.setupCondition(value_ => this.checkPositive(value_));
   }
 
-  /**
-   * accept negative values only (zero is not negative)
-   *
-   * @since 1.0.0
-   * @readonly
-   * @type {this}
-   * @memberof NumberValidator
-   */
-  public get negative(): this {
+  public get negative(): NumberValidatable {
     return this.setupCondition(value_ => this.checkNegative(value_));
   }
 
-  /**
-   * reject NaN and Infinity
-   *
-   * @readonly
-   * @type {this}
-   * @memberof NumberValidator
-   */
-  public get finite(): this {
+  public get finite(): NumberValidatable {
     return this.setupCondition(value_ => this.checkFinite(value_));
   }
 
-  /**
-   * reject NaN
-   *
-   * @since 1.0.0
-   * @readonly
-   * @type {this}
-   * @memberof NumberValidator
-   */
-  public get rejectNaN(): this {
+  public get rejectNaN(): NumberValidatable {
     return this.setupCondition(value_ => this.checkNaN(value_));
   }
 
-  /**
-   * reject INFINITY
-   *
-   * @since 1.0.0
-   * @readonly
-   * @type {this}
-   * @memberof NumberValidator
-   */
-  public get rejectInfinity(): this {
+  public get rejectInfinity(): NumberValidatable {
     return this.setupCondition(value_ => this.checkInfinity(value_));
   }
 
-  /**
-   * reject 0
-   *
-   * @since 1.0.0
-   * @readonly
-   * @type {this}
-   * @memberof NumberValidator
-   */
-  public get rejectZero(): this {
+  public get rejectZero(): NumberValidatable {
     return this.setupCondition(value_ => this.checkZero(value_));
   }
 
-  /**
-   * validate minimum value
-   *
-   * @since 1.0.0
-   * @param {number} min_
-   * @return {*}  {this}
-   * @memberof NumberValidator
-   */
-  public min(min_: number): this {
+  public min(min_: number): NumberValidatable {
     return this.setupCondition(value_ => this.checkMin(value_, min_));
   }
 
-  /**
-   * validate maximum value
-   *
-   * @since 1.0.0
-   * @param {number} max_
-   * @return {*}  {this}
-   * @memberof NumberValidator
-   */
-  public max(max_: number): this {
+  public max(max_: number): NumberValidatable {
     return this.setupCondition(value_ => this.checkMax(value_, max_));
   }
 
-  /**
-   * define accepted numbers
-   *
-   * @since 1.0.0
-   * @param {...ReadonlyArray<number>} numbers_
-   * @return {*}  {this}
-   * @memberof NumberValidator
-   */
-  public accept(...numbers_: ReadonlyArray<number>): this {
+  public accept(...numbers_: ReadonlyArray<number>): NumberValidatable {
     return this.setupCondition(value_ => this.checkAccepted(value_, numbers_));
   }
 
-  /**
-   * define rejected numbers
-   *
-   * @since 1.0.0
-   * @param {...ReadonlyArray<number>} numbers_
-   * @return {*}  {this}
-   * @memberof NumberValidator
-   */
-  public reject(...numbers_: ReadonlyArray<number>): this {
+  public reject(...numbers_: ReadonlyArray<number>): NumberValidatable {
     return this.setupCondition(value_ => this.checkRejected(value_, numbers_));
   }
 

@@ -12,6 +12,7 @@ import type {
   UnitedValidatorsItem,
   Validatable
 } from './types';
+import { Validator } from './validator';
 import { AnyValidator } from './validator/any';
 import { ArrayValidator } from './validator/array';
 import { BooleanValidator } from './validator/boolean';
@@ -19,6 +20,7 @@ import { CustomValidator } from './validator/custom';
 import { DateValidator } from './validator/date';
 import { DictionaryValidator } from './validator/dictionary';
 import { EnumValidator } from './validator/enum';
+import { ExcludeValidator } from './validator/exclude';
 import { MethodValidator } from './validator/method';
 import { NullValidator } from './validator/null';
 import { NullishValidator } from './validator/nullish';
@@ -239,5 +241,21 @@ export class TypeInspector {
    */
   public enum<E extends Enumerable<unknown>>(enum_: E): EnumValidator<E> {
     return new EnumValidator(enum_);
+  }
+
+  /**
+   * This validator is able to validate if a type doesn't exist in a KNOWN union type.
+   * The generics "Out" and "In" have to be set. "In" describes the incoming union type and "Out" the desired output type.
+   * The passed validator checks whether the undesired types (= In - Out) exist in the value.
+   *
+   * @since 1.1.0
+   * @template Out
+   * @template In
+   * @param {Validator<Exclude<In, Out>>} validator_
+   * @return {*}  {ExcludeValidator<Out, In>}
+   * @memberof TypeInspector
+   */
+  public exclude<Out extends In, In>(validator_: Validator<Exclude<In, Out>>): ExcludeValidator<Out, In> {
+    return new ExcludeValidator(validator_);
   }
 }

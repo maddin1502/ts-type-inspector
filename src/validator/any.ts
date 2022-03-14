@@ -1,4 +1,20 @@
 import { Validator } from '.';
+import type { Validatable } from '../types';
+
+export type AnyValidatable = Validatable<any> & {
+  /**
+   * reject nullish values (undefined, null)
+   *
+   * @since 1.0.0
+   */
+  get notNullish(): AnyValidatable;
+  /**
+   * reject falsy values (undefined, null, 0, false, '', NaN, 0n, ...)
+   *
+   * @since 1.0.0
+   */
+  get notFalsy(): AnyValidatable;
+};
 
 /**
  * This validator should only be used when a value is indeterminate or when you want to bypass deep validation of an object
@@ -7,34 +23,22 @@ import { Validator } from '.';
  * @export
  * @class AnyValidator
  * @extends {Validator<any>}
+ * @implements {AnyValidatable}
  */
-export class AnyValidator extends Validator<any> {
-  /**
-   * forbid nullish values (undefined, null)
-   *
-   * @since 1.0.0
-   * @readonly
-   * @type {this}
-   * @memberof AnyValidator
-   */
-  public get notNullish(): this {
+export class AnyValidator
+  extends Validator<any>
+  implements AnyValidatable
+{
+  public get notNullish(): AnyValidatable {
     return this.setupCondition(value_ => this.checkNullish(value_));
   }
 
-  /**
-   * forbid falsy values (undefined, null, 0, false, '', NaN, 0n, ...)
-   *
-   * @since 1.0.0
-   * @readonly
-   * @type {this}
-   * @memberof AnyValidator
-   */
-  public get notFalsy(): this {
+  public get notFalsy(): AnyValidatable {
     return this.setupCondition(value_ => this.checkFalsy(value_));
   }
 
   protected validateBaseType(value_: unknown): any {
-    return value_ as any;
+    return value_;
   }
 
   private checkNullish(value_: any): void {

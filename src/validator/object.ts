@@ -1,5 +1,15 @@
 import { Validator } from '.';
-import type { ObjectLike, PropertyValidators } from '../types';
+import type { ObjectLike, PropertyValidators, Validatable } from '../types';
+
+export type ObjectValidatable<Out extends ObjectLike> = Validatable<Out> & {
+  /**
+   * Reject objects that contain more keys than have been validated
+   * USE FOR POJOs ONLY!. Getter/Setter/Methods will lead to false negative results
+   *
+   * @since 1.0.0
+   */
+  get noOverload(): ObjectValidatable<Out>;
+};
 
 /**
  * Validator for object based values. Each property has to match its specified validator
@@ -7,29 +17,25 @@ import type { ObjectLike, PropertyValidators } from '../types';
  * @since 1.0.0
  * @export
  * @class ObjectValidator
- * @extends {Validator<V>}
- * @template V
+ * @extends {Validator<Out>}
+ * @implements {ObjectValidatable<Out>}
+ * @template Out
  */
-export class ObjectValidator<V extends ObjectLike> extends Validator<V> {
+export class ObjectValidator<Out extends ObjectLike>
+  extends Validator<Out>
+  implements ObjectValidatable<Out>
+{
   constructor(
-    private readonly _propertyValidators: PropertyValidators<V>
+    private readonly _propertyValidators: PropertyValidators<Out>
   ) {
     super();
   }
 
-  /**
-   * reject objects that contain more keys than have been validated
-   * USE FOR POJOs ONLY!. Getter/Setter/Methods will lead to false negative results
-   *
-   * @readonly
-   * @type {this}
-   * @memberof ObjectValidator
-   */
-  public get noOverload(): this {
+  public get noOverload(): ObjectValidatable<Out> {
     return this.setupCondition(value_ => this.checkOverload(value_));
   }
 
-  protected validateBaseType(value_: unknown): V {
+  protected validateBaseType(value_: unknown): Out {
     if (!this.isObjectLike(value_)) {
       this.throwValidationError('value is not an object');
     }

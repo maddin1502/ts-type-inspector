@@ -1,5 +1,7 @@
 import { Validator } from '.';
-import type { AnyLike, StrictValues, StrictValuesItem } from '../types';
+import type { AnyLike, StrictValues, StrictValuesItem, Validatable } from '../types';
+
+export type StrictValidatable<Out extends StrictValuesItem<S>, S extends StrictValues = StrictValues<Out>> = Validatable<Out>;
 
 /**
  * Validator for precisely defined values (not just of specific type)
@@ -8,11 +10,11 @@ import type { AnyLike, StrictValues, StrictValuesItem } from '../types';
  * @since 1.0.0
  * @export
  * @class StrictValidator
- * @extends {Validator<V>}
- * @template V
+ * @extends {Validator<Out>}
+ * @template Out
  * @template S
  */
-export class StrictValidator<V extends StrictValuesItem<S>, S extends StrictValues = StrictValues<V>> extends Validator<V> {
+export class StrictValidator<Out extends StrictValuesItem<S>, S extends StrictValues = StrictValues<Out>> extends Validator<Out> {
   private _strictValues: S;
 
   constructor(
@@ -22,11 +24,11 @@ export class StrictValidator<V extends StrictValuesItem<S>, S extends StrictValu
     this._strictValues = strictValues_;
   }
 
-  protected validateBaseType(value_: AnyLike): V {
+  protected validateBaseType(value_: AnyLike): Out {
     if (!this._strictValues.includes(value_)) {
       this.throwValidationError('no equality found');
     }
 
-    return value_ as V;
+    return value_ as Out;
   }
 }

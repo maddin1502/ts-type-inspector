@@ -1,6 +1,32 @@
 import { Validator } from '.';
+import type { DateLike, Validatable } from '../types';
 
-type DateLike = string | number | Date;
+export type DateValidatable = Validatable<Date> & {
+  /**
+   * define earliest accepted date
+   *
+   * @since 1.0.0
+   */
+  earliest(earliest_: DateLike): DateValidatable;
+  /**
+   * define latest accepted date
+   *
+   * @since 1.0.0
+   */
+  latest(latest_: DateLike): DateValidatable;
+  /**
+   * define accepted dates
+   *
+   * @since 1.0.0
+   */
+  accept(...items_: ReadonlyArray<DateLike>): DateValidatable;
+  /**
+   * define rejected dates
+   *
+   * @since 1.0.0
+   */
+  reject(...items_: ReadonlyArray<DateLike>): DateValidatable;
+};
 
 /**
  * Validator for date objects
@@ -9,53 +35,25 @@ type DateLike = string | number | Date;
  * @export
  * @class DateValidator
  * @extends {Validator<Date>}
+ * @implements {DateValidatable}
  */
-export class DateValidator extends Validator<Date> {
-  /**
-   * define earliest accepted date
-   *
-   * @since 1.0.0
-   * @param {DateLike} min_
-   * @return {*}  {this}
-   * @memberof DateValidator
-   */
-  public earliest(earliest_: DateLike): this {
+export class DateValidator
+  extends Validator<Date>
+  implements DateValidatable
+{
+  public earliest(earliest_: DateLike): DateValidatable {
     return this.setupCondition(value_ => this.checkEarliest(value_, earliest_));
   }
 
-  /**
-   * define latest accepted date
-   *
-   * @since 1.0.0
-   * @param {DateLike} max_
-   * @return {*}  {this}
-   * @memberof DateValidator
-   */
-  public latest(latest_: DateLike): this {
+  public latest(latest_: DateLike): DateValidatable {
     return this.setupCondition(value_ => this.checkLatest(value_, latest_));
   }
 
-  /**
-   * define accepted dates
-   *
-   * @since 1.0.0
-   * @param {...ReadonlyArray<DateLike>} items_
-   * @return {*}  {this}
-   * @memberof DateValidator
-   */
-  public accept(...items_: ReadonlyArray<DateLike>): this {
+  public accept(...items_: ReadonlyArray<DateLike>): DateValidatable {
     return this.setupCondition(value_ => this.checkAccepted(value_, items_));
   }
 
-  /**
-   * define rejected dates
-   *
-   * @since 1.0.0
-   * @param {...ReadonlyArray<DateLike>} items_
-   * @return {*}  {this}
-   * @memberof DateValidator
-   */
-  public reject(...items_: ReadonlyArray<DateLike>): this {
+  public reject(...items_: ReadonlyArray<DateLike>): DateValidatable {
     return this.setupCondition(value_ => this.checkRejected(value_, items_));
   }
 

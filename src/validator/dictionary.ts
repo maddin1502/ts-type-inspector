@@ -2,35 +2,40 @@ import type { Dictionary, DictionaryKey, DictionaryValue } from 'ts-lib-extended
 import { Validator } from '.';
 import type { Validatable } from '../types';
 
+export type DictionaryValidatable<Out extends Dictionary> = Validatable<Out> & {
+  /**
+   * additional dictionary key validation
+   *
+   * @since 1.0.0
+   */
+  keys(validator_: Validatable<DictionaryKey<Out>>): DictionaryValidatable<Out>;
+};
+
 /**
  * Validator for dictionary objects
  *
  * @since 1.0.0
  * @export
  * @class DictionaryValidator
- * @extends {Validator<V>}
- * @template V
+ * @extends {Validator<Out>}
+ * @implements {DictionaryValidatable<Out>}
+ * @template Out
  */
-export class DictionaryValidator<V extends Dictionary> extends Validator<V> {
+export class DictionaryValidator<Out extends Dictionary>
+  extends Validator<Out>
+  implements DictionaryValidatable<Out>
+{
   constructor(
-    private readonly _itemValidator: Validatable<DictionaryValue<V>>
+    private readonly _itemValidator: Validatable<DictionaryValue<Out>>
   ) {
     super();
   }
 
-  /**
-   * additional dictionary key validation
-   *
-   * @since 1.0.0
-   * @param {Validatable<DictionaryKey<V>>} validator_
-   * @return {*}  {this}
-   * @memberof DictionaryValidator
-   */
-  public keys(validator_: Validatable<DictionaryKey<V>>): this {
+  public keys(validator_: Validatable<DictionaryKey<Out>>): DictionaryValidatable<Out> {
     return this.setupCondition(value_ => this.checkKeys(value_, validator_));
   }
 
-  protected validateBaseType(value_: unknown): V {
+  protected validateBaseType(value_: unknown): Out {
     if (!this.isDictionary(value_)) {
       this.throwValidationError('value is not a dictionary');
     }
@@ -43,7 +48,7 @@ export class DictionaryValidator<V extends Dictionary> extends Validator<V> {
       }
     }
 
-    return value_ as V;
+    return value_ as Out;
   }
 
   private isDictionary(value_: unknown): value_ is Dictionary<any> {
@@ -51,7 +56,7 @@ export class DictionaryValidator<V extends Dictionary> extends Validator<V> {
     return typeof value_ === 'object' && value_ !== null;
   }
 
-  private checkKeys(value_: Dictionary<any>, keyValidator_: Validatable<DictionaryKey<V>>): void {
+  private checkKeys(value_: Dictionary<any>, keyValidator_: Validatable<DictionaryKey<Out>>): void {
     for (const dictionaryKey in value_) {
       try {
         keyValidator_.validate(dictionaryKey);

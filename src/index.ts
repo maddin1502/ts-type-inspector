@@ -12,7 +12,8 @@ export type {
   UnitedValidators,
   UnitedValidatorsItem,
   Validatable,
-  ValidationCondition
+  ValidationCondition,
+  DateLike
 } from './types';
 export {
   TypeInspector
