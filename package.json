@@ -1,6 +1,6 @@
 {
   "name": "ts-type-inspector",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Type safe tool for value validation",
   "files": [
     "dist"
@@ -51,6 +51,6 @@
   },
   "dependencies": {
     "@sideway/address": "^4.1.2",
-    "ts-lib-extended": "^1.1.5"
+    "ts-lib-extended": "^1.2.0"
   }
 }

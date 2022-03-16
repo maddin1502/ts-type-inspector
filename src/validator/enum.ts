@@ -1,4 +1,5 @@
 import type { Enumerable, EnumerableBase, EnumerableValue } from 'ts-lib-extended';
+import { enumerableObject } from 'ts-lib-extended';
 import { Validator } from '.';
 import type { Validatable } from '../types';
 
@@ -44,16 +45,10 @@ export class EnumValidator<E extends Enumerable<unknown>>
   }
 
   private isEnumValue(enum_: E, value_: unknown): value_ is EnumerableValue<E> {
-    const entries = Object.entries(enum_);
+    const values = enumerableObject.values(enum_);
 
-    for (let i = 0; i < entries.length; i++) {
-      const [key, value] = entries[i];
-
-      if (/^[0-9]$/.exec(key)) {
-        continue;
-      }
-
-      if (value === value_) {
+    for (let i = 0; i < values.length; i++) {
+      if (values[i] === value_) {
         return true;
       }
     }
