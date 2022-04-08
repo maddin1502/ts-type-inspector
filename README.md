@@ -163,7 +163,7 @@ Validator for number values.
 
 | Condition | Description |
 |---|---|
-| positive | accept positive values only (zero is not positiv) |
+| positive | accept positive values only (zero is not positive) |
 | negative | accept negative values only (zero is not negative) |
 | finite | reject `NaN` or `Infinity` |
 | rejectNaN | reject `NaN` |
