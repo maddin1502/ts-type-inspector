@@ -1,0 +1,36 @@
+name: Publish [package-name] to npmjs
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
+      - name: Produce (install, build, test)
+        run: npm run produce
+      - name: Archive test reports
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: test-reports
+          path: tests/reports/
+          if-no-files-found: error
+      - name: Archive package-lock
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: package-lock.json
+          path: package-lock.json
+          if-no-files-found: error
+      - name: Publish package
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}

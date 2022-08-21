@@ -1,0 +1,19 @@
+name: Validate [package-name] build
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Validate (install, build, test)
+        run: npm run produce
