@@ -1,8 +1,8 @@
 import type { ArrayItem } from 'ts-lib-extended';
 import { Validator } from '.';
-import type { ArrayItemValidator, ArrayItemValidatorArray, Validatable } from '../types';
+import type { ArrayItemValidator, Validatable } from '../types';
 
-export type ArrayValidatable<Out extends ArrayItemValidatorArray<V>, V extends ArrayItemValidator = ArrayItemValidator<Out>>
+export type ArrayValidatable<Out extends Array<any>, V extends ArrayItemValidator = ArrayItemValidator<Out>>
   = Validatable<Out> & {
     /**
      * validate exact array length
@@ -47,7 +47,7 @@ export type ArrayValidatable<Out extends ArrayItemValidatorArray<V>, V extends A
  * @template Out
  * @template V
  */
-export class ArrayValidator<Out extends ArrayItemValidatorArray<V>, V extends ArrayItemValidator = ArrayItemValidator<Out>>
+export class ArrayValidator<Out extends Array<any>, V extends ArrayItemValidator = ArrayItemValidator<Out>>
   extends Validator<Out>
   implements ArrayValidatable<Out, V>
 {

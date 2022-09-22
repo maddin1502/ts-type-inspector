@@ -1,7 +1,6 @@
 import type { Dictionary, DictionaryValue, Enumerable } from 'ts-lib-extended';
 import type {
   ArrayItemValidator,
-  ArrayItemValidatorArray,
   CustomValidation,
   MethodLike,
   ObjectLike,
@@ -139,14 +138,14 @@ export class TypeInspector {
    * Validate array values
    *
    * @since 1.0.0
-   * @template A
-   * @template V
+   * @template V Array item validator type
+   * @template A Array item type
    * @param {V} itemValidator_ Validator for array items
    * @return {*}  {ArrayValidator<A>}
    * @memberof TypeInspector
    */
-  public array<A extends ArrayItemValidatorArray<V>, V extends ArrayItemValidator = ArrayItemValidator<A>>(itemValidator_: V): ArrayValidator<A> {
-    return new ArrayValidator<A>(itemValidator_);
+  public array<V extends ArrayItemValidator<Array<any>>, A = V extends ArrayItemValidator<Array<infer T>> ? T : never>(itemValidator_: V): ArrayValidator<Array<A>> {
+    return new ArrayValidator<Array<A>, V>(itemValidator_);
   }
 
   /**

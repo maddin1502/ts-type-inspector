@@ -16,15 +16,18 @@ export interface Validatable<Out extends In, In = unknown> {
 export type PropertyValidators<V extends ObjectLike> = { readonly [key in keyof V]-?: Validatable<V[key]> };
 // TODO: readonly MinArray
 export type UnitedValidators<V = any> = MinArray<Validatable<V>, 2>;
-export type UnitedValidatorsItem<U extends UnitedValidators>
+export type UnitedValidatorsItem<U extends MinArray<Validatable<any>, 2>>
   = ArrayItem<U> extends Validatable<infer V>
     ? V
     : never;
 // TODO: or readonly MinArray?
 export type StrictValues<V extends AnyLike = AnyLike> = ReadonlyArray<V>;
 export type StrictValuesItem<S extends StrictValues> = ArrayItem<S>;
-export type ArrayItemValidator<A extends any[] = any[]> = Validatable<ArrayItem<A>>;
-export type ArrayItemValidatorArray<A extends ArrayItemValidator>
+export type ArrayItemValidator<A extends Array<any> = Array<any>> = Validatable<ArrayItem<A>>;
+/**
+ * @deprecated Remove in next release
+ */
+export type ArrayItemValidatorArray<A extends Validatable<any>>
   = A extends Validatable<infer V>
     ? V[]
     : never;
