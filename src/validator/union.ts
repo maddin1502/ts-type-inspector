@@ -1,7 +1,14 @@
-import type { UnitedValidators, UnitedValidatorsItem, Validatable } from '../types';
+import type {
+  UnitedValidators,
+  UnitedValidatorsItem,
+  Validatable
+} from '../types';
 import { Validator } from './index';
 
-export type UnionValidatable<Out extends UnitedValidatorsItem<U>, U extends UnitedValidators = UnitedValidators<Out>> = Validatable<Out>;
+export type UnionValidatable<
+  Out extends UnitedValidatorsItem<U>,
+  U extends UnitedValidators = UnitedValidators<Out>
+> = Validatable<Out>;
 
 /**
  * Validator for union type values (like "string | number")
@@ -14,15 +21,16 @@ export type UnionValidatable<Out extends UnitedValidatorsItem<U>, U extends Unit
  * @template Out
  * @template U
  */
-export class UnionValidator<Out extends UnitedValidatorsItem<U>, U extends UnitedValidators = UnitedValidators<Out>>
+export class UnionValidator<
+    Out extends UnitedValidatorsItem<U>,
+    U extends UnitedValidators = UnitedValidators<Out>
+  >
   extends Validator<Out>
   implements UnionValidatable<Out, U>
 {
   private _validators: U;
 
-  constructor(
-    ...validators_: U
-  ) {
+  constructor(...validators_: U) {
     super();
     this._validators = validators_;
   }
@@ -42,7 +50,11 @@ export class UnionValidator<Out extends UnitedValidatorsItem<U>, U extends Unite
     }
 
     if (errors.length === this._validators.length) {
-      this.throwValidationError('value does not match any of the possible types', undefined, errors);
+      this.throwValidationError(
+        'value does not match any of the possible types',
+        undefined,
+        errors
+      );
     }
 
     return value_ as Out;

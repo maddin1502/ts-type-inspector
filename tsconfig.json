@@ -6,7 +6,7 @@
     "lib": [
       "ES2022"
     ],
-  "moduleResolution": "node",
+    "moduleResolution": "node",
     "noImplicitAny": true,
     "strict": true,
     "alwaysStrict": true,

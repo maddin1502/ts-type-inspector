@@ -21,9 +21,7 @@ export class CustomValidator<Out>
    * @param {CustomValidation<Out>} _validationCallback Return an error message if validation fails; else undefined
    * @memberof CustomValidator
    */
-  constructor(
-    private readonly _validationCallback: CustomValidation<unknown>
-  ) {
+  constructor(private readonly _validationCallback: CustomValidation<unknown>) {
     super();
   }
 

@@ -12,10 +12,7 @@ export type NullValidatable = Validatable<null>;
  * @extends {Validator<null>}
  * @implements {NullValidatable}
  */
-export class NullValidator
-  extends Validator<null>
-  implements NullValidatable
-{
+export class NullValidator extends Validator<null> implements NullValidatable {
   protected validateBaseType(value_: unknown): null {
     if (value_ !== null) {
       this.throwValidationError('value is not null');

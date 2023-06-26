@@ -1,40 +1,39 @@
 import type { ArrayItem } from 'ts-lib-extended';
 import { Validator } from '.';
-import type { ArrayItemValidator, ArrayItemValidatorArray, Validatable } from '../types';
+import type { ArrayItemValidator, Validatable } from '../types';
 
-export type ArrayValidatable<Out extends ArrayItemValidatorArray<V>, V extends ArrayItemValidator = ArrayItemValidator<Out>>
-  = Validatable<Out> & {
-    /**
-     * validate exact array length
-     *
-     * @since 1.0.0
-     */
-    length(length_: number): ArrayValidatable<Out, V>;
-    /**
-     * validate minimum array length
-     *
-     * @since 1.0.0
-     */
-    min(min_: number): ArrayValidatable<Out, V>;
-    /**
-     * validate maximum array length
-     *
-     * @since 1.0.0
-     */
-    max(max_: number): ArrayValidatable<Out, V>;
-    /**
-     * define accepted values
-     *
-     * @since 1.0.0
-     */
-    accept(...items_: ReadonlyArray<ArrayItem<Out>>): ArrayValidatable<Out, V>;
-    /**
-     * define rejected values
-     *
-     * @since 1.0.0
-     */
-    reject(...items_: ReadonlyArray<ArrayItem<Out>>): ArrayValidatable<Out, V>;
-  };
+export type ArrayValidatable<Out extends any[]> = Validatable<Out> & {
+  /**
+   * validate exact array length
+   *
+   * @since 1.0.0
+   */
+  length(length_: number): ArrayValidatable<Out>;
+  /**
+   * validate minimum array length
+   *
+   * @since 1.0.0
+   */
+  min(min_: number): ArrayValidatable<Out>;
+  /**
+   * validate maximum array length
+   *
+   * @since 1.0.0
+   */
+  max(max_: number): ArrayValidatable<Out>;
+  /**
+   * define accepted values
+   *
+   * @since 1.0.0
+   */
+  accept(...items_: ReadonlyArray<ArrayItem<Out>>): ArrayValidatable<Out>;
+  /**
+   * define rejected values
+   *
+   * @since 1.0.0
+   */
+  reject(...items_: ReadonlyArray<ArrayItem<Out>>): ArrayValidatable<Out>;
+};
 
 /**
  * Validator for array values
@@ -43,38 +42,39 @@ export type ArrayValidatable<Out extends ArrayItemValidatorArray<V>, V extends A
  * @export
  * @class ArrayValidator
  * @extends {Validator<Out>}
- * @implements {ArrayValidatable<Out, V>}
+ * @implements {ArrayValidatable<Out>}
  * @template Out
- * @template V
  */
-export class ArrayValidator<Out extends ArrayItemValidatorArray<V>, V extends ArrayItemValidator = ArrayItemValidator<Out>>
+export class ArrayValidator<const Out extends any[]>
   extends Validator<Out>
-  implements ArrayValidatable<Out, V>
+  implements ArrayValidatable<Out>
 {
-  constructor(
-    private readonly _itemValidator: V
-  ) {
+  constructor(private readonly _itemValidator: ArrayItemValidator<Out>) {
     super();
   }
 
-  public length(length_: number): ArrayValidatable<Out, V> {
-    return this.setupCondition(value_ => this.checkLength(value_, length_));
+  public length(length_: number): ArrayValidatable<Out> {
+    return this.setupCondition((value_) => this.checkLength(value_, length_));
   }
 
-  public min(min_: number): ArrayValidatable<Out, V> {
-    return this.setupCondition(value_ => this.checkMin(value_, min_));
+  public min(min_: number): ArrayValidatable<Out> {
+    return this.setupCondition((value_) => this.checkMin(value_, min_));
   }
 
-  public max(max_: number): ArrayValidatable<Out, V> {
-    return this.setupCondition(value_ => this.checkMax(value_, max_));
+  public max(max_: number): ArrayValidatable<Out> {
+    return this.setupCondition((value_) => this.checkMax(value_, max_));
   }
 
-  public accept(...items_: ReadonlyArray<ArrayItem<Out>>): ArrayValidatable<Out, V> {
-    return this.setupCondition(value_ => this.checkAccepted(value_, items_));
+  public accept(
+    ...items_: ReadonlyArray<ArrayItem<Out>>
+  ): ArrayValidatable<Out> {
+    return this.setupCondition((value_) => this.checkAccepted(value_, items_));
   }
 
-  public reject(...items_: ReadonlyArray<ArrayItem<Out>>): ArrayValidatable<Out, V> {
-    return this.setupCondition(value_ => this.checkRejected(value_, items_));
+  public reject(
+    ...items_: ReadonlyArray<ArrayItem<Out>>
+  ): ArrayValidatable<Out> {
+    return this.setupCondition((value_) => this.checkRejected(value_, items_));
   }
 
   protected validateBaseType(value_: unknown): Out {

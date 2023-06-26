@@ -1,7 +1,8 @@
+import { ArrayItem } from 'ts-lib-extended/dist';
 import { Validator } from '.';
-import type { AnyLike, StrictValues, StrictValuesItem, Validatable } from '../types';
+import type { AnyLike, Validatable } from '../types';
 
-export type StrictValidatable<Out extends StrictValuesItem<S>, S extends StrictValues = StrictValues<Out>> = Validatable<Out>;
+export type StrictValidatable<V extends AnyLike[]> = Validatable<ArrayItem<V>>;
 
 /**
  * Validator for precisely defined values (not just of specific type)
@@ -10,25 +11,26 @@ export type StrictValidatable<Out extends StrictValuesItem<S>, S extends StrictV
  * @since 1.0.0
  * @export
  * @class StrictValidator
- * @extends {Validator<Out>}
- * @template Out
- * @template S
+ * @extends {Validator<ArrayItem<V>>}
+ * @implements {StrictValidatable<V>}
+ * @template V
  */
-export class StrictValidator<Out extends StrictValuesItem<S>, S extends StrictValues = StrictValues<Out>> extends Validator<Out> {
-  private _strictValues: S;
+export class StrictValidator<V extends AnyLike[]>
+  extends Validator<ArrayItem<V>>
+  implements StrictValidatable<V>
+{
+  private _strictValues: V;
 
-  constructor(
-    ...strictValues_: S
-  ) {
+  constructor(...strictValues_: V) {
     super();
     this._strictValues = strictValues_;
   }
 
-  protected validateBaseType(value_: AnyLike): Out {
-    if (!this._strictValues.includes(value_)) {
+  protected validateBaseType(value_: unknown): ArrayItem<V> {
+    if (!this._strictValues.find((value) => value === value_)) {
       this.throwValidationError('no equality found');
     }
 
-    return value_ as Out;
+    return value_ as ArrayItem<V>;
   }
 }

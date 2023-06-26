@@ -25,14 +25,12 @@ export class ObjectValidator<Out extends ObjectLike>
   extends Validator<Out>
   implements ObjectValidatable<Out>
 {
-  constructor(
-    private readonly _propertyValidators: PropertyValidators<Out>
-  ) {
+  constructor(private readonly _propertyValidators: PropertyValidators<Out>) {
     super();
   }
 
   public get noOverload(): ObjectValidatable<Out> {
-    return this.setupCondition(value_ => this.checkOverload(value_));
+    return this.setupCondition((value_) => this.checkOverload(value_));
   }
 
   protected validateBaseType(value_: unknown): Out {

@@ -17,9 +17,7 @@ export class OptionalValidator<V>
   extends Validator<undefined | V>
   implements OptionalValidatable<V>
 {
-  constructor(
-    private readonly _validator: Validatable<V>
-  ) {
+  constructor(private readonly _validator: Validatable<V>) {
     super();
   }
 

@@ -38,15 +38,15 @@ export class MethodValidator<Out extends MethodLike>
   implements MethodValidatable<Out>
 {
   public count(count_: number): MethodValidatable<Out> {
-    return this.setupCondition(value_ => this.checkCount(value_, count_));
+    return this.setupCondition((value_) => this.checkCount(value_, count_));
   }
 
   public min(min_: number): MethodValidatable<Out> {
-    return this.setupCondition(value_ => this.checkMin(value_, min_));
+    return this.setupCondition((value_) => this.checkMin(value_, min_));
   }
 
   public max(max_: number): MethodValidatable<Out> {
-    return this.setupCondition(value_ => this.checkMax(value_, max_));
+    return this.setupCondition((value_) => this.checkMax(value_, max_));
   }
 
   protected validateBaseType(value_: unknown): Out {

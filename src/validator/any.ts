@@ -25,16 +25,13 @@ export type AnyValidatable = Validatable<any> & {
  * @extends {Validator<any>}
  * @implements {AnyValidatable}
  */
-export class AnyValidator
-  extends Validator<any>
-  implements AnyValidatable
-{
+export class AnyValidator extends Validator<any> implements AnyValidatable {
   public get notNullish(): AnyValidatable {
-    return this.setupCondition(value_ => this.checkNullish(value_));
+    return this.setupCondition((value_) => this.checkNullish(value_));
   }
 
   public get notFalsy(): AnyValidatable {
-    return this.setupCondition(value_ => this.checkFalsy(value_));
+    return this.setupCondition((value_) => this.checkFalsy(value_));
   }
 
   protected validateBaseType(value_: unknown): any {

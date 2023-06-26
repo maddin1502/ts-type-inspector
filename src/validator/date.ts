@@ -37,24 +37,23 @@ export type DateValidatable = Validatable<Date> & {
  * @extends {Validator<Date>}
  * @implements {DateValidatable}
  */
-export class DateValidator
-  extends Validator<Date>
-  implements DateValidatable
-{
+export class DateValidator extends Validator<Date> implements DateValidatable {
   public earliest(earliest_: DateLike): DateValidatable {
-    return this.setupCondition(value_ => this.checkEarliest(value_, earliest_));
+    return this.setupCondition((value_) =>
+      this.checkEarliest(value_, earliest_)
+    );
   }
 
   public latest(latest_: DateLike): DateValidatable {
-    return this.setupCondition(value_ => this.checkLatest(value_, latest_));
+    return this.setupCondition((value_) => this.checkLatest(value_, latest_));
   }
 
   public accept(...items_: ReadonlyArray<DateLike>): DateValidatable {
-    return this.setupCondition(value_ => this.checkAccepted(value_, items_));
+    return this.setupCondition((value_) => this.checkAccepted(value_, items_));
   }
 
   public reject(...items_: ReadonlyArray<DateLike>): DateValidatable {
-    return this.setupCondition(value_ => this.checkRejected(value_, items_));
+    return this.setupCondition((value_) => this.checkRejected(value_, items_));
   }
 
   protected validateBaseType(value_: unknown): Date {
@@ -70,7 +69,9 @@ export class DateValidator
   }
 
   private isDate(value_: unknown): value_ is Date {
-    return !!value_ && Object.prototype.toString.call(value_) === '[object Date]';
+    return (
+      !!value_ && Object.prototype.toString.call(value_) === '[object Date]'
+    );
   }
 
   private toTime(value_: DateLike): number {
@@ -102,7 +103,10 @@ export class DateValidator
     }
   }
 
-  private checkAccepted(value_: Date, acceptedItems_: ReadonlyArray<DateLike>): void {
+  private checkAccepted(
+    value_: Date,
+    acceptedItems_: ReadonlyArray<DateLike>
+  ): void {
     const valueTime = this.toTime(value_);
 
     for (let i = 0; i < acceptedItems_.length; i++) {
@@ -114,7 +118,10 @@ export class DateValidator
     this.throwValidationError('date is not accepted');
   }
 
-  private checkRejected(value_: Date, rejectedItems_: ReadonlyArray<DateLike>): void {
+  private checkRejected(
+    value_: Date,
+    rejectedItems_: ReadonlyArray<DateLike>
+  ): void {
     const valueTime = this.toTime(value_);
 
     for (let i = 0; i < rejectedItems_.length; i++) {

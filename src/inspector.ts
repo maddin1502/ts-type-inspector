@@ -1,13 +1,12 @@
 import type { Dictionary, DictionaryValue, Enumerable } from 'ts-lib-extended';
 import type {
+  AnyLike,
   ArrayItemValidator,
-  ArrayItemValidatorArray,
   CustomValidation,
   MethodLike,
   ObjectLike,
   PropertyValidators,
-  StrictValues,
-  StrictValuesItem,
+  SelectPropertyValidators,
   UnitedValidators,
   UnitedValidatorsItem,
   Validatable
@@ -21,6 +20,7 @@ import { DateValidator } from './validator/date';
 import { DictionaryValidator } from './validator/dictionary';
 import { EnumValidator } from './validator/enum';
 import { ExcludeValidator } from './validator/exclude';
+import { IntersectValidatable, IntersectValidator } from './validator/intersect';
 import { MethodValidator } from './validator/method';
 import { NullValidator } from './validator/null';
 import { NullishValidator } from './validator/nullish';
@@ -126,13 +126,12 @@ export class TypeInspector {
    *
    * @since 1.0.0
    * @template V
-   * @template S
-   * @param {...S} values_ List of values that are accepted
-   * @return {*}  {StrictValidator<V, S>}
+   * @param {...V} values_
+   * @return {*}  {StrictValidator<V>}
    * @memberof TypeInspector
    */
-  public strict<V extends StrictValuesItem<S>, S extends StrictValues = StrictValues<V>>(...values_: S): StrictValidator<V, S> {
-    return new StrictValidator<V, S>(...values_);
+  public strict<V extends AnyLike[]>(...values_: V): StrictValidator<V> {
+    return new StrictValidator<V>(...values_);
   }
 
   /**
@@ -145,7 +144,15 @@ export class TypeInspector {
    * @return {*}  {ArrayValidator<A>}
    * @memberof TypeInspector
    */
-  public array<A extends ArrayItemValidatorArray<V>, V extends ArrayItemValidator = ArrayItemValidator<A>>(itemValidator_: V): ArrayValidator<A> {
+  /**
+   *
+   *
+   * @template A
+   * @param {ArrayItemValidator<A>} itemValidator_
+   * @return {*}  {ArrayValidator<A>}
+   * @memberof TypeInspector
+   */
+  public array<const A extends any[]>(itemValidator_: ArrayItemValidator<A>): ArrayValidator<A> {
     return new ArrayValidator<A>(itemValidator_);
   }
 
@@ -170,13 +177,13 @@ export class TypeInspector {
    * Validate object based values. Each property has to match its specified validator
    *
    * @since 1.0.0
-   * @template V
-   * @param {PropertyValidators<V>} propertyValidators_ Validators for each object property
-   * @return {*}  {ObjectValidator<V>}
+   * @template Out
+   * @param {PropertyValidators<Out>} propertyValidators_ Validators for each object property
+   * @return {*}  {ObjectValidator<Out>}
    * @memberof TypeInspector
    */
-  public object<V extends ObjectLike>(propertyValidators_: PropertyValidators<V>): ObjectValidator<V> {
-    return new ObjectValidator<V>(propertyValidators_);
+  public object<Out extends ObjectLike>(propertyValidators_: PropertyValidators<Out>): ObjectValidator<Out> {
+    return new ObjectValidator<Out>(propertyValidators_);
   }
 
   /**
@@ -258,4 +265,23 @@ export class TypeInspector {
   public exclude<Out extends In, In>(validator_: Validator<Exclude<In, Out>>): ExcludeValidator<Out, In> {
     return new ExcludeValidator(validator_);
   }
+
+  public intersect<In extends ObjectLike, K extends keyof In>(propertyValidators_: SelectPropertyValidators<In, K>): IntersectValidatable<In, K> {
+    return new IntersectValidator<In, K>(propertyValidators_);
+  }
 }
+
+const xyz = new TypeInspector();
+const affe = xyz.intersect<{a:number;b:number}, 'a'>({a:xyz.number}).validate(null);
+affe.
+
+
+function bla<T>(param: { [key in keyof T]?: undefined }): { [key in keyof typeof param]: T[key] } {
+  return null as any;
+}
+// function bla<T, X extends keyof T>(param: { [key in X]: undefined }): { [key in X]: T[key] } {
+//   return null as any;
+// }
+
+const x = bla<{a:number;b:number}>({a:undefined});
+x

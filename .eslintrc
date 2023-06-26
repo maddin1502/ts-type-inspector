@@ -18,7 +18,6 @@
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-var-requires": "warn",
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/indent": ["warn", 2],
     "@typescript-eslint/comma-dangle": "warn",
     "@typescript-eslint/no-shadow": "warn",
     "@typescript-eslint/semi": "warn",

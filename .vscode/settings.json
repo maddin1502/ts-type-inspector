@@ -7,7 +7,7 @@
     "/README.md": true,
     "/tests/reports": true
   },
-  "editor.renderFinalNewline": false,
+  "editor.renderFinalNewline": "off",
   "files.insertFinalNewline": true,
   "editor.insertSpaces": true,
   "files.eol": "\n",
