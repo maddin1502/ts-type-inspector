@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'vitest';
-import { ValidationError } from '../../src/error';
-import { TypeInspector } from '../../src/inspector';
+import { ValidationError } from '../../src/error.js';
+import { TypeInspector } from '../../src/inspector.js';
 
 const ti = new TypeInspector();
 
-describe(() => {
+describe('complex', () => {
   test('object - failure - complex property path', () => {
     expect.assertions(2);
     try {
@@ -336,21 +336,21 @@ describe(() => {
     expect(isValid).toBe(false);
     expect(dictionary1Validator.validationError).toBeDefined();
     expect(dictionary1Validator.validationError?.message).toBe(
-      'value is not a boolean'
+      'value is not a boolean (prop1.0.prop2.prop3.1)'
     );
     expect(dictionary1Validator.validationError?.propertyPath).toBe(
       'prop1.0.prop2.prop3.1'
     );
     expect(array1Validator.validationError).toBeDefined();
     expect(array1Validator.validationError?.message).toBe(
-      'value is not a boolean'
+      'value is not a boolean (0.prop2.prop3.1)'
     );
     expect(array1Validator.validationError?.propertyPath).toBe(
       '0.prop2.prop3.1'
     );
     expect(dictionary2Validator.validationError).toBeDefined();
     expect(dictionary2Validator.validationError?.message).toBe(
-      'value is not a boolean'
+      'value is not a boolean (prop2.prop3.1)'
     );
     expect(dictionary2Validator.validationError?.propertyPath).toBe(
       'prop2.prop3.1'

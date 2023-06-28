@@ -1,4 +1,4 @@
-import type { ArrayItem, MinArray } from 'ts-lib-extended';
+import { ArrayItem, MinArray } from 'ts-lib-extended';
 import { ValidationError } from './error';
 
 export type MethodLike = (...args_: any[]) => any;
@@ -56,22 +56,18 @@ export interface Validatable<Out extends In, In = unknown> {
    */
   isValid(value_: In): value_ is Out;
 }
-export type PropertyValidators<V extends ObjectLike> = {
+export type PropertyValidatables<V extends ObjectLike> = {
   readonly [key in keyof V]-?: Validatable<V[key]>;
 };
-export type PartialPropertyValidators<V = any> = {
+export type PartialPropertyValidatables<V = any> = {
   readonly [key in keyof V]?: Validatable<V[key]>;
 };
-export type SelectPropertyValidators<
+export type SelectPropertyValidatables<
   V extends ObjectLike,
   K extends keyof V
 > = { readonly [key in K]?: Validatable<V[key]> };
-// TODO: readonly MinArray
-export type UnitedValidators<V = any> = MinArray<Validatable<V>, 2>;
-export type UnitedValidatorsItem<U extends UnitedValidators> =
+export type UnionValidatables<V = any> = MinArray<Validatable<V>, 2>;
+export type UnionValidatablesItem<U extends UnionValidatables> =
   ArrayItem<U> extends Validatable<infer V> ? V : never;
-export type ArrayItemValidator<A extends any[] = any[]> = Validatable<
-  ArrayItem<A>
->;
 export type ValidationCondition<V> = (value_: V) => void | never;
 export type DateLike = string | number | Date;

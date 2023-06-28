@@ -1,12 +1,9 @@
 {
   "compilerOptions": {
-    "outDir": "dist/",
-    "target": "ES6",
-    "module": "ES2022",
-    "lib": [
-      "ES2022"
-    ],
-    "moduleResolution": "node",
+    "outDir": "dist",
+    "target": "ES5",
+    "module": "ESNext",
+    "moduleResolution": "Node",
     "noImplicitAny": true,
     "strict": true,
     "alwaysStrict": true,

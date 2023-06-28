@@ -1,8 +1,14 @@
-import type { ArrayItem } from 'ts-lib-extended';
-import { Validator } from '.';
-import type { ArrayItemValidator, Validatable } from '../types';
+import type { Validatable } from '../types.js';
+import { Validator } from './index.js';
 
-export type ArrayValidatable<Out extends any[]> = Validatable<Out> & {
+/**
+ * Validator for array values
+ *
+ * @since 1.0.0
+ * @export
+ * @template Out
+ */
+export type ArrayValidatable<Out> = Validatable<Out[]> & {
   /**
    * validate exact array length
    *
@@ -26,13 +32,13 @@ export type ArrayValidatable<Out extends any[]> = Validatable<Out> & {
    *
    * @since 1.0.0
    */
-  accept(...items_: ReadonlyArray<ArrayItem<Out>>): ArrayValidatable<Out>;
+  accept(...items_: ReadonlyArray<Out>): ArrayValidatable<Out>;
   /**
    * define rejected values
    *
    * @since 1.0.0
    */
-  reject(...items_: ReadonlyArray<ArrayItem<Out>>): ArrayValidatable<Out>;
+  reject(...items_: ReadonlyArray<Out>): ArrayValidatable<Out>;
 };
 
 /**
@@ -45,11 +51,11 @@ export type ArrayValidatable<Out extends any[]> = Validatable<Out> & {
  * @implements {ArrayValidatable<Out>}
  * @template Out
  */
-export class ArrayValidator<const Out extends any[]>
-  extends Validator<Out>
+export class ArrayValidator<const Out>
+  extends Validator<Out[]>
   implements ArrayValidatable<Out>
 {
-  constructor(private readonly _itemValidator: ArrayItemValidator<Out>) {
+  constructor(private readonly _itemValidator: Validatable<Out>) {
     super();
   }
 
@@ -65,19 +71,15 @@ export class ArrayValidator<const Out extends any[]>
     return this.setupCondition((value_) => this.checkMax(value_, max_));
   }
 
-  public accept(
-    ...items_: ReadonlyArray<ArrayItem<Out>>
-  ): ArrayValidatable<Out> {
+  public accept(...items_: ReadonlyArray<Out>): ArrayValidatable<Out> {
     return this.setupCondition((value_) => this.checkAccepted(value_, items_));
   }
 
-  public reject(
-    ...items_: ReadonlyArray<ArrayItem<Out>>
-  ): ArrayValidatable<Out> {
+  public reject(...items_: ReadonlyArray<Out>): ArrayValidatable<Out> {
     return this.setupCondition((value_) => this.checkRejected(value_, items_));
   }
 
-  protected validateBaseType(value_: unknown): Out {
+  protected validateBaseType(value_: unknown): Out[] {
     if (!Array.isArray(value_)) {
       this.throwValidationError('value is not an array');
     }
@@ -90,28 +92,31 @@ export class ArrayValidator<const Out extends any[]>
       }
     }
 
-    return value_ as Out;
+    return value_ as Out[];
   }
 
-  private checkLength(value_: Out, length_: number): void {
+  private checkLength(value_: Out[], length_: number): void {
     if (value_.length !== length_) {
       this.throwValidationError('deviant length');
     }
   }
 
-  private checkMin(value_: Out, min_: number): void {
+  private checkMin(value_: Out[], min_: number): void {
     if (value_.length < min_) {
       this.throwValidationError('too few items');
     }
   }
 
-  private checkMax(value_: Out, max_: number): void {
+  private checkMax(value_: Out[], max_: number): void {
     if (value_.length > max_) {
       this.throwValidationError('too many items');
     }
   }
 
-  private checkAccepted(value_: Out, acceptedItems_: ReadonlyArray<any>): void {
+  private checkAccepted(
+    value_: Out[],
+    acceptedItems_: ReadonlyArray<any>
+  ): void {
     for (let i = 0; i < value_.length; i++) {
       if (!acceptedItems_.includes(value_[i])) {
         this.throwValidationError('item is not accepted');
@@ -119,7 +124,10 @@ export class ArrayValidator<const Out extends any[]>
     }
   }
 
-  private checkRejected(value_: Out, rejectedItems_: ReadonlyArray<any>): void {
+  private checkRejected(
+    value_: Out[],
+    rejectedItems_: ReadonlyArray<any>
+  ): void {
     for (let i = 0; i < value_.length; i++) {
       if (rejectedItems_.includes(value_[i])) {
         this.throwValidationError('item is rejected');

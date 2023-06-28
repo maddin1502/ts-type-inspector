@@ -1,5 +1,5 @@
-import { Validator } from '.';
-import type { Validatable } from '../types';
+import type { Validatable } from '../types.js';
+import { Validator } from './index.js';
 
 export type BooleanValidatable = Validatable<boolean> & {
   /**

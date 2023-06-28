@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { TypeInspector } from '../../../src/inspector';
-import { OptionalValidator } from '../../../src/validator/optional';
+import { TypeInspector } from '../../../src/inspector.js';
+import { OptionalValidator } from '../../../src/validator/optional.js';
 
 const ti = new TypeInspector();
 

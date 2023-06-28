@@ -5,8 +5,8 @@
   "files": [
     "dist"
   ],
-  "module": "dist",
-  "types": "dist",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
     "build": "tsc -p ./tsconfig.prod.json",
@@ -54,6 +54,6 @@
   },
   "dependencies": {
     "@sideway/address": "^5.0.0",
-    "ts-lib-extended": "^2.0.2"
+    "ts-lib-extended": "^2.0.5"
   }
 }

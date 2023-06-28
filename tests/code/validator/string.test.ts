@@ -1,7 +1,7 @@
 import url from 'url';
 import { describe, expect, test } from 'vitest';
-import { TypeInspector } from '../../../src/inspector';
-import { StringValidator } from '../../../src/validator/string';
+import { TypeInspector } from '../../../src/inspector.js';
+import { StringValidator } from '../../../src/validator/string.js';
 
 const ti = new TypeInspector();
 

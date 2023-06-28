@@ -1,6 +1,16 @@
-import { Validator } from '.';
-import type { Validatable } from '../types';
+import type { Validatable } from '../types.js';
+import { Validator } from './index.js';
 
+/**
+ * This validator is able to validate if a type doesn't exist in a KNOWN union type.
+ * The generics "Out" and "In" have to be set. "In" describes the incoming union type and "Out" the desired output type.
+ * The passed validator checks whether the undesired types (= In - Out) exist in the value.
+ *
+ * @since 1.1.0
+ * @export
+ * @template Out
+ * @template In
+ */
 export type ExcludeValidatable<Out extends In, In> = Validatable<Out, In>;
 
 /**

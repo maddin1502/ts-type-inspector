@@ -4,7 +4,7 @@ import type {
   Validatable,
   ValidationCondition,
   ValidationErrorHandler
-} from '../types';
+} from '../types.js';
 
 export abstract class Validator<Out extends In, In = unknown>
   implements Validatable<Out, In>
@@ -67,29 +67,36 @@ export abstract class Validator<Out extends In, In = unknown>
   protected detectError(
     reason_: unknown,
     propertyTraces_?: PropertyKey[]
-  ): Error {
+  ): { error: Error; originalMessage?: string } {
     if (this.isValidationError(reason_)) {
       if (reason_.propertyTrace && propertyTraces_) {
         propertyTraces_.push(...reason_.propertyTrace);
       }
-      return reason_;
+      return { error: reason_, originalMessage: reason_.originalErrorMessage };
     } else if (reason_ instanceof Error) {
-      return reason_;
+      return { error: reason_ };
     } else if (
       this.hasMessage(reason_) &&
       typeof reason_.message === 'string' &&
       reason_.message !== ''
     ) {
-      return new Error(reason_.message);
+      return { error: new Error(reason_.message) };
     } else {
-      return new Error('unknown error');
+      return { error: new Error('unknown error') };
     }
   }
 
   protected rethrowError(reason_: unknown, trace_?: PropertyKey): never {
     const propertyTraces: PropertyKey[] = trace_ === undefined ? [] : [trace_];
-    const error = this.detectError(reason_, propertyTraces);
-    this.throwValidationError(error.message, propertyTraces, [error]);
+    const { error, originalMessage } = this.detectError(
+      reason_,
+      propertyTraces
+    );
+    this.throwValidationError(
+      originalMessage ?? error.message,
+      propertyTraces,
+      [error]
+    );
   }
 
   protected throwValidationError(
@@ -102,7 +109,6 @@ export abstract class Validator<Out extends In, In = unknown>
       propertyTrace_,
       subErrors_
     );
-    validationError.message = '';
 
     for (let i = 0; i < this._errorHandlers.length; i++) {
       this._errorHandlers[i](validationError);

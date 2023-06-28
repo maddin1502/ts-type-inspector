@@ -1,6 +1,12 @@
-import { Validator } from '.';
-import type { Validatable } from '../types';
+import type { Validatable } from '../types.js';
+import { Validator } from './index.js';
 
+/**
+ * This validator should only be used when a value is indeterminate or when you want to bypass deep validation of an object
+ *
+ * @since 1.0.0
+ * @export
+ */
 export type AnyValidatable = Validatable<any> & {
   /**
    * reject nullish values (undefined, null)

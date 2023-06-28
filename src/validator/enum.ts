@@ -4,9 +4,16 @@ import type {
   EnumerableValue
 } from 'ts-lib-extended';
 import { enumerableObject } from 'ts-lib-extended';
-import { Validator } from '.';
-import type { Validatable } from '../types';
+import type { Validatable } from '../types.js';
+import { Validator } from './index.js';
 
+/**
+ * Validator for enum values
+ *
+ * @since 1.0.2
+ * @export
+ * @template E
+ */
 export type EnumValidatable<E extends Enumerable> = Validatable<
   EnumerableValue<E>
 > & {

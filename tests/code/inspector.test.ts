@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { TypeInspector } from '../../src/inspector';
+import { TypeInspector } from '../../src/inspector.js';
 
 const ti = new TypeInspector();
 

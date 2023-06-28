@@ -1,6 +1,14 @@
-import { Validator } from '.';
-import type { MethodLike, Validatable } from '../types';
+import type { MethodLike, Validatable } from '../types.js';
+import { Validator } from './index.js';
 
+/**
+ * Validator for method-like values.
+ * Unfortunately (for technical reasons), this validator can only validate the number of parameters.
+ *
+ * @since 1.0.0
+ * @export
+ * @template Out
+ */
 export type MethodValidatable<Out extends MethodLike> = Validatable<Out> & {
   /**
    * validate exact params count

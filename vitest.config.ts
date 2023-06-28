@@ -3,7 +3,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     coverage: {
-      reporter: 'text', 'html - cobertura',
+      reporter: ['text', 'html', 'cobertura'],
       src: ['./src'],
       reportsDirectory: './tests/reports/coverage',
       clean: true,

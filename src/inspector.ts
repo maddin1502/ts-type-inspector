@@ -1,36 +1,32 @@
 import type { Dictionary, DictionaryValue, Enumerable } from 'ts-lib-extended';
 import type {
   AnyLike,
-  ArrayItemValidator,
   CustomValidation,
   MethodLike,
   ObjectLike,
-  PropertyValidators,
-  SelectPropertyValidators,
-  UnitedValidators,
-  UnitedValidatorsItem,
+  PropertyValidatables,
+  UnionValidatables,
   Validatable
-} from './types';
-import { Validator } from './validator';
-import { AnyValidator } from './validator/any';
-import { ArrayValidator } from './validator/array';
-import { BooleanValidator } from './validator/boolean';
-import { CustomValidator } from './validator/custom';
-import { DateValidator } from './validator/date';
-import { DictionaryValidator } from './validator/dictionary';
-import { EnumValidator } from './validator/enum';
-import { ExcludeValidator } from './validator/exclude';
-import { IntersectValidatable, IntersectValidator } from './validator/intersect';
-import { MethodValidator } from './validator/method';
-import { NullValidator } from './validator/null';
-import { NullishValidator } from './validator/nullish';
-import { NumberValidator } from './validator/number';
-import { ObjectValidator } from './validator/object';
-import { OptionalValidator } from './validator/optional';
-import { StrictValidator } from './validator/strict';
-import { StringValidator } from './validator/string';
-import { UndefinedValidator } from './validator/undefined';
-import { UnionValidator } from './validator/union';
+} from './types.js';
+import { Validator } from './validator/index.js';
+import { AnyValidator } from './validator/any.js';
+import { ArrayValidator } from './validator/array.js';
+import { BooleanValidator } from './validator/boolean.js';
+import { CustomValidator } from './validator/custom.js';
+import { DateValidator } from './validator/date.js';
+import { DictionaryValidator } from './validator/dictionary.js';
+import { EnumValidator } from './validator/enum.js';
+import { ExcludeValidator } from './validator/exclude.js';
+import { MethodValidator } from './validator/method.js';
+import { NullValidator } from './validator/null.js';
+import { NullishValidator } from './validator/nullish.js';
+import { NumberValidator } from './validator/number.js';
+import { ObjectValidator } from './validator/object.js';
+import { OptionalValidator } from './validator/optional.js';
+import { StrictValidator } from './validator/strict.js';
+import { StringValidator } from './validator/string.js';
+import { UndefinedValidator } from './validator/undefined.js';
+import { UnionValidator } from './validator/union.js';
 
 /**
  * Collection of gadgets for type inspection
@@ -47,7 +43,9 @@ export class TypeInspector {
    * @type {StringValidator}
    * @memberof TypeInspector
    */
-  public get string(): StringValidator { return new StringValidator(); }
+  public get string(): StringValidator {
+    return new StringValidator();
+  }
 
   /**
    * Validate numeric values.
@@ -57,7 +55,9 @@ export class TypeInspector {
    * @type {NumberValidator}
    * @memberof TypeInspector
    */
-  public get number(): NumberValidator { return new NumberValidator(); }
+  public get number(): NumberValidator {
+    return new NumberValidator();
+  }
 
   /**
    * Validate boolean values.
@@ -67,7 +67,9 @@ export class TypeInspector {
    * @type {BooleanValidator}
    * @memberof TypeInspector
    */
-  public get boolean(): BooleanValidator { return new BooleanValidator(); }
+  public get boolean(): BooleanValidator {
+    return new BooleanValidator();
+  }
 
   /**
    * Validate method-like values.
@@ -90,7 +92,9 @@ export class TypeInspector {
    * @type {DateValidator}
    * @memberof TypeInspector
    */
-  public get date(): DateValidator { return new DateValidator(); }
+  public get date(): DateValidator {
+    return new DateValidator();
+  }
 
   /**
    * Validate undefined values... The value has to be undefined to match this validator
@@ -100,7 +104,9 @@ export class TypeInspector {
    * @type {UndefinedValidator}
    * @memberof TypeInspector
    */
-  public get undefined(): UndefinedValidator { return new UndefinedValidator(); }
+  public get undefined(): UndefinedValidator {
+    return new UndefinedValidator();
+  }
 
   /**
    * Validate null values... The value has to be null to match this validator
@@ -110,7 +116,9 @@ export class TypeInspector {
    * @type {NullValidator}
    * @memberof TypeInspector
    */
-  public get null(): NullValidator { return new NullValidator(); }
+  public get null(): NullValidator {
+    return new NullValidator();
+  }
 
   /**
    * Validate nullish values
@@ -119,7 +127,9 @@ export class TypeInspector {
    * @type {NullishValidator}
    * @memberof TypeInspector
    */
-  public get nullish(): NullishValidator { return new NullishValidator(); }
+  public get nullish(): NullishValidator {
+    return new NullishValidator();
+  }
 
   /**
    * Validate values through strict equality (===). Keep in mind that objects are compared by reference
@@ -138,39 +148,30 @@ export class TypeInspector {
    * Validate array values
    *
    * @since 1.0.0
-   * @template A
-   * @template V
-   * @param {V} itemValidator_ Validator for array items
-   * @return {*}  {ArrayValidator<A>}
+   * @template Item
+   * @param {Validatable<Item>} itemValidator_
+   * @return {*}  {ArrayValidator<Item>}
    * @memberof TypeInspector
    */
-  /**
-   *
-   *
-   * @template A
-   * @param {ArrayItemValidator<A>} itemValidator_
-   * @return {*}  {ArrayValidator<A>}
-   * @memberof TypeInspector
-   */
-  public array<const A extends any[]>(itemValidator_: ArrayItemValidator<A>): ArrayValidator<A> {
-    return new ArrayValidator<A>(itemValidator_);
+  public array<const Item>(
+    itemValidator_: Validatable<Item>
+  ): ArrayValidator<Item> {
+    return new ArrayValidator<Item>(itemValidator_);
   }
 
   /**
    * Validate union types like "string | number" or optional properties.
    * At least one validator have to match for a positive result
    *
-   * @since 1.0.0
+   * @public
    * @template V
-   * @template U
-   * @param {...U} validators_ Validators for each part of the union type
-   * @return {*}  {UnionValidator<V>}
-   * @memberof TypeInspector
+   * @param {...V} validators_ Validators for each part of the union type
+   * @returns {UnionValidator<V>}
    */
-  public union<V extends UnitedValidatorsItem<U>, U extends UnitedValidators = UnitedValidators<V>>(
-    ...validators_: U
+  public union<V extends UnionValidatables>(
+    ...validators_: V
   ): UnionValidator<V> {
-    return new UnionValidator<V, U>(...validators_);
+    return new UnionValidator<V>(...validators_);
   }
 
   /**
@@ -178,11 +179,13 @@ export class TypeInspector {
    *
    * @since 1.0.0
    * @template Out
-   * @param {PropertyValidators<Out>} propertyValidators_ Validators for each object property
+   * @param {PropertyValidatables<Out>} propertyValidators_ Validators for each object property
    * @return {*}  {ObjectValidator<Out>}
    * @memberof TypeInspector
    */
-  public object<Out extends ObjectLike>(propertyValidators_: PropertyValidators<Out>): ObjectValidator<Out> {
+  public object<Out extends ObjectLike>(
+    propertyValidators_: PropertyValidatables<Out>
+  ): ObjectValidator<Out> {
     return new ObjectValidator<Out>(propertyValidators_);
   }
 
@@ -195,7 +198,9 @@ export class TypeInspector {
    * @return {*}  {DictionaryValidator<V>}
    * @memberof TypeInspector
    */
-  public dictionary<V extends Dictionary>(itemValidator_: Validatable<DictionaryValue<V>>): DictionaryValidator<V> {
+  public dictionary<V extends Dictionary>(
+    itemValidator_: Validatable<DictionaryValue<V>>
+  ): DictionaryValidator<V> {
     return new DictionaryValidator<V>(itemValidator_);
   }
 
@@ -215,10 +220,10 @@ export class TypeInspector {
    * Validate for optional properties/values
    *
    * @since 1.0.0
+   * @public
    * @template V
    * @param {Validatable<V>} validator_ Validator for the non-optional part
-   * @return {*}  {OptionalValidator<V>}
-   * @memberof TypeInspector
+   * @returns {OptionalValidator<V>}
    */
   public optional<V>(validator_: Validatable<V>): OptionalValidator<V> {
     return new OptionalValidator(validator_);
@@ -233,7 +238,9 @@ export class TypeInspector {
    * @return {*}  {CustomValidator<V>}
    * @memberof TypeInspector
    */
-  public custom<V>(validationCallback_: CustomValidation<unknown>): CustomValidator<V> {
+  public custom<V>(
+    validationCallback_: CustomValidation<unknown>
+  ): CustomValidator<V> {
     return new CustomValidator(validationCallback_);
   }
 
@@ -246,7 +253,7 @@ export class TypeInspector {
    * @return {*}  {EnumValidator<E>}
    * @memberof TypeInspector
    */
-  public enum<E extends Enumerable<unknown>>(enum_: E): EnumValidator<E> {
+  enum<E extends Enumerable<unknown>>(enum_: E): EnumValidator<E> {
     return new EnumValidator(enum_);
   }
 
@@ -262,26 +269,37 @@ export class TypeInspector {
    * @return {*}  {ExcludeValidator<Out, In>}
    * @memberof TypeInspector
    */
-  public exclude<Out extends In, In>(validator_: Validator<Exclude<In, Out>>): ExcludeValidator<Out, In> {
+  public exclude<Out extends In, In>(
+    validator_: Validator<Exclude<In, Out>>
+  ): ExcludeValidator<Out, In> {
     return new ExcludeValidator(validator_);
   }
 
-  public intersect<In extends ObjectLike, K extends keyof In>(propertyValidators_: SelectPropertyValidators<In, K>): IntersectValidatable<In, K> {
-    return new IntersectValidator<In, K>(propertyValidators_);
-  }
+  // public intersect<In extends ObjectLike, K extends keyof In>(propertyValidators_: SelectPropertyValidators<In, K>): IntersectValidatable<In, K> {
+  //   return new IntersectValidator<In, K>(propertyValidators_);
+  // }
 }
 
-const xyz = new TypeInspector();
-const affe = xyz.intersect<{a:number;b:number}, 'a'>({a:xyz.number}).validate(null);
-affe.
+// const xyz = new TypeInspector();
+// const affe = xyz.intersect<{a:number;b:number}, 'a'>({a:xyz.number}).validate(null);
+// affe.
 
-
-function bla<T>(param: { [key in keyof T]?: undefined }): { [key in keyof typeof param]: T[key] } {
-  return null as any;
-}
+// function bla<T>(param: { [key in keyof T]?: undefined }): { [key in keyof typeof param]: T[key] } {
+//   return null as any;
+// }
 // function bla<T, X extends keyof T>(param: { [key in X]: undefined }): { [key in X]: T[key] } {
 //   return null as any;
 // }
 
-const x = bla<{a:number;b:number}>({a:undefined});
-x
+// const x = bla<{a:number;b:number}>({a:undefined});
+// x
+
+
+
+// type HasNames = { names: readonly string[] };
+// function getNamesExactly<const T extends HasNames>(arg: T): T["names"] {
+//     return arg.names;
+// }
+// const names = getNamesExactly({ names: ["Alice", "Bob", "Eve"] });
+
+// const ti = new TypeInspector()

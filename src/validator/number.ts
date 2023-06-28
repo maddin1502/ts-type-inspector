@@ -1,6 +1,12 @@
-import { Validator } from '.';
-import type { Validatable } from '../types';
+import type { Validatable } from '../types.js';
+import { Validator } from './index.js';
 
+/**
+ * Validator for numeric values
+ *
+ * @since 1.0.0
+ * @export
+ */
 export type NumberValidatable = Validatable<number> & {
   /**
    * accept positive values only (zero is not positive)

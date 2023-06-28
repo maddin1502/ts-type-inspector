@@ -1,7 +1,13 @@
 import { isEmailValid, uriRegex } from '@sideway/address';
-import { Validator } from '.';
-import type { Validatable } from '../types';
+import type { Validatable } from '../types.js';
+import { Validator } from './index.js';
 
+/**
+ * Validator for string values.
+ *
+ * @since 1.0.0
+ * @export
+ */
 export type StringValidatable = Validatable<string> & {
   /**
    * define minimum string length

@@ -3,9 +3,16 @@ import type {
   DictionaryKey,
   DictionaryValue
 } from 'ts-lib-extended';
-import { Validator } from '.';
-import type { Validatable } from '../types';
+import type { Validatable } from '../types.js';
+import { Validator } from './index.js';
 
+/**
+ * Validator for dictionary objects
+ *
+ * @since 1.0.0
+ * @export
+ * @template Out
+ */
 export type DictionaryValidatable<Out extends Dictionary> = Validatable<Out> & {
   /**
    * additional dictionary key validation

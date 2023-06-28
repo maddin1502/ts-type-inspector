@@ -1,14 +1,20 @@
 import type {
-  UnitedValidators,
-  UnitedValidatorsItem,
+  UnionValidatables,
+  UnionValidatablesItem,
   Validatable
-} from '../types';
+} from '../types.js';
 import { Validator } from './index';
 
-export type UnionValidatable<
-  Out extends UnitedValidatorsItem<U>,
-  U extends UnitedValidators = UnitedValidators<Out>
-> = Validatable<Out>;
+/**
+ * Validator for union type values (like "string | number")
+ *
+ * @since 1.0.0
+ * @export
+ * @template V
+ */
+export type UnionValidatable<V extends UnionValidatables> = Validatable<
+  UnionValidatablesItem<V>
+>;
 
 /**
  * Validator for union type values (like "string | number")
@@ -16,26 +22,22 @@ export type UnionValidatable<
  * @since 1.0.0
  * @export
  * @class UnionValidator
- * @extends {Validator<Out>}
- * @implements {UnionValidatable<Out, U>}
- * @template Out
- * @template U
+ * @extends {Validator<UnionValidatablesItem<V>>}
+ * @implements {UnionValidatable<V>}
+ * @template V
  */
-export class UnionValidator<
-    Out extends UnitedValidatorsItem<U>,
-    U extends UnitedValidators = UnitedValidators<Out>
-  >
-  extends Validator<Out>
-  implements UnionValidatable<Out, U>
+export class UnionValidator<V extends UnionValidatables>
+  extends Validator<UnionValidatablesItem<V>>
+  implements UnionValidatable<V>
 {
-  private _validators: U;
+  private _validators: V;
 
-  constructor(...validators_: U) {
+  constructor(...validators_: V) {
     super();
     this._validators = validators_;
   }
 
-  protected validateBaseType(value_: unknown): Out {
+  protected validateBaseType(value_: unknown): UnionValidatablesItem<V> {
     const errors: Error[] = [];
 
     for (let i = 0; i < this._validators.length; i++) {
@@ -57,6 +59,6 @@ export class UnionValidator<
       );
     }
 
-    return value_ as Out;
+    return value_ as UnionValidatablesItem<V>;
   }
 }

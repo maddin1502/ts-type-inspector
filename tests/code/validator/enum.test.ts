@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { TypeInspector } from '../../../src/inspector';
-import { EnumValidator } from '../../../src/validator/enum';
+import { TypeInspector } from '../../../src/inspector.js';
+import { EnumValidator } from '../../../src/validator/enum.js';
 
 enum NumberEnum {
   a,

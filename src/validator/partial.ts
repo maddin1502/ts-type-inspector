@@ -1,10 +1,17 @@
-import { Validator } from '.';
 import type {
   ObjectLike,
-  PartialPropertyValidators,
+  PartialPropertyValidatables,
   Validatable
-} from '../types';
+} from '../types.js';
+import { Validator } from './index.js';
 
+/**
+ * Validator for object based values. This is a "unsafe" validator that only validates some properties and ignores others
+ *
+ * @since 2.0.0
+ * @export
+ * @template Out
+ */
 export type PartialValidatable<Out extends ObjectLike> = Validatable<Out>;
 
 /**
@@ -22,7 +29,7 @@ export class PartialValidator<Out extends ObjectLike>
   implements PartialValidatable<Out>
 {
   constructor(
-    private readonly _propertyValidators: PartialPropertyValidators<Out>
+    private readonly _propertyValidators: PartialPropertyValidatables<Out>
   ) {
     super();
   }

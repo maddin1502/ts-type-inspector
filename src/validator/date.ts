@@ -1,6 +1,12 @@
-import { Validator } from '.';
-import type { DateLike, Validatable } from '../types';
+import type { DateLike, Validatable } from '../types.js';
+import { Validator } from './index.js';
 
+/**
+ * Validator for date objects
+ *
+ * @since 1.0.0
+ * @export
+ */
 export type DateValidatable = Validatable<Date> & {
   /**
    * define earliest accepted date
