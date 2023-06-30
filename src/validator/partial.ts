@@ -6,7 +6,7 @@ import type {
 import { Validator } from './index.js';
 
 /**
- * Validator for object based values. This is a "unsafe" validator that only validates some properties and ignores others
+ * Validator for object based values. This is an **UNSAFE** validator that only validates some properties and ignores others
  *
  * @since 2.0.0
  * @export
@@ -15,7 +15,7 @@ import { Validator } from './index.js';
 export type PartialValidatable<Out extends ObjectLike> = Validatable<Out>;
 
 /**
- * Validator for object based values. This is a "unsafe" validator that only validates some properties and ignores others
+ * Validator for object based values. This is an **UNSAFE** validator that only validates some properties and ignores others
  *
  * @since 2.0.0
  * @export

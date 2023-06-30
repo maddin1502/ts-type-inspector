@@ -33,8 +33,6 @@ export type { EnumValidatable } from './validator/enum.js';
 export { ExcludeValidator } from './validator/exclude.js';
 export type { ExcludeValidatable } from './validator/exclude.js';
 export { Validator } from './validator/index.js';
-export {} from './validator/intersect.js';
-export type {} from './validator/intersect.js';
 export { MethodValidator } from './validator/method.js';
 export type { MethodValidatable } from './validator/method.js';
 export { NullValidator } from './validator/null.js';

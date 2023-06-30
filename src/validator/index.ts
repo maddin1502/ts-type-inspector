@@ -104,14 +104,22 @@ export abstract class Validator<Out extends In, In = unknown>
     propertyTrace_?: ReadonlyArray<PropertyKey>,
     subErrors_?: ReadonlyArray<Error>
   ): never {
-    const validationError = new ValidationError(
+    let validationError = new ValidationError(
       message_,
       propertyTrace_,
       subErrors_
     );
 
     for (let i = 0; i < this._errorHandlers.length; i++) {
-      this._errorHandlers[i](validationError);
+      const handlerMessage = this._errorHandlers[i](validationError);
+
+      if (handlerMessage) {
+        validationError = new ValidationError(
+          handlerMessage,
+          propertyTrace_,
+          subErrors_
+        );
+      }
     }
 
     throw (this._validationError = validationError);

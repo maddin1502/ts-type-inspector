@@ -4,11 +4,11 @@ import type {
   CustomValidation,
   MethodLike,
   ObjectLike,
+  PartialPropertyValidatables,
   PropertyValidatables,
   UnionValidatables,
   Validatable
 } from './types.js';
-import { Validator } from './validator/index.js';
 import { AnyValidator } from './validator/any.js';
 import { ArrayValidator } from './validator/array.js';
 import { BooleanValidator } from './validator/boolean.js';
@@ -17,12 +17,14 @@ import { DateValidator } from './validator/date.js';
 import { DictionaryValidator } from './validator/dictionary.js';
 import { EnumValidator } from './validator/enum.js';
 import { ExcludeValidator } from './validator/exclude.js';
+import { Validator } from './validator/index.js';
 import { MethodValidator } from './validator/method.js';
 import { NullValidator } from './validator/null.js';
 import { NullishValidator } from './validator/nullish.js';
 import { NumberValidator } from './validator/number.js';
 import { ObjectValidator } from './validator/object.js';
 import { OptionalValidator } from './validator/optional.js';
+import { PartialValidator } from './validator/partial.js';
 import { StrictValidator } from './validator/strict.js';
 import { StringValidator } from './validator/string.js';
 import { UndefinedValidator } from './validator/undefined.js';
@@ -190,6 +192,21 @@ export class TypeInspector {
   }
 
   /**
+   * Validator for object based values. This is an **UNSAFE** validator that only validates some properties and ignores others
+   *
+   * @since 2.0.0
+   * @template Out
+   * @param {PartialPropertyValidatables<Out>} propertyValidators_
+   * @return {*}  {PartialValidator<Out>}
+   * @memberof TypeInspector
+   */
+  public partial<Out extends ObjectLike>(
+    propertyValidators_: PartialPropertyValidatables<Out>
+  ): PartialValidator<Out> {
+    return new PartialValidator<Out>(propertyValidators_);
+  }
+
+  /**
    * Validate dictionary values.
    *
    * @since 1.0.0
@@ -274,32 +291,4 @@ export class TypeInspector {
   ): ExcludeValidator<Out, In> {
     return new ExcludeValidator(validator_);
   }
-
-  // public intersect<In extends ObjectLike, K extends keyof In>(propertyValidators_: SelectPropertyValidators<In, K>): IntersectValidatable<In, K> {
-  //   return new IntersectValidator<In, K>(propertyValidators_);
-  // }
 }
-
-// const xyz = new TypeInspector();
-// const affe = xyz.intersect<{a:number;b:number}, 'a'>({a:xyz.number}).validate(null);
-// affe.
-
-// function bla<T>(param: { [key in keyof T]?: undefined }): { [key in keyof typeof param]: T[key] } {
-//   return null as any;
-// }
-// function bla<T, X extends keyof T>(param: { [key in X]: undefined }): { [key in X]: T[key] } {
-//   return null as any;
-// }
-
-// const x = bla<{a:number;b:number}>({a:undefined});
-// x
-
-
-
-// type HasNames = { names: readonly string[] };
-// function getNamesExactly<const T extends HasNames>(arg: T): T["names"] {
-//     return arg.names;
-// }
-// const names = getNamesExactly({ names: ["Alice", "Bob", "Eve"] });
-
-// const ti = new TypeInspector()

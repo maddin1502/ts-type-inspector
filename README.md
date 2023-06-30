@@ -228,6 +228,26 @@ ti.object<DataInterface>({
 });
 ```
 
+#### Partial
+
+> since 2.0.0
+
+Validator for object based values. This is an **UNSAFE** validator that only validates some properties and ignores others
+- `null` is rejected
+
+```ts
+import ti from 'ts-type-inspector';
+
+interface DataInterface {
+  prop1: string;
+  prop2: number;
+}
+
+ti.partial<DataInterface>({
+  prop1: ti.string
+});
+```
+
 #### Dictionary
 
 > since 1.0.0

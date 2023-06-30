@@ -27,7 +27,9 @@ describe('complex', () => {
       });
     } catch (error) {
       const validationError = error as ValidationError;
-      expect(validationError.message).toBe('value is not a boolean');
+      expect(validationError.message).toBe(
+        'value is not a boolean (prop1.0.prop2.prop3.1)'
+      );
       expect(validationError.propertyPath).toBe('prop1.0.prop2.prop3.1');
     }
   });
@@ -80,7 +82,7 @@ describe('complex', () => {
       });
     } catch (error) {
       const validationError = error as ValidationError;
-      expect(validationError.message).toBe('bad value');
+      expect(validationError.message).toBe('bad value (prop1.0.prop2.prop3.1)');
       expect(validationError.propertyPath).toBe('prop1.0.prop2.prop3.1');
     }
   });
@@ -107,7 +109,7 @@ describe('complex', () => {
       });
     } catch (error) {
       const validationError = error as ValidationError;
-      expect(validationError.message).toBe('bad value');
+      expect(validationError.message).toBe('bad value (prop1.0.prop2.prop3.1)');
       expect(validationError.propertyPath).toBe('prop1.0.prop2.prop3.1');
     }
   });
@@ -136,7 +138,9 @@ describe('complex', () => {
 
     expect(isValid).toBe(false);
     expect(validator.validationError).toBeDefined();
-    expect(validator.validationError?.message).toBe('value is not a boolean');
+    expect(validator.validationError?.message).toBe(
+      'value is not a boolean (prop1.0.prop2.prop3.1)'
+    );
     expect(validator.validationError?.propertyPath).toBe(
       'prop1.0.prop2.prop3.1'
     );
@@ -170,33 +174,33 @@ describe('complex', () => {
     expect(isValid).toBe(false);
     expect(object1Validator.validationError).toBeDefined();
     expect(object1Validator.validationError?.message).toBe(
-      'value is not a boolean'
+      'value is not a boolean (prop1.0.prop2.prop3.1)'
     );
     expect(object1Validator.validationError?.propertyPath).toBe(
       'prop1.0.prop2.prop3.1'
     );
     expect(array1Validator.validationError).toBeDefined();
     expect(array1Validator.validationError?.message).toBe(
-      'value is not a boolean'
+      'value is not a boolean (0.prop2.prop3.1)'
     );
     expect(array1Validator.validationError?.propertyPath).toBe(
       '0.prop2.prop3.1'
     );
     expect(object2Validator.validationError).toBeDefined();
     expect(object2Validator.validationError?.message).toBe(
-      'value is not a boolean'
+      'value is not a boolean (prop2.prop3.1)'
     );
     expect(object2Validator.validationError?.propertyPath).toBe(
       'prop2.prop3.1'
     );
     expect(object3Validator.validationError).toBeDefined();
     expect(object3Validator.validationError?.message).toBe(
-      'value is not a boolean'
+      'value is not a boolean (prop3.1)'
     );
     expect(object3Validator.validationError?.propertyPath).toBe('prop3.1');
     expect(array2validator.validationError).toBeDefined();
     expect(array2validator.validationError?.message).toBe(
-      'value is not a boolean'
+      'value is not a boolean (1)'
     );
     expect(array2validator.validationError?.propertyPath).toBe('1');
     expect(booleanValidator.validationError).toBeDefined();
@@ -237,7 +241,7 @@ describe('complex', () => {
     expect(isValid).toBe(false);
     expect(validator.validationError).toBeDefined();
     expect(validator.validationError?.message).toBe(
-      'the number is not divisible by 7'
+      'the number is not divisible by 7 (prop1.0.prop2.prop3.3)'
     );
     expect(validator.validationError?.propertyPath).toBe(
       'prop1.0.prop2.prop3.3'
@@ -260,18 +264,29 @@ describe('complex', () => {
       });
     } catch (error) {
       const validationError = error as ValidationError;
-      expect(validationError.message).toBe('value is not a boolean');
+      expect(validationError.message).toBe(
+        'value is not a boolean (prop1.0.prop2.prop3.1)'
+      );
       expect(validationError.propertyPath).toBe('prop1.0.prop2.prop3.1');
     }
   });
 
   test('dictionary - failure - complex property path - custom error', () => {
-    expect.assertions(2);
+    expect.assertions(3);
+    let errorFlag = false;
     try {
       ti.dictionary(
         ti.array(
           ti.dictionary(
-            ti.dictionary(ti.array(ti.boolean.onError(() => 'bad value')))
+            ti.dictionary(
+              ti.array(
+                ti.boolean
+                  .onError(() => {
+                    errorFlag = true;
+                  })
+                  .onError(() => 'bad value')
+              )
+            )
           )
         )
       ).validate({
@@ -285,8 +300,9 @@ describe('complex', () => {
       });
     } catch (error) {
       const validationError = error as ValidationError;
-      expect(validationError.message).toBe('bad value');
+      expect(validationError.message).toBe('bad value (prop1.0.prop2.prop3.1)');
       expect(validationError.propertyPath).toBe('prop1.0.prop2.prop3.1');
+      expect(errorFlag).toBe(true);
     }
   });
 
@@ -308,7 +324,9 @@ describe('complex', () => {
 
     expect(isValid).toBe(false);
     expect(validator.validationError).toBeDefined();
-    expect(validator.validationError?.message).toBe('value is not a boolean');
+    expect(validator.validationError?.message).toBe(
+      'value is not a boolean (prop1.0.prop2.prop3.1)'
+    );
     expect(validator.validationError?.propertyPath).toBe(
       'prop1.0.prop2.prop3.1'
     );
@@ -357,12 +375,12 @@ describe('complex', () => {
     );
     expect(dictionary3Validator.validationError).toBeDefined();
     expect(dictionary3Validator.validationError?.message).toBe(
-      'value is not a boolean'
+      'value is not a boolean (prop3.1)'
     );
     expect(dictionary3Validator.validationError?.propertyPath).toBe('prop3.1');
     expect(array2validator.validationError).toBeDefined();
     expect(array2validator.validationError?.message).toBe(
-      'value is not a boolean'
+      'value is not a boolean (1)'
     );
     expect(array2validator.validationError?.propertyPath).toBe('1');
     expect(booleanValidator.validationError).toBeDefined();
@@ -403,7 +421,7 @@ describe('complex', () => {
     expect(isValid).toBe(false);
     expect(validator.validationError).toBeDefined();
     expect(validator.validationError?.message).toBe(
-      'the number is not divisible by 7'
+      'the number is not divisible by 7 (prop1.0.prop2.prop3.3)'
     );
     expect(validator.validationError?.propertyPath).toBe(
       'prop1.0.prop2.prop3.3'
@@ -473,7 +491,9 @@ describe('complex', () => {
 
     expect(isValid).toBe(false);
     expect(validator.validationError).toBeDefined();
-    expect(validator.validationError?.message).toBe('no equality found');
+    expect(validator.validationError?.message).toBe(
+      'no equality found (prop1.1.prop12.prop121.2)'
+    );
     expect(validator.validationError?.propertyPath).toBe(
       'prop1.1.prop12.prop121.2'
     );

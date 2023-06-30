@@ -47,7 +47,7 @@ export class UnionValidator<V extends UnionValidatables>
         validator.validate(value_);
         break;
       } catch (reason_) {
-        errors.push(this.detectError(reason_));
+        errors.push(this.detectError(reason_).error);
       }
     }
 
