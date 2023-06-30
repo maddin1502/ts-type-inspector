@@ -1,78 +1,58 @@
-import { ValidationError, VALIDATION_ERROR_MARKER } from '../error';
-import type { CustomValidation, Validatable, ValidationCondition } from '../types';
+import { VALIDATION_ERROR_MARKER, ValidationError } from '../error';
+import type {
+  CustomValidation,
+  Validatable,
+  ValidationCondition,
+  ValidationErrorHandler
+} from '../types.js';
 
-export abstract class Validator<Out extends In, In = unknown> implements Validatable<Out, In> {
+export abstract class Validator<Out extends In, In = unknown>
+  implements Validatable<Out, In>
+{
   private _validationError: ValidationError | undefined;
-  private _customValidation: CustomValidation<Out> | undefined;
-  private _customErrorMessage: string | undefined | (() => string);
+  private _customValidations: CustomValidation<Out>[];
+  private _errorHandlers: ValidationErrorHandler[];
   private _conditions: ValidationCondition<Out>[];
 
   constructor() {
     this._conditions = [];
+    this._customValidations = [];
+    this._errorHandlers = [];
   }
 
-  /**
-   * set if validation has failed
-   *
-   * @readonly
-   * @type {(ValidationError | undefined)}
-   * @memberof Validator
-   */
-  public get validationError(): ValidationError | undefined { return this._validationError; }
+  public get validationError(): ValidationError | undefined {
+    return this._validationError;
+  }
 
-  /**
-   * add a custom validation; return a error message if validation fails
-   *
-   * @param {CustomValidation<Out>} evaluation_
-   * @return {*}  {this}
-   * @memberof Validator
-   */
-  public custom(evaluation_: CustomValidation<Out>): this {
-    this._customValidation = evaluation_;
+  public custom(validation_: CustomValidation<Out>): this {
+    this._customValidations.push(validation_);
     return this;
   }
 
-  /**
-   * custom error message (overrides all hard coded messages)
-   *
-   * @param {(string | (() => string))} message_
-   * @return {*}  {this}
-   * @memberof Validator
-   */
-  public error(message_: string | (() => string)): this {
-    this._customErrorMessage = message_;
+  public onError(handler_: ValidationErrorHandler): this {
+    this._errorHandlers.push(handler_);
     return this;
   }
 
-  /**
-   * validate value
-   *
-   * @param {In} value_
-   * @return {*}  {V}
-   * @memberof Validator
-   */
   public validate(value_: In): Out {
     const value = this.validateBaseType(value_);
 
     for (let i = 0; i < this._conditions.length; i++) {
       this._conditions[i](value);
     }
-    const customEvaluationResult = this._customValidation?.(value);
 
-    if (customEvaluationResult !== undefined) {
-      this.throwValidationError(customEvaluationResult);
+    for (let i = 0; i < this._customValidations.length; i++) {
+      const customValidationResult = this._customValidations[i](value);
+
+      if (customValidationResult !== undefined) {
+        this.throwValidationError(customValidationResult);
+      }
     }
 
+    this._validationError = undefined;
     return value;
   }
 
-  /**
-   * validate value
-   *
-   * @param {In} value_
-   * @return {*}  {value_ is V} true if valid; false if invalid; this is a type predicate - asserted type will be associated to value if true
-   * @memberof Validator
-   */
   public isValid(value_: In): value_ is Out {
     try {
       this.validate(value_);
@@ -84,25 +64,39 @@ export abstract class Validator<Out extends In, In = unknown> implements Validat
 
   protected abstract validateBaseType(value_: In): Out;
 
-  protected detectError(reason_: unknown, propertyTraces_?: PropertyKey[]): Error {
+  protected detectError(
+    reason_: unknown,
+    propertyTraces_?: PropertyKey[]
+  ): { error: Error; originalMessage?: string } {
     if (this.isValidationError(reason_)) {
       if (reason_.propertyTrace && propertyTraces_) {
         propertyTraces_.push(...reason_.propertyTrace);
       }
-      return reason_;
+      return { error: reason_, originalMessage: reason_.originalErrorMessage };
     } else if (reason_ instanceof Error) {
-      return reason_;
-    } else if (this.hasMessage(reason_) && typeof reason_.message === 'string' && reason_.message !== '') {
-      return new Error(reason_.message);
+      return { error: reason_ };
+    } else if (
+      this.hasMessage(reason_) &&
+      typeof reason_.message === 'string' &&
+      reason_.message !== ''
+    ) {
+      return { error: new Error(reason_.message) };
     } else {
-      return new Error('unknown error');
+      return { error: new Error('unknown error') };
     }
   }
 
   protected rethrowError(reason_: unknown, trace_?: PropertyKey): never {
     const propertyTraces: PropertyKey[] = trace_ === undefined ? [] : [trace_];
-    const error = this.detectError(reason_, propertyTraces);
-    this.throwValidationError(error.message, propertyTraces, [error]);
+    const { error, originalMessage } = this.detectError(
+      reason_,
+      propertyTraces
+    );
+    this.throwValidationError(
+      originalMessage ?? error.message,
+      propertyTraces,
+      [error]
+    );
   }
 
   protected throwValidationError(
@@ -110,21 +104,25 @@ export abstract class Validator<Out extends In, In = unknown> implements Validat
     propertyTrace_?: ReadonlyArray<PropertyKey>,
     subErrors_?: ReadonlyArray<Error>
   ): never {
-    let errorMessage: string;
+    let validationError = new ValidationError(
+      message_,
+      propertyTrace_,
+      subErrors_
+    );
 
-    switch (typeof this._customErrorMessage) {
-      case 'string':
-        errorMessage = this._customErrorMessage;
-        break;
-      case 'function':
-        errorMessage = this._customErrorMessage();
-        break;
-      default:
-        errorMessage = message_;
-        break;
+    for (let i = 0; i < this._errorHandlers.length; i++) {
+      const handlerMessage = this._errorHandlers[i](validationError);
+
+      if (handlerMessage) {
+        validationError = new ValidationError(
+          handlerMessage,
+          propertyTrace_,
+          subErrors_
+        );
+      }
     }
 
-    throw this._validationError = new ValidationError(errorMessage, propertyTrace_, subErrors_);
+    throw (this._validationError = validationError);
   }
 
   protected setupCondition(condition_: ValidationCondition<Out>): this {
@@ -133,7 +131,11 @@ export abstract class Validator<Out extends In, In = unknown> implements Validat
   }
 
   private isValidationError(reason_: unknown): reason_ is ValidationError {
-    return typeof reason_ === 'object' && reason_ !== null && VALIDATION_ERROR_MARKER in reason_;
+    return (
+      typeof reason_ === 'object' &&
+      reason_ !== null &&
+      VALIDATION_ERROR_MARKER in reason_
+    );
   }
 
   private hasMessage(value_: unknown): value_ is { message: any } {

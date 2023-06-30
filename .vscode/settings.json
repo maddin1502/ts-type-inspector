@@ -7,12 +7,13 @@
     "/README.md": true,
     "/tests/reports": true
   },
-  "editor.renderFinalNewline": false,
+  "editor.renderFinalNewline": "off",
   "files.insertFinalNewline": true,
   "editor.insertSpaces": true,
   "files.eol": "\n",
   "files.encoding": "utf8",
   "files.trimTrailingWhitespace": true,
   "diffEditor.ignoreTrimWhitespace": false,
-  "typescript.tsdk": "node_modules\\typescript\\lib"
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+	"typescript.preferences.importModuleSpecifierEnding": "js"
 }

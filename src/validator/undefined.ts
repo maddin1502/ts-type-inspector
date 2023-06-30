@@ -1,6 +1,12 @@
-import { Validator } from '.';
-import type { Validatable } from '../types';
+import type { Validatable } from '../types.js';
+import { Validator } from './index.js';
 
+/**
+ * Validator for undefined values
+ *
+ * @since 1.0.0
+ * @export
+ */
 export type UndefinedValidatable = Validatable<undefined>;
 
 /**

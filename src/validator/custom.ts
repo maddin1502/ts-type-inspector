@@ -1,6 +1,13 @@
-import { Validator } from '.';
-import type { CustomValidation, Validatable } from '../types';
+import type { CustomValidation, Validatable } from '../types.js';
+import { Validator } from './index.js';
 
+/**
+ * Validator for custom value validation.
+ *
+ * @since 1.0.0
+ * @export
+ * @template Out
+ */
 export type CustomValidatable<Out> = Validatable<Out>;
 
 /**
@@ -21,9 +28,7 @@ export class CustomValidator<Out>
    * @param {CustomValidation<Out>} _validationCallback Return an error message if validation fails; else undefined
    * @memberof CustomValidator
    */
-  constructor(
-    private readonly _validationCallback: CustomValidation<unknown>
-  ) {
+  constructor(private readonly _validationCallback: CustomValidation<unknown>) {
     super();
   }
 

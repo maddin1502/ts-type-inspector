@@ -1,15 +1,30 @@
-import type { Enumerable, EnumerableBase, EnumerableValue } from 'ts-lib-extended';
+import type {
+  Enumerable,
+  EnumerableBase,
+  EnumerableValue
+} from 'ts-lib-extended';
 import { enumerableObject } from 'ts-lib-extended';
-import { Validator } from '.';
-import type { Validatable } from '../types';
+import type { Validatable } from '../types.js';
+import { Validator } from './index.js';
 
-export type EnumValidatable<E extends Enumerable<unknown>> = Validatable<EnumerableValue<E>> & {
+/**
+ * Validator for enum values
+ *
+ * @since 1.0.2
+ * @export
+ * @template E
+ */
+export type EnumValidatable<E extends Enumerable> = Validatable<
+  EnumerableValue<E>
+> & {
   /**
    * additional base type validation for enum values
    *
    * @since 1.0.2
    */
-  values(validator_: Validatable<EnumerableBase<EnumerableValue<E>>>): EnumValidatable<E>;
+  values(
+    validator_: Validatable<EnumerableBase<EnumerableValue<E>>>
+  ): EnumValidatable<E>;
 };
 
 /**
@@ -22,18 +37,20 @@ export type EnumValidatable<E extends Enumerable<unknown>> = Validatable<Enumera
  * @implements {EnumValidatable<E>}
  * @template E
  */
-export class EnumValidator<E extends Enumerable<unknown>>
+export class EnumValidator<E extends Enumerable>
   extends Validator<EnumerableValue<E>>
   implements EnumValidatable<E>
 {
-  constructor(
-    private readonly _enum: E
-  ) {
+  constructor(private readonly _enum: E) {
     super();
   }
 
-  public values(validator_: Validatable<EnumerableBase<EnumerableValue<E>>>): EnumValidatable<E> {
-    return this.setupCondition(value_ => this.checkValues(value_, validator_));
+  public values(
+    validator_: Validatable<EnumerableBase<EnumerableValue<E>>>
+  ): EnumValidatable<E> {
+    return this.setupCondition((value_) =>
+      this.checkValues(value_, validator_)
+    );
   }
 
   protected validateBaseType(value_: unknown): EnumerableValue<E> {
@@ -56,7 +73,10 @@ export class EnumValidator<E extends Enumerable<unknown>>
     return false;
   }
 
-  private checkValues(value_: EnumerableValue<E>, validator_: Validatable<EnumerableBase<EnumerableValue<E>>>): void {
+  private checkValues(
+    value_: EnumerableValue<E>,
+    validator_: Validatable<EnumerableBase<EnumerableValue<E>>>
+  ): void {
     if (!validator_.isValid(value_)) {
       this.throwValidationError('value does not match enums base type');
     }

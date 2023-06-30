@@ -1,5 +1,5 @@
-import { Validator } from '.';
-import type { Validatable } from '../types';
+import type { Validatable } from '../types.js';
+import { Validator } from './index.js';
 
 export type BooleanValidatable = Validatable<boolean> & {
   /**
@@ -30,11 +30,11 @@ export class BooleanValidator
   implements BooleanValidatable
 {
   public get true(): BooleanValidatable {
-    return this.setupCondition(value_ => this.checkTrue(value_));
+    return this.setupCondition((value_) => this.checkTrue(value_));
   }
 
   public get false(): BooleanValidatable {
-    return this.setupCondition(value_ => this.checkFalse(value_));
+    return this.setupCondition((value_) => this.checkFalse(value_));
   }
 
   protected validateBaseType(value_: unknown): boolean {

@@ -1,6 +1,14 @@
-import { Validator } from '.';
-import type { MethodLike, Validatable } from '../types';
+import type { MethodLike, Validatable } from '../types.js';
+import { Validator } from './index.js';
 
+/**
+ * Validator for method-like values.
+ * Unfortunately (for technical reasons), this validator can only validate the number of parameters.
+ *
+ * @since 1.0.0
+ * @export
+ * @template Out
+ */
 export type MethodValidatable<Out extends MethodLike> = Validatable<Out> & {
   /**
    * validate exact params count
@@ -38,15 +46,15 @@ export class MethodValidator<Out extends MethodLike>
   implements MethodValidatable<Out>
 {
   public count(count_: number): MethodValidatable<Out> {
-    return this.setupCondition(value_ => this.checkCount(value_, count_));
+    return this.setupCondition((value_) => this.checkCount(value_, count_));
   }
 
   public min(min_: number): MethodValidatable<Out> {
-    return this.setupCondition(value_ => this.checkMin(value_, min_));
+    return this.setupCondition((value_) => this.checkMin(value_, min_));
   }
 
   public max(max_: number): MethodValidatable<Out> {
-    return this.setupCondition(value_ => this.checkMax(value_, max_));
+    return this.setupCondition((value_) => this.checkMax(value_, max_));
   }
 
   protected validateBaseType(value_: unknown): Out {

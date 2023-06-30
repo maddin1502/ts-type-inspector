@@ -1,6 +1,17 @@
-import { Validator } from '.';
-import type { ObjectLike, PropertyValidators, Validatable } from '../types';
+import type {
+  ObjectLike,
+  PropertyValidatables,
+  Validatable
+} from '../types.js';
+import { Validator } from './index.js';
 
+/**
+ * Validator for object based values. Each property has to match its specified validator
+ *
+ * @since 1.0.0
+ * @export
+ * @template Out
+ */
 export type ObjectValidatable<Out extends ObjectLike> = Validatable<Out> & {
   /**
    * Reject objects that contain more keys than have been validated
@@ -25,14 +36,12 @@ export class ObjectValidator<Out extends ObjectLike>
   extends Validator<Out>
   implements ObjectValidatable<Out>
 {
-  constructor(
-    private readonly _propertyValidators: PropertyValidators<Out>
-  ) {
+  constructor(private readonly _propertyValidators: PropertyValidatables<Out>) {
     super();
   }
 
   public get noOverload(): ObjectValidatable<Out> {
-    return this.setupCondition(value_ => this.checkOverload(value_));
+    return this.setupCondition((value_) => this.checkOverload(value_));
   }
 
   protected validateBaseType(value_: unknown): Out {

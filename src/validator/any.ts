@@ -1,6 +1,12 @@
-import { Validator } from '.';
-import type { Validatable } from '../types';
+import type { Validatable } from '../types.js';
+import { Validator } from './index.js';
 
+/**
+ * This validator should only be used when a value is indeterminate or when you want to bypass deep validation of an object
+ *
+ * @since 1.0.0
+ * @export
+ */
 export type AnyValidatable = Validatable<any> & {
   /**
    * reject nullish values (undefined, null)
@@ -25,16 +31,13 @@ export type AnyValidatable = Validatable<any> & {
  * @extends {Validator<any>}
  * @implements {AnyValidatable}
  */
-export class AnyValidator
-  extends Validator<any>
-  implements AnyValidatable
-{
+export class AnyValidator extends Validator<any> implements AnyValidatable {
   public get notNullish(): AnyValidatable {
-    return this.setupCondition(value_ => this.checkNullish(value_));
+    return this.setupCondition((value_) => this.checkNullish(value_));
   }
 
   public get notFalsy(): AnyValidatable {
-    return this.setupCondition(value_ => this.checkFalsy(value_));
+    return this.setupCondition((value_) => this.checkFalsy(value_));
   }
 
   protected validateBaseType(value_: unknown): any {

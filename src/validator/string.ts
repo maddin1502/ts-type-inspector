@@ -1,7 +1,13 @@
-import { email, uri } from '@sideway/address';
-import { Validator } from '.';
-import type { Validatable } from '../types';
+import { isEmailValid, uriRegex } from '@sideway/address';
+import type { Validatable } from '../types.js';
+import { Validator } from './index.js';
 
+/**
+ * Validator for string values.
+ *
+ * @since 1.0.0
+ * @export
+ */
 export type StringValidatable = Validatable<string> & {
   /**
    * define minimum string length
@@ -20,13 +26,13 @@ export type StringValidatable = Validatable<string> & {
    *
    * @since 1.0.0
    */
-  accept(...accepted_: ReadonlyArray<(string | RegExp)>): StringValidatable;
+  accept(...accepted_: ReadonlyArray<string | RegExp>): StringValidatable;
   /**
    * define rejected values or patterns
    *
    * @since 1.0.0
    */
-  reject(...rejected_: ReadonlyArray<(string | RegExp)>): StringValidatable;
+  reject(...rejected_: ReadonlyArray<string | RegExp>): StringValidatable;
   /**
    * specify exact string length
    *
@@ -111,63 +117,67 @@ export class StringValidator
   implements StringValidatable
 {
   public shortest(min_: number): this {
-    return this.setupCondition(value_ => this.checkShortest(value_, min_));
+    return this.setupCondition((value_) => this.checkShortest(value_, min_));
   }
 
   public longest(max_: number): this {
-    return this.setupCondition(value_ => this.checkLongest(value_, max_));
+    return this.setupCondition((value_) => this.checkLongest(value_, max_));
   }
 
-  public accept(...accepted_: ReadonlyArray<(string | RegExp)>): this {
-    return this.setupCondition(value_ => this.checkAccepted(value_, accepted_));
+  public accept(...accepted_: ReadonlyArray<string | RegExp>): this {
+    return this.setupCondition((value_) =>
+      this.checkAccepted(value_, accepted_)
+    );
   }
 
-  public reject(...rejected_: ReadonlyArray<(string | RegExp)>): this {
-    return this.setupCondition(value_ => this.checkRejected(value_, rejected_));
+  public reject(...rejected_: ReadonlyArray<string | RegExp>): this {
+    return this.setupCondition((value_) =>
+      this.checkRejected(value_, rejected_)
+    );
   }
 
   public length(length_: number): this {
-    return this.setupCondition(value_ => this.checkLength(value_, length_));
+    return this.setupCondition((value_) => this.checkLength(value_, length_));
   }
 
   public get rejectEmpty(): this {
-    return this.setupCondition(value_ => this.checkEmpty(value_));
+    return this.setupCondition((value_) => this.checkEmpty(value_));
   }
 
   public get base64(): this {
-    return this.setupCondition(value_ => this.checkBase64(value_));
+    return this.setupCondition((value_) => this.checkBase64(value_));
   }
 
   public get json(): this {
-    return this.setupCondition(value_ => this.checkJson(value_));
+    return this.setupCondition((value_) => this.checkJson(value_));
   }
 
   public get date(): this {
-    return this.setupCondition(value_ => this.checkDate(value_));
+    return this.setupCondition((value_) => this.checkDate(value_));
   }
 
   public get numeric(): this {
-    return this.setupCondition(value_ => this.checkNumeric(value_));
+    return this.setupCondition((value_) => this.checkNumeric(value_));
   }
 
   public get uuid(): this {
-    return this.setupCondition(value_ => this.checkUuid(value_));
+    return this.setupCondition((value_) => this.checkUuid(value_));
   }
 
   public get email(): this {
-    return this.setupCondition(value_ => this.checkEmail(value_));
+    return this.setupCondition((value_) => this.checkEmail(value_));
   }
 
   public get uri(): this {
-    return this.setupCondition(value_ => this.checkUri(value_));
+    return this.setupCondition((value_) => this.checkUri(value_));
   }
 
   public get url(): this {
-    return this.setupCondition(value_ => this.checkUrl(value_));
+    return this.setupCondition((value_) => this.checkUrl(value_));
   }
 
   public get hex(): this {
-    return this.setupCondition(value_ => this.checkHex(value_));
+    return this.setupCondition((value_) => this.checkHex(value_));
   }
 
   protected validateBaseType(value_: unknown): string {
@@ -220,7 +230,10 @@ export class StringValidator
     }
   }
 
-  private checkAccepted(value_: string, accepted_: ReadonlyArray<(string | RegExp)>): void {
+  private checkAccepted(
+    value_: string,
+    accepted_: ReadonlyArray<string | RegExp>
+  ): void {
     for (let i = 0; i < accepted_.length; i++) {
       if (this.matches(accepted_[i], value_)) {
         return;
@@ -230,7 +243,10 @@ export class StringValidator
     this.throwValidationError('string is not accepted');
   }
 
-  private checkRejected(value_: string, rejected_: ReadonlyArray<(string | RegExp)>): void {
+  private checkRejected(
+    value_: string,
+    rejected_: ReadonlyArray<string | RegExp>
+  ): void {
     for (let i = 0; i < rejected_.length; i++) {
       if (this.matches(rejected_[i], value_)) {
         this.throwValidationError('string is rejected');
@@ -239,7 +255,11 @@ export class StringValidator
   }
 
   private checkBase64(value_: string): void {
-    if (!/^([0-9a-zA-Z+\/]{4})*(([0-9a-zA-Z+\/]{2}==)|([0-9a-zA-Z+\/]{3}=))?$/.test(value_)) {
+    if (
+      !/^([0-9a-zA-Z+\/]{4})*(([0-9a-zA-Z+\/]{2}==)|([0-9a-zA-Z+\/]{3}=))?$/.test(
+        value_
+      )
+    ) {
       this.throwValidationError('string is not base64 encoded');
     }
   }
@@ -263,7 +283,11 @@ export class StringValidator
   }
 
   private checkUuid(value_: string): void {
-    if (!/^[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}$/.test(value_)) {
+    if (
+      !/^[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}$/.test(
+        value_
+      )
+    ) {
       this.throwValidationError('string is not an uuid');
     }
   }
@@ -275,20 +299,22 @@ export class StringValidator
   }
 
   private checkEmail(value_: string): void {
-    if (!email.isValid(value_)) {
+    if (!isEmailValid(value_)) {
       this.throwValidationError('string is not an email address');
     }
   }
 
   private checkUri(value_: string): void {
-    if (!uri.regex({ allowQuerySquareBrackets: true }).regex.test(value_)) {
+    if (!uriRegex({ allowQuerySquareBrackets: true }).regex.test(value_)) {
       this.throwValidationError('string is not a uri');
     }
   }
 
   private checkUrl(value_: string): void {
     if (!URL) {
-      this.throwValidationError('URL is not defined! Please use "Webworker" lib for frontend web applications');
+      this.throwValidationError(
+        'URL is not defined! Please use "Webworker" lib for frontend web applications'
+      );
     }
 
     try {

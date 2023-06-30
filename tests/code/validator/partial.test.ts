@@ -9,9 +9,8 @@ describe(ObjectValidator.name, () => {
     expect.assertions(2);
     expect(
       ti
-        .object({
+        .partial({
           stringProperty: ti.string,
-          numberProperty: ti.number,
           arrayProperty: ti.array(ti.boolean),
           unionProperty: ti.union(ti.undefined, ti.date),
           dateProperty: ti.date,
@@ -20,7 +19,6 @@ describe(ObjectValidator.name, () => {
         })
         .isValid({
           stringProperty: 'hello',
-          numberProperty: 42,
           arrayProperty: [true, false, false, true, false],
           unionProperty: undefined,
           dateProperty: new Date('1970-01-01'),
@@ -30,7 +28,7 @@ describe(ObjectValidator.name, () => {
     ).toBe(true);
 
     expect(
-      ti.object({ test: ti.string }).isValid({ test: 'hello', test2: 'world' })
+      ti.partial({ test: ti.string }).isValid({ test: 'hello', test2: 'world' })
     ).toBe(true);
   });
 
@@ -38,7 +36,7 @@ describe(ObjectValidator.name, () => {
     expect.assertions(13);
     expect(
       ti
-        .object({
+        .partial({
           stringProperty: ti.string,
           numberProperty: ti.number,
           arrayProperty: ti.array(ti.boolean),
@@ -60,7 +58,7 @@ describe(ObjectValidator.name, () => {
 
     expect(
       ti
-        .object({
+        .partial({
           stringProperty: ti.string,
           numberProperty: ti.number,
           arrayProperty: ti.array(ti.boolean),
@@ -82,7 +80,7 @@ describe(ObjectValidator.name, () => {
 
     expect(
       ti
-        .object({
+        .partial({
           stringProperty: ti.string,
           numberProperty: ti.number,
           arrayProperty: ti.array(ti.boolean),
@@ -104,7 +102,7 @@ describe(ObjectValidator.name, () => {
 
     expect(
       ti
-        .object({
+        .partial({
           stringProperty: ti.string,
           numberProperty: ti.number,
           arrayProperty: ti.array(ti.boolean),
@@ -126,7 +124,7 @@ describe(ObjectValidator.name, () => {
 
     expect(
       ti
-        .object({
+        .partial({
           stringProperty: ti.string,
           numberProperty: ti.number,
           arrayProperty: ti.array(ti.boolean),
@@ -148,7 +146,7 @@ describe(ObjectValidator.name, () => {
 
     expect(
       ti
-        .object({
+        .partial({
           stringProperty: ti.string,
           numberProperty: ti.number,
           arrayProperty: ti.array(ti.boolean),
@@ -170,7 +168,7 @@ describe(ObjectValidator.name, () => {
 
     expect(
       ti
-        .object({
+        .partial({
           stringProperty: ti.string,
           numberProperty: ti.number,
           arrayProperty: ti.array(ti.boolean),
@@ -192,7 +190,7 @@ describe(ObjectValidator.name, () => {
 
     expect(
       ti
-        .object({
+        .partial({
           stringProperty: ti.string,
           numberProperty: ti.number,
           arrayProperty: ti.array(ti.boolean),
@@ -204,36 +202,19 @@ describe(ObjectValidator.name, () => {
         .isValid({})
     ).toBe(false);
 
-    expect(ti.object({}).isValid(undefined)).toBe(false);
-    expect(ti.object({}).isValid(1)).toBe(false);
-    expect(ti.object({}).isValid(() => true)).toBe(false);
-    expect(ti.object({}).isValid(ObjectValidator)).toBe(false);
-    expect(ti.object({}).isValid(null)).toBe(false);
-  });
-
-  test('isValid - correct conditions', () => {
-    expect.assertions(1);
-    expect(
-      ti.object({ p1: ti.string }).noOverload.isValid({ p1: 'hello' })
-    ).toBe(true);
-  });
-
-  test('isValid - incorrect conditions', () => {
-    expect.assertions(1);
-    expect(
-      ti
-        .object({ p1: ti.string })
-        .noOverload.isValid({ p1: 'hello', p2: 'world' })
-    ).toBe(false);
+    expect(ti.partial({}).isValid(undefined)).toBe(false);
+    expect(ti.partial({}).isValid(1)).toBe(false);
+    expect(ti.partial({}).isValid(() => true)).toBe(false);
+    expect(ti.partial({}).isValid(ObjectValidator)).toBe(false);
+    expect(ti.partial({}).isValid(null)).toBe(false);
   });
 
   test('validate - success', () => {
     expect.assertions(2);
     expect(() =>
       ti
-        .object({
+        .partial({
           stringProperty: ti.string,
-          numberProperty: ti.number,
           arrayProperty: ti.array(ti.boolean),
           unionProperty: ti.union(ti.undefined, ti.date),
           dateProperty: ti.date,
@@ -242,7 +223,6 @@ describe(ObjectValidator.name, () => {
         })
         .validate({
           stringProperty: 'hello',
-          numberProperty: 42,
           arrayProperty: [true, false, false, true, false],
           unionProperty: undefined,
           dateProperty: new Date('1970-01-01'),
@@ -253,7 +233,7 @@ describe(ObjectValidator.name, () => {
 
     expect(() =>
       ti
-        .object({
+        .partial({
           test: ti.string
         })
         .isValid({
@@ -267,7 +247,7 @@ describe(ObjectValidator.name, () => {
     expect.assertions(8);
     expect(() =>
       ti
-        .object({
+        .partial({
           stringProperty: ti.string,
           numberProperty: ti.number,
           arrayProperty: ti.array(ti.boolean),
@@ -289,7 +269,7 @@ describe(ObjectValidator.name, () => {
 
     expect(() =>
       ti
-        .object({
+        .partial({
           stringProperty: ti.string,
           numberProperty: ti.number,
           arrayProperty: ti.array(ti.boolean),
@@ -311,7 +291,7 @@ describe(ObjectValidator.name, () => {
 
     expect(() =>
       ti
-        .object({
+        .partial({
           stringProperty: ti.string,
           numberProperty: ti.number,
           arrayProperty: ti.array(ti.boolean),
@@ -333,7 +313,7 @@ describe(ObjectValidator.name, () => {
 
     expect(() =>
       ti
-        .object({
+        .partial({
           stringProperty: ti.string,
           numberProperty: ti.number,
           arrayProperty: ti.array(ti.boolean),
@@ -355,7 +335,7 @@ describe(ObjectValidator.name, () => {
 
     expect(() =>
       ti
-        .object({
+        .partial({
           stringProperty: ti.string,
           numberProperty: ti.number,
           arrayProperty: ti.array(ti.boolean),
@@ -377,7 +357,7 @@ describe(ObjectValidator.name, () => {
 
     expect(() =>
       ti
-        .object({
+        .partial({
           stringProperty: ti.string,
           numberProperty: ti.number,
           arrayProperty: ti.array(ti.boolean),
@@ -399,7 +379,7 @@ describe(ObjectValidator.name, () => {
 
     expect(() =>
       ti
-        .object({
+        .partial({
           stringProperty: ti.string,
           numberProperty: ti.number,
           arrayProperty: ti.array(ti.boolean),
@@ -421,7 +401,7 @@ describe(ObjectValidator.name, () => {
 
     expect(() =>
       ti
-        .object({
+        .partial({
           stringProperty: ti.string,
           numberProperty: ti.number,
           arrayProperty: ti.array(ti.boolean),

@@ -1,6 +1,13 @@
-import { Validator } from '.';
-import type { Validatable } from '../types';
+import type { Validatable } from '../types.js';
+import { Validator } from './index.js';
 
+/**
+ * Validator for optional (maybe undefined) properties/values
+ *
+ * @since 1.0.0
+ * @export
+ * @template V
+ */
 export type OptionalValidatable<V> = Validatable<undefined | V>;
 
 /**
@@ -17,9 +24,7 @@ export class OptionalValidator<V>
   extends Validator<undefined | V>
   implements OptionalValidatable<V>
 {
-  constructor(
-    private readonly _validator: Validatable<V>
-  ) {
+  constructor(private readonly _validator: Validatable<V>) {
     super();
   }
 

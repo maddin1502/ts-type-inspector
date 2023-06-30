@@ -1,111 +1,71 @@
-import { JestClassExtended } from 'jest-class-extended';
-import { TypeInspector } from '../../src/inspector';
+import { describe, expect, test } from 'vitest';
+import { TypeInspector } from '../../src/inspector.js';
 
 const ti = new TypeInspector();
-const jce = new JestClassExtended(TypeInspector);
 
-jce.describe(() => {
-  jce.test(
-    'boolean',
-    1,
-    () => {
-      expect(ti.boolean === ti.boolean).toBe(false);
-    }
-  );
+describe(TypeInspector.name, () => {
+  test('boolean', () => {
+    expect.assertions(1);
+    expect(ti.boolean === ti.boolean).toBe(false);
+  });
 
-  jce.test(
-    'number',
-    1,
-    () => {
-      expect(ti.number === ti.number).toBe(false);
-    }
-  );
+  test('number', () => {
+    expect.assertions(1);
+    expect(ti.number === ti.number).toBe(false);
+  });
 
-  jce.test(
-    'string',
-    1,
-    () => {
-      expect(ti.string === ti.string).toBe(false);
-    }
-  );
+  test('string', () => {
+    expect.assertions(1);
+    expect(ti.string === ti.string).toBe(false);
+  });
 
-  jce.test(
-    'method',
-    1,
-    () => {
-      expect(ti.method === ti.method).toBe(false);
-    }
-  );
+  test('method', () => {
+    expect.assertions(1);
+    expect(ti.method === ti.method).toBe(false);
+  });
 
-  jce.test(
-    'date',
-    1,
-    () => {
-      expect(ti.date === ti.date).toBe(false);
-    }
-  );
+  test('date', () => {
+    expect.assertions(1);
+    expect(ti.date === ti.date).toBe(false);
+  });
 
-  jce.test(
-    'undefined',
-    1,
-    () => {
-      expect(ti.undefined === ti.undefined).toBe(false);
-    }
-  );
+  test('undefined', () => {
+    expect.assertions(1);
+    expect(ti.undefined === ti.undefined).toBe(false);
+  });
 
-  jce.test(
-    'array',
-    1,
-    () => {
-      expect(ti.array(ti.any) === ti.array(ti.any)).toBe(false);
-    }
-  );
+  test('array', () => {
+    expect.assertions(1);
+    expect(ti.array(ti.any) === ti.array(ti.any)).toBe(false);
+  });
 
-  jce.test(
-    'strict',
-    1,
-    () => {
-      expect(ti.strict(ti.any) === ti.strict(ti.any)).toBe(false);
-    }
-  );
+  test('strict', () => {
+    expect.assertions(1);
+    expect(ti.strict(ti.any) === ti.strict(ti.any)).toBe(false);
+  });
 
-  jce.test(
-    'union',
-    1,
-    () => {
-      expect(ti.union(ti.any, ti.any) === ti.union(ti.any, ti.any)).toBe(false);
-    }
-  );
+  test('union', () => {
+    expect.assertions(1);
+    expect(ti.union(ti.any, ti.any) === ti.union(ti.any, ti.any)).toBe(false);
+  });
 
-  jce.test(
-    'object',
-    1,
-    () => {
-      expect(ti.object({}) === ti.object({})).toBe(false);
-    }
-  );
+  test('object', () => {
+    expect.assertions(1);
+    expect(ti.object({}) === ti.object({})).toBe(false);
+  });
 
-  jce.test(
-    'dictionary',
-    1,
-    () => {
-      expect(ti.dictionary(ti.any) === ti.dictionary(ti.any)).toBe(false);
-    }
-  );
+  test('dictionary', () => {
+    expect.assertions(1);
+    expect(ti.dictionary(ti.any) === ti.dictionary(ti.any)).toBe(false);
+  });
 
-  jce.test(
-    'any',
-    1,
-    () => {
-      expect(ti.any === ti.any).toBe(false);
-    }
-  );
+  test('any', () => {
+    expect.assertions(1);
+    expect(ti.any === ti.any).toBe(false);
+  });
 
-  jce.test(
-    'optional',
-    1,
-    () => {
-      expect(ti.optional(ti.any) === ti.optional(ti.any)).toBe(false);
-    }
-  );
+  test('optional', () => {
+    expect.assertions(1);
+    expect(ti.optional(ti.any) === ti.optional(ti.any)).toBe(false);
+  });
 });

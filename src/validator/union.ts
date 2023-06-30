@@ -1,7 +1,20 @@
-import type { UnitedValidators, UnitedValidatorsItem, Validatable } from '../types';
+import type {
+  UnionValidatables,
+  UnionValidatablesItem,
+  Validatable
+} from '../types.js';
 import { Validator } from './index';
 
-export type UnionValidatable<Out extends UnitedValidatorsItem<U>, U extends UnitedValidators = UnitedValidators<Out>> = Validatable<Out>;
+/**
+ * Validator for union type values (like "string | number")
+ *
+ * @since 1.0.0
+ * @export
+ * @template V
+ */
+export type UnionValidatable<V extends UnionValidatables> = Validatable<
+  UnionValidatablesItem<V>
+>;
 
 /**
  * Validator for union type values (like "string | number")
@@ -9,25 +22,22 @@ export type UnionValidatable<Out extends UnitedValidatorsItem<U>, U extends Unit
  * @since 1.0.0
  * @export
  * @class UnionValidator
- * @extends {Validator<Out>}
- * @implements {UnionValidatable<Out, U>}
- * @template Out
- * @template U
+ * @extends {Validator<UnionValidatablesItem<V>>}
+ * @implements {UnionValidatable<V>}
+ * @template V
  */
-export class UnionValidator<Out extends UnitedValidatorsItem<U>, U extends UnitedValidators = UnitedValidators<Out>>
-  extends Validator<Out>
-  implements UnionValidatable<Out, U>
+export class UnionValidator<V extends UnionValidatables>
+  extends Validator<UnionValidatablesItem<V>>
+  implements UnionValidatable<V>
 {
-  private _validators: U;
+  private _validators: V;
 
-  constructor(
-    ...validators_: U
-  ) {
+  constructor(...validators_: V) {
     super();
     this._validators = validators_;
   }
 
-  protected validateBaseType(value_: unknown): Out {
+  protected validateBaseType(value_: unknown): UnionValidatablesItem<V> {
     const errors: Error[] = [];
 
     for (let i = 0; i < this._validators.length; i++) {
@@ -37,14 +47,18 @@ export class UnionValidator<Out extends UnitedValidatorsItem<U>, U extends Unite
         validator.validate(value_);
         break;
       } catch (reason_) {
-        errors.push(this.detectError(reason_));
+        errors.push(this.detectError(reason_).error);
       }
     }
 
     if (errors.length === this._validators.length) {
-      this.throwValidationError('value does not match any of the possible types', undefined, errors);
+      this.throwValidationError(
+        'value does not match any of the possible types',
+        undefined,
+        errors
+      );
     }
 
-    return value_ as Out;
+    return value_ as UnionValidatablesItem<V>;
   }
 }
