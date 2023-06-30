@@ -1,4 +1,4 @@
-name: Validate [package-name] build
+name: Validate ts-type-inspector build
 
 on:
   pull_request:
