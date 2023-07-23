@@ -25,7 +25,7 @@ describe(StringValidator.name, () => {
   });
 
   test('isValid - correct conditions', () => {
-    expect.assertions(32);
+    expect.assertions(33);
     expect(ti.string.length(5).isValid('hello')).toBe(true);
     expect(ti.string.length(5).longest(6).isValid('hello')).toBe(true);
     expect(ti.string.length(5).shortest(4).isValid('hello')).toBe(true);
@@ -47,13 +47,13 @@ describe(StringValidator.name, () => {
     );
     expect(ti.string.hex.isValid('789789424ab89032ab438409ff')).toBe(true);
 
-    // just a few simple tests... @sideway/address will do the job
-
+    // just a few simple tests... test in email-validator module will do the job
     expect(ti.string.email.isValid('email@example.com')).toBe(true);
+    expect(ti.string.email.isValid('email+1a@example.com')).toBe(true);
 
-    expect(ti.string.uri.isValid('https://github.com/sideway/address')).toBe(
-      true
-    );
+    expect(
+      ti.string.uri.isValid('https://github.com/manishsaraan/email-validator')
+    ).toBe(true);
     expect(ti.string.uri.isValid('ftp://ftp.is.co.za/rfc/rfc1808.txt')).toBe(
       true
     );
@@ -100,7 +100,7 @@ describe(StringValidator.name, () => {
   });
 
   test('isValid - incorrect conditions', () => {
-    expect.assertions(24);
+    expect.assertions(25);
     expect(ti.string.length(6).isValid('hello')).toBe(false);
     expect(ti.string.length(5).longest(4).isValid('hello')).toBe(false);
     expect(ti.string.length(5).shortest(6).isValid('hello')).toBe(false);
@@ -123,15 +123,15 @@ describe(StringValidator.name, () => {
     expect(ti.string.rejectEmpty.isValid('')).toBe(false);
     expect(ti.string.hex.isValid('789789424abxx032ab438409ff')).toBe(false);
 
-    // just a few simple tests... @sideway/address will do the job
-
+    // just a few simple tests... test in email-validator module will do the job
     expect(ti.string.email.isValid('email@examplecom')).toBe(false);
+    expect(ti.string.email.isValid('email+1a@examplecom')).toBe(false);
 
     expect(ti.string.url.isValid('192.0.2.16:80')).toBe(false);
 
-    expect(ti.string.uri.isValid('https//github.com/sideway/address')).toBe(
-      false
-    );
+    expect(
+      ti.string.uri.isValid('https//github.com/manishsaraan/email-validator')
+    ).toBe(false);
     expect(ti.string.uri.isValid('ftp//ftp.is.co.za/rfc/rfc1808.txt')).toBe(
       false
     );
