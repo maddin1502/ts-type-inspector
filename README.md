@@ -150,8 +150,8 @@ Validator for string values.
 | date | reject strings that are not in ISO8601 date format |
 | numeric | strings have to contain a numeric value |
 | uuid | reject strings that are no UUIDs |
-| email | string has to match email pattern |
-| uri | string has to match uri pattern |
+| email | string has to match email pattern (uses [email-validator](https://www.npmjs.com/package/email-validator)) |
+| uri | string has to match uri pattern (uses [url-validator](https://www.npmjs.com/package/url-validator)) |
 | url | string has to match url pattern |
 | hex | accept just hexadecimal strings |
 

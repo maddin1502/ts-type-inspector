@@ -1,4 +1,5 @@
-import { isEmailValid, uriRegex } from '@sideway/address';
+import { validate as emailValidate } from 'email-validator';
+import { isUri } from 'valid-url';
 import type { Validatable } from '../types.js';
 import { Validator } from './index.js';
 
@@ -77,13 +78,13 @@ export type StringValidatable = Validatable<string> & {
    */
   get uuid(): StringValidatable;
   /**
-   * string has to be an email.
+   * string has to be an email - uses [email-validator](https://www.npmjs.com/package/email-validator)
    *
    * @since 1.0.0
    */
   get email(): StringValidatable;
   /**
-   * string has to be an uri
+   * string has to be an uri - uses [url-validator](https://www.npmjs.com/package/url-validator)
    *
    * @since 1.0.0
    */
@@ -299,13 +300,13 @@ export class StringValidator
   }
 
   private checkEmail(value_: string): void {
-    if (!isEmailValid(value_)) {
+    if (!emailValidate(value_)) {
       this.throwValidationError('string is not an email address');
     }
   }
 
   private checkUri(value_: string): void {
-    if (!uriRegex({ allowQuerySquareBrackets: true }).regex.test(value_)) {
+    if (isUri(value_) === undefined) {
       this.throwValidationError('string is not a uri');
     }
   }
