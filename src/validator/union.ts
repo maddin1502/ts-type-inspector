@@ -3,7 +3,7 @@ import type {
   UnionValidatablesItem,
   Validatable
 } from '../types.js';
-import { Validator } from './index';
+import { Validator } from './index.js';
 
 /**
  * Validator for union type values (like "string | number")

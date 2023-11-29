@@ -1,4 +1,4 @@
-import { ArrayItem } from 'ts-lib-extended/dist';
+import type { ArrayItem } from 'ts-lib-extended';
 import type { AnyLike, Validatable } from '../types.js';
 import { Validator } from './index.js';
 

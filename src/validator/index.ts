@@ -1,4 +1,4 @@
-import { VALIDATION_ERROR_MARKER, ValidationError } from '../error';
+import { VALIDATION_ERROR_MARKER, ValidationError } from '../error.js';
 import type {
   CustomValidation,
   Validatable,

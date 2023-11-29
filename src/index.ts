@@ -1,6 +1,6 @@
-import { TypeInspector } from './inspector';
+import { TypeInspector } from './inspector.js';
 
-export { ValidationError } from './error';
+export { ValidationError } from './error.js';
 export type {
   AnyLike,
   CustomValidation,
@@ -15,7 +15,7 @@ export type {
   Validatable,
   ValidationCondition,
   ValidationErrorHandler
-} from './types';
+} from './types.js';
 export { AnyValidator } from './validator/any.js';
 export type { AnyValidatable } from './validator/any.js';
 export { ArrayValidator } from './validator/array.js';
