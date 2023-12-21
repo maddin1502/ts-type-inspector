@@ -2,6 +2,17 @@ import { describe, expect, test } from 'vitest';
 import { TypeInspector } from '../../../src/inspector.js';
 import { AnyValidator } from '../../../src/validator/any.js';
 
+class AnyValidatorWithParams extends AnyValidator<{ test?: string }> {
+  constructor() {
+    super();
+    this.custom((value_, params_) => {
+      if (params_?.test !== undefined && params_.test !== value_) {
+        return 'failure'
+      }
+    })
+  }
+}
+
 const ti = new TypeInspector();
 
 describe(AnyValidator.name, () => {
@@ -26,4 +37,17 @@ describe(AnyValidator.name, () => {
     expect(ti.any.notFalsy.isValid('')).toBe(false);
     expect(ti.any.notFalsy.isValid(NaN)).toBe(false);
   });
+
+  test('params', () => {
+    expect.assertions(8);
+    const avwp = new AnyValidatorWithParams();
+    expect(avwp.isValid('42')).toBe(true);
+    expect(() => avwp.validate('42')).not.toThrow();
+    expect(avwp.isValid('42', {})).toBe(true);
+    expect(() => avwp.validate('42', {})).not.toThrow();
+    expect(avwp.isValid('42', { test: '42' })).toBe(true);
+    expect(() => avwp.validate('42', { test: '42' })).not.toThrow();
+    expect(avwp.isValid('24', { test: '42' })).toBe(false);
+    expect(() => avwp.validate('24', { test: '42' })).toThrow();
+  })
 });

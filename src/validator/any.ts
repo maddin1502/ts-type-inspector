@@ -1,42 +1,51 @@
-import type { Validatable } from '../types.js';
+import type { Validatable, ValidationParameters } from '../types.js';
 import { Validator } from './index.js';
 
 /**
  * This validator should only be used when a value is indeterminate or when you want to bypass deep validation of an object
  *
- * @since 1.0.0
  * @export
+ * @template {ValidationParameters} [P={}]
+ * @since 1.0.0
  */
-export type AnyValidatable = Validatable<any> & {
+export type AnyValidatable<P extends ValidationParameters = {}> = Validatable<any, unknown, P> & {
   /**
    * reject nullish values (undefined, null)
    *
+   * @readonly
+   * @type {AnyValidatable<P>}
    * @since 1.0.0
    */
-  get notNullish(): AnyValidatable;
+  get notNullish(): AnyValidatable<P>;
   /**
    * reject falsy values (undefined, null, 0, false, '', NaN, 0n, ...)
    *
+   * @readonly
+   * @type {AnyValidatable<P>}
    * @since 1.0.0
    */
-  get notFalsy(): AnyValidatable;
+  get notFalsy(): AnyValidatable<P>;
 };
 
 /**
  * This validator should only be used when a value is indeterminate or when you want to bypass deep validation of an object
  *
- * @since 1.0.0
  * @export
  * @class AnyValidator
- * @extends {Validator<any>}
- * @implements {AnyValidatable}
+ * @template {ValidationParameters} [P={}]
+ * @extends {Validator<any, unknown, P>}
+ * @implements {AnyValidatable<P>}
+ * @since 1.0.0
  */
-export class AnyValidator extends Validator<any> implements AnyValidatable {
-  public get notNullish(): AnyValidatable {
+export class AnyValidator<P extends ValidationParameters = {}>
+  extends Validator<any, unknown, P>
+  implements AnyValidatable<P>
+{
+  public get notNullish(): AnyValidatable<P> {
     return this.setupCondition((value_) => this.checkNullish(value_));
   }
 
-  public get notFalsy(): AnyValidatable {
+  public get notFalsy(): AnyValidatable<P> {
     return this.setupCondition((value_) => this.checkFalsy(value_));
   }
 

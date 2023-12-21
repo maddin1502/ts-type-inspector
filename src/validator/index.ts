@@ -3,15 +3,16 @@ import type {
   CustomValidation,
   Validatable,
   ValidationCondition,
-  ValidationErrorHandler
+  ValidationErrorHandler,
+  ValidationParameters
 } from '../types.js';
 
-export abstract class Validator<Out extends In, In = unknown>
-  implements Validatable<Out, In>
+export abstract class Validator<Out extends In, In = unknown, P extends ValidationParameters = {}>
+  implements Validatable<Out, In, P>
 {
   private _validationError: ValidationError | undefined;
-  private _customValidations: CustomValidation<Out>[];
-  private _errorHandlers: ValidationErrorHandler[];
+  private _customValidations: CustomValidation<Out, P>[];
+  private _errorHandlers: ValidationErrorHandler<P>[];
   private _conditions: ValidationCondition<Out>[];
 
   constructor() {
@@ -24,28 +25,28 @@ export abstract class Validator<Out extends In, In = unknown>
     return this._validationError;
   }
 
-  public custom(validation_: CustomValidation<Out>): this {
+  public custom(validation_: CustomValidation<Out, P>): this {
     this._customValidations.push(validation_);
     return this;
   }
 
-  public onError(handler_: ValidationErrorHandler): this {
+  public onError(handler_: ValidationErrorHandler<P>): this {
     this._errorHandlers.push(handler_);
     return this;
   }
 
-  public validate(value_: In): Out {
-    const value = this.validateBaseType(value_);
+  public validate(value_: In, params_?: P): Out {
+    const value = this.validateBaseType(value_, params_);
 
     for (let i = 0; i < this._conditions.length; i++) {
       this._conditions[i](value);
     }
 
     for (let i = 0; i < this._customValidations.length; i++) {
-      const customValidationResult = this._customValidations[i](value);
+      const customValidationResult = this._customValidations[i](value, params_);
 
       if (customValidationResult !== undefined) {
-        this.throwValidationError(customValidationResult);
+        this.throwValidationError(customValidationResult, undefined, undefined, params_);
       }
     }
 
@@ -53,16 +54,16 @@ export abstract class Validator<Out extends In, In = unknown>
     return value;
   }
 
-  public isValid(value_: In): value_ is Out {
+  public isValid(value_: In, params_?: P): value_ is Out {
     try {
-      this.validate(value_);
+      this.validate(value_, params_);
       return true;
     } catch {
       return false;
     }
   }
 
-  protected abstract validateBaseType(value_: In): Out;
+  protected abstract validateBaseType(value_: In, params_?: P): Out;
 
   protected detectError(
     reason_: unknown,
@@ -86,7 +87,7 @@ export abstract class Validator<Out extends In, In = unknown>
     }
   }
 
-  protected rethrowError(reason_: unknown, trace_?: PropertyKey): never {
+  protected rethrowError(reason_: unknown, trace_?: PropertyKey, params_?: P): never {
     const propertyTraces: PropertyKey[] = trace_ === undefined ? [] : [trace_];
     const { error, originalMessage } = this.detectError(
       reason_,
@@ -95,14 +96,16 @@ export abstract class Validator<Out extends In, In = unknown>
     this.throwValidationError(
       originalMessage ?? error.message,
       propertyTraces,
-      [error]
+      [error],
+      params_
     );
   }
 
   protected throwValidationError(
     message_: string,
     propertyTrace_?: ReadonlyArray<PropertyKey>,
-    subErrors_?: ReadonlyArray<Error>
+    subErrors_?: ReadonlyArray<Error>,
+    params_?: P
   ): never {
     let validationError = new ValidationError(
       message_,
@@ -111,7 +114,7 @@ export abstract class Validator<Out extends In, In = unknown>
     );
 
     for (let i = 0; i < this._errorHandlers.length; i++) {
-      const handlerMessage = this._errorHandlers[i](validationError);
+      const handlerMessage = this._errorHandlers[i](validationError, params_);
 
       if (handlerMessage) {
         validationError = new ValidationError(
