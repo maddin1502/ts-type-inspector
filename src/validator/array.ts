@@ -10,7 +10,12 @@ import { Validator } from './index.js';
  * @template {{ itemValidatorParams?: PI }} [P={}]
  * @since 1.0.0
  */
-export type ArrayValidatable<Out, PI extends ValidationParameters = {}, P extends { itemValidatorParams?: PI } = {}> = Validatable<Out[], unknown, P> & {
+export type ArrayValidatable<
+  Out extends In,
+  In = unknown,
+  PI extends ValidationParameters = {},
+  P extends { itemValidatorParams?: PI } = {}
+> = Validatable<Out, In, P> & {
   /**
    * validate exact array length
    *
@@ -65,7 +70,11 @@ export type ArrayValidatable<Out, PI extends ValidationParameters = {}, P extend
  * @implements {ArrayValidatable<Out, PI, P>}
  * @since 1.0.0
  */
-export class ArrayValidator<const Out, PI extends ValidationParameters = {}, P extends { itemValidatorParams?: PI } = {}>
+export class ArrayValidator<
+    const Out,
+    PI extends ValidationParameters = {},
+    P extends { itemValidatorParams?: PI } = {}
+  >
   extends Validator<Out[], unknown, P>
   implements ArrayValidatable<Out, PI, P>
 {

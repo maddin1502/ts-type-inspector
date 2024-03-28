@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { TypeInspector } from '../../../src/inspector.js';
 import { AnyValidator } from '../../../src/validator/any.js';
 
-class AnyValidatorWithParams extends AnyValidator<{ test?: string }> {
+class AnyValidatorWithParams extends AnyValidator<unknown, { test?: string }> {
   constructor() {
     super();
     this.custom((value_, params_) => {

@@ -5,26 +5,27 @@ import { Validator } from './index.js';
  * This validator should only be used when a value is indeterminate or when you want to bypass deep validation of an object
  *
  * @export
+ * @template [In=unknown]
  * @template {ValidationParameters} [P={}]
  * @since 1.0.0
  */
-export type AnyValidatable<P extends ValidationParameters = {}> = Validatable<any, unknown, P> & {
+export type AnyValidatable<In = unknown, P extends ValidationParameters = {}> = Validatable<any, In, P> & {
   /**
    * reject nullish values (undefined, null)
    *
    * @readonly
-   * @type {AnyValidatable<P>}
+   * @type {AnyValidatable<In, P>}
    * @since 1.0.0
    */
-  get notNullish(): AnyValidatable<P>;
+  get notNullish(): AnyValidatable<In, P>;
   /**
    * reject falsy values (undefined, null, 0, false, '', NaN, 0n, ...)
    *
    * @readonly
-   * @type {AnyValidatable<P>}
+   * @type {AnyValidatable<In, P>}
    * @since 1.0.0
    */
-  get notFalsy(): AnyValidatable<P>;
+  get notFalsy(): AnyValidatable<In, P>;
 };
 
 /**
@@ -32,20 +33,21 @@ export type AnyValidatable<P extends ValidationParameters = {}> = Validatable<an
  *
  * @export
  * @class AnyValidator
+ * @template [In=unknown]
  * @template {ValidationParameters} [P={}]
- * @extends {Validator<any, unknown, P>}
- * @implements {AnyValidatable<P>}
+ * @extends {Validator<any, In, P>}
+ * @implements {AnyValidatable<In, P>}
  * @since 1.0.0
  */
-export class AnyValidator<P extends ValidationParameters = {}>
-  extends Validator<any, unknown, P>
-  implements AnyValidatable<P>
+export class AnyValidator<In = unknown, P extends ValidationParameters = {}>
+  extends Validator<any, In, P>
+  implements AnyValidatable<In, P>
 {
-  public get notNullish(): AnyValidatable<P> {
+  public get notNullish(): AnyValidatable<In, P> {
     return this.setupCondition((value_) => this.checkNullish(value_));
   }
 
-  public get notFalsy(): AnyValidatable<P> {
+  public get notFalsy(): AnyValidatable<In, P> {
     return this.setupCondition((value_) => this.checkFalsy(value_));
   }
 
