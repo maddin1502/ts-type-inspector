@@ -1,31 +1,36 @@
-import type { Validatable, ValidationParameters } from '../types.js';
+import type {
+  EmptyObject,
+  ExtendedValidationParameters,
+  Validatable
+} from '../types.js';
 import { Validator } from './index.js';
 
 /**
  * This validator should only be used when a value is indeterminate or when you want to bypass deep validation of an object
  *
  * @export
- * @template [In=unknown]
- * @template {ValidationParameters} [P={}]
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
  * @since 1.0.0
  */
-export type AnyValidatable<In = unknown, P extends ValidationParameters = {}> = Validatable<any, In, P> & {
+export type AnyValidatable<
+  EVP extends ExtendedValidationParameters = EmptyObject
+> = Validatable<any, EVP> & {
   /**
    * reject nullish values (undefined, null)
    *
    * @readonly
-   * @type {AnyValidatable<In, P>}
+   * @type {AnyValidatable<EVP>}
    * @since 1.0.0
    */
-  get notNullish(): AnyValidatable<In, P>;
+  get notNullish(): AnyValidatable<EVP>;
   /**
    * reject falsy values (undefined, null, 0, false, '', NaN, 0n, ...)
    *
    * @readonly
-   * @type {AnyValidatable<In, P>}
+   * @type {AnyValidatable<EVP>}
    * @since 1.0.0
    */
-  get notFalsy(): AnyValidatable<In, P>;
+  get notFalsy(): AnyValidatable<EVP>;
 };
 
 /**
@@ -33,21 +38,22 @@ export type AnyValidatable<In = unknown, P extends ValidationParameters = {}> = 
  *
  * @export
  * @class AnyValidator
- * @template [In=unknown]
- * @template {ValidationParameters} [P={}]
- * @extends {Validator<any, In, P>}
- * @implements {AnyValidatable<In, P>}
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {Validator<any, EVP>}
+ * @implements {AnyValidatable<EVP>}
  * @since 1.0.0
  */
-export class AnyValidator<In = unknown, P extends ValidationParameters = {}>
-  extends Validator<any, In, P>
-  implements AnyValidatable<In, P>
+export class AnyValidator<
+    EVP extends ExtendedValidationParameters = EmptyObject
+  >
+  extends Validator<any, EVP>
+  implements AnyValidatable<EVP>
 {
-  public get notNullish(): AnyValidatable<In, P> {
+  public get notNullish(): AnyValidatable<EVP> {
     return this.setupCondition((value_) => this.checkNullish(value_));
   }
 
-  public get notFalsy(): AnyValidatable<In, P> {
+  public get notFalsy(): AnyValidatable<EVP> {
     return this.setupCondition((value_) => this.checkFalsy(value_));
   }
 

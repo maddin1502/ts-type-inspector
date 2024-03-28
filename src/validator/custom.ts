@@ -1,34 +1,51 @@
-import type { CustomValidation, Validatable } from '../types.js';
+import type {
+  CustomValidation,
+  EmptyObject,
+  ExtendedValidationParameters,
+  Validatable
+} from '../types.js';
 import { Validator } from './index.js';
 
 /**
  * Validator for custom value validation.
  *
- * @since 1.0.0
  * @export
  * @template Out
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @since 1.0.0
  */
-export type CustomValidatable<Out> = Validatable<Out>;
+export type CustomValidatable<
+  Out,
+  EVP extends ExtendedValidationParameters = EmptyObject
+> = Validatable<Out, EVP>;
 
 /**
  * Validator for custom value validation.
  *
- * @since 1.0.0
  * @export
  * @class CustomValidator
- * @extends {Validator<Out>}
- * @implements {CustomValidatable<Out>}
  * @template Out
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {Validator<Out, EVP>}
+ * @implements {CustomValidatable<Out, EVP>}
+ * @since 1.0.0
  */
-export class CustomValidator<Out>
-  extends Validator<Out>
-  implements CustomValidatable<Out>
+export class CustomValidator<
+    Out,
+    EVP extends ExtendedValidationParameters = EmptyObject
+  >
+  extends Validator<Out, EVP>
+  implements CustomValidatable<Out, EVP>
 {
   /**
-   * @param {CustomValidation<Out>} _validationCallback Return an error message if validation fails; else undefined
-   * @memberof CustomValidator
+   * Creates an instance of CustomValidator.
+   *
+   * @constructor
+   * @param {CustomValidation<unknown, EVP>} _validationCallback  Return an error message if validation fails; else undefined
    */
-  constructor(private readonly _validationCallback: CustomValidation<unknown>) {
+  constructor(
+    private readonly _validationCallback: CustomValidation<unknown, EVP>
+  ) {
     super();
   }
 

@@ -1,6 +1,6 @@
+import { TypeInspector } from '@/inspector.js';
+import { ArrayValidator } from '@/validator/array.js';
 import { describe, expect, test } from 'vitest';
-import { TypeInspector } from '../../../src/inspector.js';
-import { ArrayValidator } from '../../../src/validator/array.js';
 
 const ti = new TypeInspector();
 

@@ -1,4 +1,8 @@
-import type { Validatable, ValidationParameters } from '../types.js';
+import type {
+  EmptyObject,
+  ExtendedValidationParameters,
+  Validatable
+} from '../types.js';
 import { Validator } from './index.js';
 
 /**
@@ -6,56 +10,55 @@ import { Validator } from './index.js';
  *
  * @export
  * @template Out
- * @template {ValidationParameters} [PI={}]
- * @template {{ itemValidatorParams?: PI }} [P={}]
+ * @template {ExtendedValidationParameters} [EVPI=EmptyObject]
+ * @template {{ itemValidatorParams?: EVPI }} [EVP=EmptyObject]
  * @since 1.0.0
  */
 export type ArrayValidatable<
-  Out extends In,
-  In = unknown,
-  PI extends ValidationParameters = {},
-  P extends { itemValidatorParams?: PI } = {}
-> = Validatable<Out, In, P> & {
+  Out,
+  EVPI extends ExtendedValidationParameters = EmptyObject,
+  EVP extends { itemValidatorParams?: EVPI } = EmptyObject
+> = Validatable<Out[], EVP> & {
   /**
    * validate exact array length
    *
    * @param {number} length_
-   * @returns {ArrayValidatable<Out, PI, P>}
+   * @returns {ArrayValidatable<Out, EVPI, EVP>}
    * @since 1.0.0
    */
-  length(length_: number): ArrayValidatable<Out, PI, P>;
+  length(length_: number): ArrayValidatable<Out, EVPI, EVP>;
   /**
    * validate minimum array length
    *
    * @param {number} min_
-   * @returns {ArrayValidatable<Out, PI, P>}
+   * @returns {ArrayValidatable<Out, EVPI, EVP>}
    * @since 1.0.0
    */
-  min(min_: number): ArrayValidatable<Out, PI, P>;
+  min(min_: number): ArrayValidatable<Out, EVPI, EVP>;
   /**
    * validate maximum array length
    *
    * @param {number} max_
-   * @returns {ArrayValidatable<Out, PI, P>}
+   * @returns {ArrayValidatable<Out, EVPI, EVP>}
    * @since 1.0.0
    */
-  max(max_: number): ArrayValidatable<Out, PI, P>;
+  max(max_: number): ArrayValidatable<Out, EVPI, EVP>;
   /**
    * define accepted values
    *
    * @param {...ReadonlyArray<Out>} items_
-   * @returns {ArrayValidatable<Out, PI, P>}
+   * @returns {ArrayValidatable<Out, EVPI, EVP>}
    * @since 1.0.0
    */
-  accept(...items_: ReadonlyArray<Out>): ArrayValidatable<Out, PI, P>;
+  accept(...items_: ReadonlyArray<Out>): ArrayValidatable<Out, EVPI, EVP>;
   /**
    * define rejected values
    *
    * @param {...ReadonlyArray<Out>} items_
-   * @returns {ArrayValidatable<Out, PI, P>}
+   * @returns {ArrayValidatable<Out, EVPI, EVP>}
    * @since 1.0.0
    */
-  reject(...items_: ReadonlyArray<Out>): ArrayValidatable<Out, PI, P>;
+  reject(...items_: ReadonlyArray<Out>): ArrayValidatable<Out, EVPI, EVP>;
 };
 
 /**
@@ -64,52 +67,56 @@ export type ArrayValidatable<
  * @export
  * @class ArrayValidator
  * @template Out
- * @template {ValidationParameters} [PI={}]
- * @template {{ itemValidatorParams?: PI }} [P={}]
- * @extends {Validator<Out[], unknown, P>}
- * @implements {ArrayValidatable<Out, PI, P>}
+ * @template {ExtendedValidationParameters} [EVPI=EmptyObject]
+ * @template {{ itemValidatorParams?: EVPI }} [EVP=EmptyObject]
+ * @extends {Validator<Out[], unknown, EVP>}
+ * @implements {ArrayValidatable<Out, EVPI, EVP>}
  * @since 1.0.0
  */
 export class ArrayValidator<
     const Out,
-    PI extends ValidationParameters = {},
-    P extends { itemValidatorParams?: PI } = {}
+    EVPI extends ExtendedValidationParameters = EmptyObject,
+    EVP extends { itemValidatorParams?: EVPI } = EmptyObject
   >
-  extends Validator<Out[], unknown, P>
-  implements ArrayValidatable<Out, PI, P>
+  extends Validator<Out[], EVP>
+  implements ArrayValidatable<Out, EVPI, EVP>
 {
   /**
    * Creates an instance of ArrayValidator.
    *
    * @constructor
-   * @param {Validatable<Out, unknown, PI>} _itemValidator
+   * @param {Validatable<Out, unknown, EVPI>} _itemValidator
    * @since 1.0.0
    */
-  constructor(private readonly _itemValidator: Validatable<Out, unknown, PI>) {
+  constructor(private readonly _itemValidator: Validatable<Out, EVPI>) {
     super();
   }
 
-  public length(length_: number): ArrayValidatable<Out, PI, P> {
+  public length(length_: number): ArrayValidatable<Out, EVPI, EVP> {
     return this.setupCondition((value_) => this.checkLength(value_, length_));
   }
 
-  public min(min_: number): ArrayValidatable<Out, PI, P> {
+  public min(min_: number): ArrayValidatable<Out, EVPI, EVP> {
     return this.setupCondition((value_) => this.checkMin(value_, min_));
   }
 
-  public max(max_: number): ArrayValidatable<Out, PI, P> {
+  public max(max_: number): ArrayValidatable<Out, EVPI, EVP> {
     return this.setupCondition((value_) => this.checkMax(value_, max_));
   }
 
-  public accept(...items_: ReadonlyArray<Out>): ArrayValidatable<Out, PI, P> {
+  public accept(
+    ...items_: ReadonlyArray<Out>
+  ): ArrayValidatable<Out, EVPI, EVP> {
     return this.setupCondition((value_) => this.checkAccepted(value_, items_));
   }
 
-  public reject(...items_: ReadonlyArray<Out>): ArrayValidatable<Out, PI, P> {
+  public reject(
+    ...items_: ReadonlyArray<Out>
+  ): ArrayValidatable<Out, EVPI, EVP> {
     return this.setupCondition((value_) => this.checkRejected(value_, items_));
   }
 
-  protected validateBaseType(value_: unknown, params_?: P): Out[] {
+  protected validateBaseType(value_: unknown, params_?: EVP): Out[] {
     if (!Array.isArray(value_)) {
       this.throwValidationError('value is not an array');
     }

@@ -1,7 +1,8 @@
 import { ArrayItem, MinArray } from 'ts-lib-extended';
 import { ValidationError } from './error.js';
 
-export type ValidationParameters = Record<string, any>;
+export type ExtendedValidationParameters = Record<string, any>;
+export type EmptyObject = Record<string, never>;
 export type MethodLike = (...args_: any[]) => any;
 export type ObjectLike = Record<PropertyKey, any>;
 export type AnyLike =
@@ -13,52 +14,56 @@ export type AnyLike =
   | undefined
   | symbol
   | null;
-export type CustomValidation<V, P extends ValidationParameters = {}> = (value_: V, params_?: P) => string | undefined;
-export type ValidationErrorHandler<P extends ValidationParameters = {}> = (error_: ValidationError, params_?: P) => string | void;
-export interface Validatable<Out extends In, In = unknown, P extends ValidationParameters = {}> {
+export type CustomValidation<
+  V,
+  EVP extends ExtendedValidationParameters = EmptyObject
+> = (value_: V, params_?: EVP) => string | undefined;
+export type ValidationErrorHandler<
+  EVP extends ExtendedValidationParameters = EmptyObject
+> = (error_: ValidationError, params_?: EVP) => string | void;
+export interface Validatable<
+  Out,
+  EVP extends ExtendedValidationParameters = EmptyObject
+> {
   /**
    * retrieve error from last validation; undefined if validation succeeded
    *
+   * @readonly
    * @type {(ValidationError | undefined)}
-   * @memberof Validatable
    */
   readonly validationError: ValidationError | undefined;
   /**
    * add a custom validation; return a error message if validation fails
    *
-   * @param {CustomValidation<Out, P>} validation_
-   * @param {P} params_
-   * @return {*}  {this}
-   * @memberof Validatable
+   * @param {CustomValidation<Out, EVP>} validation_
+   * @param {?EVP} [params_]
+   * @returns {this}
    */
-  custom(validation_: CustomValidation<Out, P>, params_?: P): this;
+  custom(validation_: CustomValidation<Out, EVP>, params_?: EVP): this;
   /**
    * Perform an action when a validation error occurs.
    * HINT: can also be used to customize the error message
    *
-   * @param {ValidationErrorHandler<P>} handler_
-   * @return {*}  {this}
-   * @memberof Validatable
+   * @param {ValidationErrorHandler<EVP>} handler_
+   * @returns {this}
    */
-  onError(handler_: ValidationErrorHandler<P>): this;
+  onError(handler_: ValidationErrorHandler<EVP>): this;
   /**
    * validate value; throws an error on failure
    *
-   * @param {In} value_
-   * @param {P} params_
-   * @return {*}  {Out}
-   * @memberof Validatable
+   * @param {unknown} value_
+   * @param {?EVP} [params_]
+   * @returns {Out}
    */
-  validate(value_: In, params_?: P): Out;
+  validate(value_: unknown, params_?: EVP): Out;
   /**
    * validate value
    *
-   * @param {In} value_
-   * @param {P} params_
-   * @return {*}  {value_ is Out} true if valid; false if invalid; this is a type predicate - asserted type will be associated to value if true
-   * @memberof Validatable
+   * @param {unknown} value_
+   * @param {?EVP} [params_]
+   * @returns {value_ is Out} true if valid; false if invalid; this is a type predicate - asserted type will be associated to value if true
    */
-  isValid(value_: In, params_?: P): value_ is Out;
+  isValid(value_: unknown, params_?: EVP): value_ is Out;
 }
 export type PropertyValidatables<V extends ObjectLike> = {
   readonly [key in keyof V]-?: Validatable<V[key]>;

@@ -1,15 +1,15 @@
+import { TypeInspector } from '@/inspector.js';
+import { AnyValidator } from '@/validator/any.js';
 import { describe, expect, test } from 'vitest';
-import { TypeInspector } from '../../../src/inspector.js';
-import { AnyValidator } from '../../../src/validator/any.js';
 
-class AnyValidatorWithParams extends AnyValidator<unknown, { test?: string }> {
+class AnyValidatorWithParams extends AnyValidator<{ test?: string }> {
   constructor() {
     super();
     this.custom((value_, params_) => {
       if (params_?.test !== undefined && params_.test !== value_) {
-        return 'failure'
+        return 'failure';
       }
-    })
+    });
   }
 }
 
@@ -49,5 +49,5 @@ describe(AnyValidator.name, () => {
     expect(() => avwp.validate('42', { test: '42' })).not.toThrow();
     expect(avwp.isValid('24', { test: '42' })).toBe(false);
     expect(() => avwp.validate('24', { test: '42' })).toThrow();
-  })
+  });
 });

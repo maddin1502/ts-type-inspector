@@ -1,64 +1,86 @@
-import type { DateLike, Validatable } from '../types.js';
+import type {
+  DateLike,
+  EmptyObject,
+  ExtendedValidationParameters,
+  Validatable
+} from '../types.js';
 import { Validator } from './index.js';
 
 /**
  * Validator for date objects
  *
- * @since 1.0.0
  * @export
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @since 1.0.0
  */
-export type DateValidatable = Validatable<Date> & {
+export type DateValidatable<
+  EVP extends ExtendedValidationParameters = EmptyObject
+> = Validatable<Date, EVP> & {
   /**
    * define earliest accepted date
    *
+   * @param {DateLike} earliest_
+   * @returns {DateValidatable<EVP>}
    * @since 1.0.0
    */
-  earliest(earliest_: DateLike): DateValidatable;
+  earliest(earliest_: DateLike): DateValidatable<EVP>;
   /**
    * define latest accepted date
    *
+   * @param {DateLike} latest_
+   * @returns {DateValidatable<EVP>}
    * @since 1.0.0
    */
-  latest(latest_: DateLike): DateValidatable;
+  latest(latest_: DateLike): DateValidatable<EVP>;
   /**
    * define accepted dates
    *
+   * @param {...ReadonlyArray<DateLike>} items_
+   * @returns {DateValidatable<EVP>}
    * @since 1.0.0
    */
-  accept(...items_: ReadonlyArray<DateLike>): DateValidatable;
+  accept(...items_: ReadonlyArray<DateLike>): DateValidatable<EVP>;
   /**
    * define rejected dates
    *
+   * @param {...ReadonlyArray<DateLike>} items_
+   * @returns {DateValidatable<EVP>}
    * @since 1.0.0
    */
-  reject(...items_: ReadonlyArray<DateLike>): DateValidatable;
+  reject(...items_: ReadonlyArray<DateLike>): DateValidatable<EVP>;
 };
 
 /**
  * Validator for date objects
  *
- * @since 1.0.0
  * @export
  * @class DateValidator
- * @extends {Validator<Date>}
- * @implements {DateValidatable}
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {Validator<Date, EVP>}
+ * @implements {DateValidatable<EVP>}
+ * @since 1.0.0
  */
-export class DateValidator extends Validator<Date> implements DateValidatable {
-  public earliest(earliest_: DateLike): DateValidatable {
+export class DateValidator<
+    EVP extends ExtendedValidationParameters = EmptyObject
+  >
+  extends Validator<Date, EVP>
+  implements DateValidatable<EVP>
+{
+  public earliest(earliest_: DateLike): DateValidatable<EVP> {
     return this.setupCondition((value_) =>
       this.checkEarliest(value_, earliest_)
     );
   }
 
-  public latest(latest_: DateLike): DateValidatable {
+  public latest(latest_: DateLike): DateValidatable<EVP> {
     return this.setupCondition((value_) => this.checkLatest(value_, latest_));
   }
 
-  public accept(...items_: ReadonlyArray<DateLike>): DateValidatable {
+  public accept(...items_: ReadonlyArray<DateLike>): DateValidatable<EVP> {
     return this.setupCondition((value_) => this.checkAccepted(value_, items_));
   }
 
-  public reject(...items_: ReadonlyArray<DateLike>): DateValidatable {
+  public reject(...items_: ReadonlyArray<DateLike>): DateValidatable<EVP> {
     return this.setupCondition((value_) => this.checkRejected(value_, items_));
   }
 

@@ -1,6 +1,12 @@
+import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    }
+  },
   test: {
     coverage: {
       reporter: ['text', 'html', 'cobertura'],
@@ -9,15 +15,12 @@ export default defineConfig({
       clean: true,
       cleanOnRerun: true
     },
-    reporters: [
-      'default',
-      'junit'
-    ],
+    reporters: ['default', 'junit'],
     dir: './tests',
     clearMocks: true,
     mockReset: true,
     outputFile: {
-      'junit': './tests/reports/result/junit.xml'
+      junit: './tests/reports/result/junit.xml'
     }
   }
 });

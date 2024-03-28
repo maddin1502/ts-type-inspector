@@ -4,11 +4,11 @@ import type {
   Validatable,
   ValidationCondition,
   ValidationErrorHandler,
-  ValidationParameters
+  ExtendedValidationParameters
 } from '../types.js';
 
-export abstract class Validator<Out extends In, In = unknown, P extends ValidationParameters = {}>
-  implements Validatable<Out, In, P>
+export abstract class Validator<Out, P extends ExtendedValidationParameters = {}>
+  implements Validatable<Out, P>
 {
   private _validationError: ValidationError | undefined;
   private _customValidations: CustomValidation<Out, P>[];
@@ -35,7 +35,7 @@ export abstract class Validator<Out extends In, In = unknown, P extends Validati
     return this;
   }
 
-  public validate(value_: In, params_?: P): Out {
+  public validate(value_: unknown, params_?: P): Out {
     const value = this.validateBaseType(value_, params_);
 
     for (let i = 0; i < this._conditions.length; i++) {
@@ -46,7 +46,12 @@ export abstract class Validator<Out extends In, In = unknown, P extends Validati
       const customValidationResult = this._customValidations[i](value, params_);
 
       if (customValidationResult !== undefined) {
-        this.throwValidationError(customValidationResult, undefined, undefined, params_);
+        this.throwValidationError(
+          customValidationResult,
+          undefined,
+          undefined,
+          params_
+        );
       }
     }
 
@@ -54,7 +59,7 @@ export abstract class Validator<Out extends In, In = unknown, P extends Validati
     return value;
   }
 
-  public isValid(value_: In, params_?: P): value_ is Out {
+  public isValid(value_: unknown, params_?: P): value_ is Out {
     try {
       this.validate(value_, params_);
       return true;
@@ -63,7 +68,7 @@ export abstract class Validator<Out extends In, In = unknown, P extends Validati
     }
   }
 
-  protected abstract validateBaseType(value_: In, params_?: P): Out;
+  protected abstract validateBaseType(value_: unknown, params_?: P): Out;
 
   protected detectError(
     reason_: unknown,
@@ -87,7 +92,11 @@ export abstract class Validator<Out extends In, In = unknown, P extends Validati
     }
   }
 
-  protected rethrowError(reason_: unknown, trace_?: PropertyKey, params_?: P): never {
+  protected rethrowError(
+    reason_: unknown,
+    trace_?: PropertyKey,
+    params_?: P
+  ): never {
     const propertyTraces: PropertyKey[] = trace_ === undefined ? [] : [trace_];
     const { error, originalMessage } = this.detectError(
       reason_,

@@ -1,7 +1,7 @@
 {
   "name": "ts-type-inspector",
-  "version": "2.1.1",
-  "description": "Type safe tool for value validation",
+  "version": "3.0.0",
+  "description": "Tool for type safe value validation",
   "files": [
     "dist"
   ],
