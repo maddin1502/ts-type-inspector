@@ -1,10 +1,10 @@
+import { TypeInspector } from '@/inspector.js';
+import { NullValidator } from '@/validator/null.js';
 import { describe, expect, test } from 'vitest';
-import { TypeInspector } from '../../../src/inspector.js';
-import { NullValidator } from '../../../src/validator/null.js';
 
 const ti = new TypeInspector();
 
-describe(NullValidator.name, () => {
+describe(NullValidator, () => {
   test('isValid', () => {
     expect.assertions(2);
     expect(ti.null.isValid(null)).toBe(true);

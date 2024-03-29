@@ -1,10 +1,10 @@
+import { TypeInspector } from '@/inspector.js';
+import { NullishValidator } from '@/validator/nullish.js';
 import { describe, expect, test } from 'vitest';
-import { TypeInspector } from '../../../src/inspector.js';
-import { NullishValidator } from '../../../src/validator/nullish.js';
 
 const ti = new TypeInspector();
 
-describe(NullishValidator.name, () => {
+describe(NullishValidator, () => {
   test('isValid', () => {
     expect.assertions(4);
     expect(ti.nullish.isValid(null)).toBe(true);

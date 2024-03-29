@@ -4,7 +4,7 @@ import { describe, expect, test } from 'vitest';
 
 const ti = new TypeInspector();
 
-describe(ArrayValidator.name, () => {
+describe(ArrayValidator, () => {
   test('isValid - success', () => {
     expect.assertions(3);
     expect(ti.array(ti.number).isValid([1, 2, 42])).toBe(true);

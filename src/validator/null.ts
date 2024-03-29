@@ -1,29 +1,42 @@
-import type { Validatable } from '../types.js';
+import type {
+  EmptyObject,
+  ExtendedValidationParameters,
+  Validatable
+} from '../types.js';
 import { Validator } from './index.js';
 
 /**
  * Validator for null values
  *
- * @since 1.0.0
  * @export
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @since 1.0.0
  */
-export type NullValidatable = Validatable<null>;
+export type NullValidatable<
+  EVP extends ExtendedValidationParameters = EmptyObject
+> = Validatable<null, EVP>;
 
 /**
  * Validator for null values
  *
- * @since 1.0.0
  * @export
  * @class NullValidator
- * @extends {Validator<null>}
- * @implements {NullValidatable}
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {Validator<null, EVP>}
+ * @implements {NullValidatable<EVP>}
+ * @since 1.0.0
  */
-export class NullValidator extends Validator<null> implements NullValidatable {
+export class NullValidator<
+    EVP extends ExtendedValidationParameters = EmptyObject
+  >
+  extends Validator<null, EVP>
+  implements NullValidatable<EVP>
+{
   protected validateBaseType(value_: unknown): null {
-    if (value_ !== null) {
-      this.throwValidationError('value is not null');
+    if (value_ === null) {
+      return value_;
     }
 
-    return value_;
+    this.throwValidationError('value is not null');
   }
 }

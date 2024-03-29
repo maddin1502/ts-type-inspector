@@ -1,32 +1,42 @@
-import type { Validatable } from '../types.js';
+import type {
+  EmptyObject,
+  ExtendedValidationParameters,
+  Validatable
+} from '../types.js';
 import { Validator } from './index.js';
 
 /**
  * Validator for nullish values (null or undefined)
  *
- * @since 1.0.0
  * @export
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @since 1.0.0
  */
-export type NullishValidatable = Validatable<null | undefined>;
+export type NullishValidatable<
+  EVP extends ExtendedValidationParameters = EmptyObject
+> = Validatable<null | undefined, EVP>;
 
 /**
  * Validator for nullish values (null or undefined)
  *
- * @since 1.0.0
  * @export
  * @class NullishValidator
- * @extends {(Validator<null | undefined>)}
- * @implements {NullishValidatable}
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {Validator<null | undefined, EVP>}
+ * @implements {NullishValidatable<EVP>}
+ * @since 1.0.0
  */
-export class NullishValidator
-  extends Validator<null | undefined>
-  implements NullishValidatable
+export class NullishValidator<
+    EVP extends ExtendedValidationParameters = EmptyObject
+  >
+  extends Validator<null | undefined, EVP>
+  implements NullishValidatable<EVP>
 {
   protected validateBaseType(value_: unknown): null | undefined {
-    if (value_ !== null && value_ !== undefined) {
-      this.throwValidationError('value is not nullish');
+    if (value_ === null || value_ === undefined) {
+      return value_;
     }
 
-    return value_;
+    this.throwValidationError('value is not nullish');
   }
 }

@@ -11,7 +11,7 @@ const dateString2 = '2021-01-01T00:00:00';
 const date2 = new Date(dateString2);
 const dateNumber2 = date2.getTime();
 
-describe(DateValidator.name, () => {
+describe(DateValidator, () => {
   test('isValid - success', () => {
     expect.assertions(3);
     expect(ti.date.isValid(new Date())).toBe(true);

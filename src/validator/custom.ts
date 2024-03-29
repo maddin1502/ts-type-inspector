@@ -52,10 +52,10 @@ export class CustomValidator<
   protected validateBaseType(value_: unknown): Out {
     const result = this._validationCallback(value_);
 
-    if (result !== undefined) {
-      this.throwValidationError(result);
+    if (result === undefined) {
+      return value_ as Out;
     }
 
-    return value_ as Out;
+    this.throwValidationError(result);
   }
 }

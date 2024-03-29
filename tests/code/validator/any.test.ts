@@ -15,7 +15,7 @@ class AnyValidatorWithParams extends AnyValidator<{ test?: string }> {
 
 const ti = new TypeInspector();
 
-describe(AnyValidator.name, () => {
+describe(AnyValidator, () => {
   test('isValid - success', () => {
     expect.assertions(10);
     expect(ti.any.isValid(undefined)).toBe(true);

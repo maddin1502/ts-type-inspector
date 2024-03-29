@@ -4,7 +4,7 @@ import { describe, expect, test } from 'vitest';
 
 const ti = new TypeInspector();
 
-describe(CustomValidator.name, () => {
+describe(CustomValidator, () => {
   test('isValid', () => {
     expect.assertions(2);
     expect(

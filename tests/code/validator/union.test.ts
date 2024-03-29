@@ -1,10 +1,10 @@
+import { TypeInspector } from '@/inspector.js';
+import { UnionValidator } from '@/validator/union.js';
 import { describe, expect, test } from 'vitest';
-import { TypeInspector } from '../../../src/inspector';
-import { UnionValidator } from '../../../src/validator/union';
 
 const ti = new TypeInspector();
 
-describe(UnionValidator.name, () => {
+describe(UnionValidator, () => {
   test('isValid - success', () => {
     expect.assertions(4);
     expect(ti.union(ti.string, ti.number).isValid(42)).toBe(true);

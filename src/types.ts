@@ -1,8 +1,14 @@
-import { ArrayItem, MinArray } from 'ts-lib-extended';
-import { ValidationError } from './error.js';
+import type { ArrayItem, MinArray } from 'ts-lib-extended';
+import type { ValidationError } from './error.js';
 
-export type ExtendedValidationParameters = Record<string, any>;
 export type EmptyObject = Record<string, never>;
+export type ExtendedValidationParameters = Record<string, any>;
+export type ContainerExtendedValidationParameters<
+  EVP extends ExtendedValidationParameters = EmptyObject
+> = {
+  [key: string]: any;
+  extendedItemValidationParameters?: EVP;
+};
 export type MethodLike = (...args_: any[]) => any;
 export type ObjectLike = Record<PropertyKey, any>;
 export type AnyLike =

@@ -114,19 +114,17 @@ export class DateValidator<
   }
 
   private checkEarliest(value_: Date, earliest_: DateLike): void {
-    const valueTime = this.toTime(value_);
     const earliestTime = this.toTime(earliest_);
 
-    if (!isNaN(earliestTime) && valueTime < earliestTime) {
+    if (!isNaN(earliestTime) && this.toTime(value_) < earliestTime) {
       this.throwValidationError('date is too early');
     }
   }
 
   private checkLatest(value_: Date, latest_: DateLike): void {
-    const valueTime = this.toTime(value_);
     const latestTime = this.toTime(latest_);
 
-    if (!isNaN(latestTime) && valueTime > latestTime) {
+    if (!isNaN(latestTime) && this.toTime(value_) > latestTime) {
       this.throwValidationError('date is too late');
     }
   }

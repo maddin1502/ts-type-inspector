@@ -1,31 +1,44 @@
 import type { ArrayItem } from 'ts-lib-extended';
-import type { AnyLike, Validatable } from '../types.js';
+import type {
+  AnyLike,
+  EmptyObject,
+  ExtendedValidationParameters,
+  Validatable
+} from '../types.js';
 import { Validator } from './index.js';
 
 /**
  * Validator for precisely defined values (not just of specific type)
  * Keep in mind that object are compaired by reference (equality)
  *
- * @since 1.0.0
  * @export
- * @template V
+ * @template {AnyLike[]} V
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @since 1.0.0
  */
-export type StrictValidatable<V extends AnyLike[]> = Validatable<ArrayItem<V>>;
+export type StrictValidatable<
+  V extends AnyLike[],
+  EVP extends ExtendedValidationParameters = EmptyObject
+> = Validatable<ArrayItem<V>, EVP>;
 
 /**
  * Validator for precisely defined values (not just of specific type)
  * Keep in mind that object are compaired by reference (equality)
  *
- * @since 1.0.0
  * @export
  * @class StrictValidator
- * @extends {Validator<ArrayItem<V>>}
- * @implements {StrictValidatable<V>}
- * @template V
+ * @template {AnyLike[]} V
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {Validator<ArrayItem<V>, EVP>}
+ * @implements {StrictValidatable<V, EVP>}
+ * @since 1.0.0
  */
-export class StrictValidator<V extends AnyLike[]>
-  extends Validator<ArrayItem<V>>
-  implements StrictValidatable<V>
+export class StrictValidator<
+    V extends AnyLike[],
+    EVP extends ExtendedValidationParameters = EmptyObject
+  >
+  extends Validator<ArrayItem<V>, EVP>
+  implements StrictValidatable<V, EVP>
 {
   private _strictValues: V;
 
@@ -35,7 +48,7 @@ export class StrictValidator<V extends AnyLike[]>
   }
 
   protected validateBaseType(value_: unknown): ArrayItem<V> {
-    if (!this._strictValues.some((value) => value === value_)) {
+    if (!this._strictValues.some((strictValue_) => strictValue_ === value_)) {
       this.throwValidationError('no equality found');
     }
 

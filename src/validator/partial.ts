@@ -1,4 +1,6 @@
 import type {
+  EmptyObject,
+  ExtendedValidationParameters,
   ObjectLike,
   PartialPropertyValidatables,
   Validatable
@@ -8,25 +10,33 @@ import { Validator } from './index.js';
 /**
  * Validator for object based values. This is an **UNSAFE** validator that only validates some properties and ignores others
  *
- * @since 2.0.0
  * @export
- * @template Out
+ * @template {ObjectLike} Out
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @since 2.0.0
  */
-export type PartialValidatable<Out extends ObjectLike> = Validatable<Out>;
+export type PartialValidatable<
+  Out extends ObjectLike,
+  EVP extends ExtendedValidationParameters = EmptyObject
+> = Validatable<Out, EVP>;
 
 /**
  * Validator for object based values. This is an **UNSAFE** validator that only validates some properties and ignores others
  *
- * @since 2.0.0
  * @export
  * @class PartialValidator
- * @extends {Validator<Out>}
- * @implements {PartialValidatable<Out>}
- * @template Out
+ * @template {ObjectLike} Out
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {Validator<Out, EVP>}
+ * @implements {PartialValidatable<Out, EVP>}
+ * @since 2.0.0
  */
-export class PartialValidator<Out extends ObjectLike>
-  extends Validator<Out>
-  implements PartialValidatable<Out>
+export class PartialValidator<
+    Out extends ObjectLike,
+    EVP extends ExtendedValidationParameters = EmptyObject
+  >
+  extends Validator<Out, EVP>
+  implements PartialValidatable<Out, EVP>
 {
   constructor(
     private readonly _propertyValidators: PartialPropertyValidatables<Out>

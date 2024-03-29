@@ -1,68 +1,87 @@
-import type { MethodLike, Validatable } from '../types.js';
+import type {
+  EmptyObject,
+  ExtendedValidationParameters,
+  MethodLike,
+  Validatable
+} from '../types.js';
 import { Validator } from './index.js';
 
 /**
  * Validator for method-like values.
  * Unfortunately (for technical reasons), this validator can only validate the number of parameters.
  *
- * @since 1.0.0
  * @export
- * @template Out
+ * @template {MethodLike} Out
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @since 1.0.0
  */
-export type MethodValidatable<Out extends MethodLike> = Validatable<Out> & {
+export type MethodValidatable<
+  Out extends MethodLike,
+  EVP extends ExtendedValidationParameters = EmptyObject
+> = Validatable<Out, EVP> & {
   /**
    * validate exact params count
    *
+   * @param {number} count_
+   * @returns {MethodValidatable<Out, EVP>}
    * @since 1.0.0
    */
-  count(count_: number): MethodValidatable<Out>;
+  count(count_: number): MethodValidatable<Out, EVP>;
   /**
    * validate minimum params count
    *
+   * @param {number} min_
+   * @returns {MethodValidatable<Out, EVP>}
    * @since 1.0.0
    */
-  min(min_: number): MethodValidatable<Out>;
+  min(min_: number): MethodValidatable<Out, EVP>;
   /**
    * validate maximum params count
    *
+   * @param {number} max_
+   * @returns {MethodValidatable<Out, EVP>}
    * @since 1.0.0
    */
-  max(max_: number): MethodValidatable<Out>;
+  max(max_: number): MethodValidatable<Out, EVP>;
 };
 
 /**
  * Validator for method-like values.
  * Unfortunately (for technical reasons), this validator can only validate the number of parameters.
  *
- * @since 1.0.0
  * @export
  * @class MethodValidator
- * @extends {Validator<Out>}
- * @implements {MethodValidatable<Out>}
- * @template Out
+ * @template {MethodLike} Out
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {Validator<Out, EVP>}
+ * @implements {MethodValidatable<Out, EVP>}
+ * @since 1.0.0
  */
-export class MethodValidator<Out extends MethodLike>
-  extends Validator<Out>
-  implements MethodValidatable<Out>
+export class MethodValidator<
+    Out extends MethodLike,
+    EVP extends ExtendedValidationParameters = EmptyObject
+  >
+  extends Validator<Out, EVP>
+  implements MethodValidatable<Out, EVP>
 {
-  public count(count_: number): MethodValidatable<Out> {
+  public count(count_: number): MethodValidatable<Out, EVP> {
     return this.setupCondition((value_) => this.checkCount(value_, count_));
   }
 
-  public min(min_: number): MethodValidatable<Out> {
+  public min(min_: number): MethodValidatable<Out, EVP> {
     return this.setupCondition((value_) => this.checkMin(value_, min_));
   }
 
-  public max(max_: number): MethodValidatable<Out> {
+  public max(max_: number): MethodValidatable<Out, EVP> {
     return this.setupCondition((value_) => this.checkMax(value_, max_));
   }
 
   protected validateBaseType(value_: unknown): Out {
-    if (typeof value_ !== 'function') {
-      this.throwValidationError('value is not a method');
+    if (typeof value_ === 'function') {
+      return value_ as Out;
     }
 
-    return value_ as Out;
+    this.throwValidationError('value is not a method');
   }
 
   private checkCount(value_: Out, count_: number): void {

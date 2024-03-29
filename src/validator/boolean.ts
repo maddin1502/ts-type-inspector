@@ -58,11 +58,11 @@ export class BooleanValidator<
   }
 
   protected validateBaseType(value_: unknown): boolean {
-    if (typeof value_ !== 'boolean') {
-      this.throwValidationError('value is not a boolean');
+    if (typeof value_ === 'boolean') {
+      return value_;
     }
 
-    return value_;
+    this.throwValidationError('value is not a boolean');
   }
 
   private checkTrue(value_: boolean): void {

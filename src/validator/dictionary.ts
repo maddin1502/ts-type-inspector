@@ -4,6 +4,7 @@ import type {
   DictionaryValue
 } from 'ts-lib-extended';
 import type {
+  ContainerExtendedValidationParameters,
   EmptyObject,
   ExtendedValidationParameters,
   Validatable
@@ -15,25 +16,25 @@ import { Validator } from './index.js';
  *
  * @export
  * @template {Dictionary} Out
- * @template {ExtendedValidationParameters} [EVPI=EmptyObject]
- * @template {{ itemValidatorParams?: EVPI }} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ContainerExtendedValidationParameters<EVP>} [CEVP=EmptyObject]
  * @since 1.0.0
  */
 export type DictionaryValidatable<
   Out extends Dictionary,
-  EVPI extends ExtendedValidationParameters = EmptyObject,
-  EVP extends { itemValidatorParams?: EVPI } = EmptyObject
-> = Validatable<Out, EVP> & {
+  EVP extends ExtendedValidationParameters = EmptyObject,
+  CEVP extends ContainerExtendedValidationParameters<EVP> = EmptyObject
+> = Validatable<Out, CEVP> & {
   /**
    * additional dictionary key validation
    *
    * @param {Validatable<DictionaryKey<Out>>} validator_
-   * @returns {DictionaryValidatable<Out, EVPI, EVP>}
+   * @returns {DictionaryValidatable<Out, EVP, CEVP>}
    * @since 1.0.0
    */
   keys(
     validator_: Validatable<DictionaryKey<Out>>
-  ): DictionaryValidatable<Out, EVPI, EVP>;
+  ): DictionaryValidatable<Out, EVP, CEVP>;
 };
 
 /**
@@ -42,29 +43,29 @@ export type DictionaryValidatable<
  * @export
  * @class DictionaryValidator
  * @template {Dictionary} Out
- * @template {ExtendedValidationParameters} [EVPI=EmptyObject]
- * @template {{ itemValidatorParams?: EVPI }} [EVP=EmptyObject]
- * @extends {Validator<Out, EVP>}
- * @implements {DictionaryValidatable<Out, EVPI, EVP>}
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ContainerExtendedValidationParameters<EVP>} [CEVP=EmptyObject]
+ * @extends {Validator<Out, CEVP>}
+ * @implements {DictionaryValidatable<Out, EVP, CEVP>}
  * @since 1.0.0
  */
 export class DictionaryValidator<
     Out extends Dictionary,
-    EVPI extends ExtendedValidationParameters = EmptyObject,
-    EVP extends { itemValidatorParams?: EVPI } = EmptyObject
+    EVP extends ExtendedValidationParameters = EmptyObject,
+    CEVP extends ContainerExtendedValidationParameters<EVP> = EmptyObject
   >
-  extends Validator<Out, EVP>
-  implements DictionaryValidatable<Out, EVPI, EVP>
+  extends Validator<Out, CEVP>
+  implements DictionaryValidatable<Out, EVP, CEVP>
 {
   constructor(
-    private readonly _itemValidator: Validatable<DictionaryValue<Out>, EVPI>
+    private readonly _itemValidator: Validatable<DictionaryValue<Out>, EVP>
   ) {
     super();
   }
 
   public keys(
     validator_: Validatable<DictionaryKey<Out>>
-  ): DictionaryValidatable<Out, EVPI, EVP> {
+  ): DictionaryValidatable<Out, EVP, CEVP> {
     return this.setupCondition((value_) => this.checkKeys(value_, validator_));
   }
 

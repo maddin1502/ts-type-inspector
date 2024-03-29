@@ -1,14 +1,17 @@
 import { VALIDATION_ERROR_MARKER, ValidationError } from '../error.js';
 import type {
   CustomValidation,
+  EmptyObject,
+  ExtendedValidationParameters,
   Validatable,
   ValidationCondition,
-  ValidationErrorHandler,
-  ExtendedValidationParameters
+  ValidationErrorHandler
 } from '../types.js';
 
-export abstract class Validator<Out, P extends ExtendedValidationParameters = {}>
-  implements Validatable<Out, P>
+export abstract class Validator<
+  Out,
+  P extends ExtendedValidationParameters = EmptyObject
+> implements Validatable<Out, P>
 {
   private _validationError: ValidationError | undefined;
   private _customValidations: CustomValidation<Out, P>[];

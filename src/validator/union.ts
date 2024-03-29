@@ -1,4 +1,6 @@
 import type {
+  EmptyObject,
+  ExtendedValidationParameters,
   UnionValidatables,
   UnionValidatablesItem,
   Validatable
@@ -8,27 +10,33 @@ import { Validator } from './index.js';
 /**
  * Validator for union type values (like "string | number")
  *
- * @since 1.0.0
  * @export
- * @template V
+ * @template {UnionValidatables} V
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @since 1.0.0
  */
-export type UnionValidatable<V extends UnionValidatables> = Validatable<
-  UnionValidatablesItem<V>
->;
+export type UnionValidatable<
+  V extends UnionValidatables,
+  EVP extends ExtendedValidationParameters = EmptyObject
+> = Validatable<UnionValidatablesItem<V>, EVP>;
 
 /**
  * Validator for union type values (like "string | number")
  *
- * @since 1.0.0
  * @export
  * @class UnionValidator
- * @extends {Validator<UnionValidatablesItem<V>>}
- * @implements {UnionValidatable<V>}
- * @template V
+ * @template {UnionValidatables} V
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {Validator<UnionValidatablesItem<V>, EVP>}
+ * @implements {UnionValidatable<V, EVP>}
+ * @since 1.0.0
  */
-export class UnionValidator<V extends UnionValidatables>
-  extends Validator<UnionValidatablesItem<V>>
-  implements UnionValidatable<V>
+export class UnionValidator<
+    V extends UnionValidatables,
+    EVP extends ExtendedValidationParameters = EmptyObject
+  >
+  extends Validator<UnionValidatablesItem<V>, EVP>
+  implements UnionValidatable<V, EVP>
 {
   private _validators: V;
 

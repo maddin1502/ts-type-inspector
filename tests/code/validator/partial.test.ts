@@ -1,10 +1,10 @@
+import { TypeInspector } from '@/inspector.js';
+import { ObjectValidator } from '@/validator/object.js';
 import { describe, expect, test } from 'vitest';
-import { TypeInspector } from '../../../src/inspector.js';
-import { ObjectValidator } from '../../../src/validator/object.js';
 
 const ti = new TypeInspector();
 
-describe(ObjectValidator.name, () => {
+describe(ObjectValidator, () => {
   test('isValid - success', () => {
     expect.assertions(2);
     expect(

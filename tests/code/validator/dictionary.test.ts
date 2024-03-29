@@ -4,7 +4,7 @@ import { describe, expect, test } from 'vitest';
 
 const ti = new TypeInspector();
 
-describe(DictionaryValidator.name, () => {
+describe(DictionaryValidator, () => {
   test('isValid - success', () => {
     expect.assertions(2);
     expect(ti.dictionary(ti.boolean).isValid({ test: true })).toBe(true);

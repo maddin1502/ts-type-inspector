@@ -4,7 +4,7 @@ import { describe, expect, test } from 'vitest';
 
 const ti = new TypeInspector();
 
-describe(BooleanValidator.name, () => {
+describe(BooleanValidator, () => {
   test('isValid - success', () => {
     expect.assertions(2);
     expect(ti.boolean.isValid(true)).toBe(true);

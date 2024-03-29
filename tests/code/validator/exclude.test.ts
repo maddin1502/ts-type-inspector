@@ -1,10 +1,10 @@
+import { TypeInspector } from '@/inspector.js';
+import { ExcludeValidator } from '@/validator/exclude.js';
 import { describe, expect, test } from 'vitest';
-import { TypeInspector } from '../../../src/inspector.js';
-import { ExcludeValidator } from '../../../src/validator/exclude.js';
 
 const ti = new TypeInspector();
 
-describe(ExcludeValidator.name, () => {
+describe(ExcludeValidator, () => {
   test('isValid - success', () => {
     expect.assertions(2);
     expect(
