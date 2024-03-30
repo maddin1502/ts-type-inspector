@@ -1,10 +1,7 @@
 import { validate as emailValidate } from 'email-validator';
+import type { EmptyObject } from 'ts-lib-extended';
 import { isUri, isWebUri } from 'valid-url';
-import type {
-  EmptyObject,
-  ExtendedValidationParameters,
-  Validatable
-} from '../types.js';
+import type { ExtendedValidationParameters, Validatable } from '../types.js';
 import { Validator } from './index.js';
 
 /**

@@ -1,6 +1,6 @@
+import type { EmptyObject } from 'ts-lib-extended';
 import type {
   ContainerExtendedValidationParameters,
-  EmptyObject,
   ExtendedValidationParameters,
   Validatable
 } from '../types.js';

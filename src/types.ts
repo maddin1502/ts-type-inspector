@@ -1,7 +1,6 @@
-import type { ArrayItem, MinArray } from 'ts-lib-extended';
+import type { ArrayItem, EmptyObject, MinArray } from 'ts-lib-extended';
 import type { ValidationError } from './error.js';
 
-export type EmptyObject = Record<string, never>;
 export type ExtendedValidationParameters = Record<string, any>;
 export type ContainerExtendedValidationParameters<
   EVP extends ExtendedValidationParameters = EmptyObject
@@ -86,6 +85,6 @@ export type UnionValidatablesItem<U extends UnionValidatables> =
   ArrayItem<U> extends Validatable<infer V> ? V : never;
 export type ValidationCondition<V> = (value_: V) => void | never;
 export type DateLike = string | number | Date;
-export type ItemValidatables<A extends unknown[]> = {
+export type TupleItemValidatables<A extends unknown[]> = {
   [index in keyof A]: Validatable<A[index]>;
 };

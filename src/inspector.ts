@@ -2,11 +2,11 @@ import type { Dictionary, DictionaryValue, Enumerable } from 'ts-lib-extended';
 import type {
   AnyLike,
   CustomValidation,
-  ItemValidatables,
   MethodLike,
   ObjectLike,
   PartialPropertyValidatables,
   PropertyValidatables,
+  TupleItemValidatables,
   UnionValidatables,
   Validatable
 } from './types.js';
@@ -26,9 +26,9 @@ import { NumberValidator } from './validator/number.js';
 import { ObjectValidator } from './validator/object.js';
 import { OptionalValidator } from './validator/optional.js';
 import { PartialValidator } from './validator/partial.js';
-import { SequenceValidator } from './validator/sequence.js';
 import { StrictValidator } from './validator/strict.js';
 import { StringValidator } from './validator/string.js';
+import { TupleValidator } from './validator/tuple.js';
 import { UndefinedValidator } from './validator/undefined.js';
 import { UnionValidator } from './validator/union.js';
 
@@ -297,9 +297,18 @@ export class TypeInspector {
     return new ExcludeValidator(validator_);
   }
 
-  public sequence<Out extends unknown[]>(
-    ...itemValidators_: ItemValidatables<Out>
-  ): SequenceValidator<Out> {
-    return new SequenceValidator<Out>(...itemValidators_);
+  /**
+   * Validate tuple values
+   *
+   * @public
+   * @template {unknown[]} Out
+   * @param {...TupleItemValidatables<Out>} itemValidators_ ordered set of validators for each tuple entry
+   * @returns {TupleValidator<Out>}
+   * @since 3.0.0
+   */
+  public tuple<Out extends unknown[]>(
+    ...itemValidators_: TupleItemValidatables<Out>
+  ): TupleValidator<Out> {
+    return new TupleValidator<Out>(...itemValidators_);
   }
 }

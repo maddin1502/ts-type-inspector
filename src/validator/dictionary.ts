@@ -1,11 +1,11 @@
 import type {
   Dictionary,
   DictionaryKey,
-  DictionaryValue
+  DictionaryValue,
+  EmptyObject
 } from 'ts-lib-extended';
 import type {
   ContainerExtendedValidationParameters,
-  EmptyObject,
   ExtendedValidationParameters,
   Validatable
 } from '../types.js';

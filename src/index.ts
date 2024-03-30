@@ -6,7 +6,6 @@ export type {
   ContainerExtendedValidationParameters,
   CustomValidation,
   DateLike,
-  EmptyObject,
   ExtendedValidationParameters,
   MethodLike,
   ObjectLike,
@@ -57,7 +56,7 @@ export {
 } from './validator/undefined.js';
 export { UnionValidator, type UnionValidatable } from './validator/union.js';
 
-const ti = new TypeInspector();
+export const ti = new TypeInspector();
 
-export { TypeInspector, ti };
+export { TypeInspector };
 export default ti;

@@ -1,7 +1,7 @@
+import type { EmptyObject } from 'ts-lib-extended';
 import { VALIDATION_ERROR_MARKER, ValidationError } from '../error.js';
 import type {
   CustomValidation,
-  EmptyObject,
   ExtendedValidationParameters,
   Validatable,
   ValidationCondition,

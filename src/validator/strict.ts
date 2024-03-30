@@ -1,7 +1,6 @@
-import type { ArrayItem } from 'ts-lib-extended';
+import type { ArrayItem, EmptyObject } from 'ts-lib-extended';
 import type {
   AnyLike,
-  EmptyObject,
   ExtendedValidationParameters,
   Validatable
 } from '../types.js';

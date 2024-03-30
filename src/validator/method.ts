@@ -1,5 +1,5 @@
+import type { EmptyObject } from 'ts-lib-extended';
 import type {
-  EmptyObject,
   ExtendedValidationParameters,
   MethodLike,
   Validatable

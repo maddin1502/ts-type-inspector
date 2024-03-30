@@ -1,14 +1,11 @@
 import type {
+  EmptyObject,
   Enumerable,
   EnumerableBase,
   EnumerableValue
 } from 'ts-lib-extended';
 import { enumerableObject } from 'ts-lib-extended';
-import type {
-  EmptyObject,
-  ExtendedValidationParameters,
-  Validatable
-} from '../types.js';
+import type { ExtendedValidationParameters, Validatable } from '../types.js';
 import { Validator } from './index.js';
 
 /**
