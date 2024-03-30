@@ -40,7 +40,7 @@ export class StrictValidator<
   extends Validator<ArrayItem<V>, EVP>
   implements StrictValidatable<V, EVP>
 {
-  private _strictValues: V;
+  private readonly _strictValues: V;
 
   constructor(...strictValues_: V) {
     super();

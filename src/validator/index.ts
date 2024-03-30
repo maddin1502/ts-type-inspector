@@ -14,9 +14,9 @@ export abstract class Validator<
 > implements Validatable<Out, P>
 {
   private _validationError: ValidationError | undefined;
-  private _customValidations: CustomValidation<Out, P>[];
-  private _errorHandlers: ValidationErrorHandler<P>[];
-  private _conditions: ValidationCondition<Out>[];
+  private readonly _customValidations: CustomValidation<Out, P>[];
+  private readonly _errorHandlers: ValidationErrorHandler<P>[];
+  private readonly _conditions: ValidationCondition<Out>[];
 
   constructor() {
     this._conditions = [];

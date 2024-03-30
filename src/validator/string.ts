@@ -123,7 +123,7 @@ export type StringValidatable<
    */
   get uri(): StringValidatable<EVP>;
   /**
-   * string has to be an url - uses [url-validator](https://www.npmjs.com/package/url-validator)
+   * string has to be an web-url (http, https) - uses [url-validator](https://www.npmjs.com/package/url-validator)
    *
    * @readonly
    * @type {StringValidatable<EVP>}

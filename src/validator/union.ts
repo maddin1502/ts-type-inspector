@@ -38,7 +38,7 @@ export class UnionValidator<
   extends Validator<UnionValidatablesItem<V>, EVP>
   implements UnionValidatable<V, EVP>
 {
-  private _validators: V;
+  private readonly _validators: V;
 
   constructor(...validators_: V) {
     super();

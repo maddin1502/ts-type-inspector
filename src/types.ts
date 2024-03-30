@@ -86,3 +86,6 @@ export type UnionValidatablesItem<U extends UnionValidatables> =
   ArrayItem<U> extends Validatable<infer V> ? V : never;
 export type ValidationCondition<V> = (value_: V) => void | never;
 export type DateLike = string | number | Date;
+export type ItemValidatables<A extends unknown[]> = {
+  [index in keyof A]: Validatable<A[index]>;
+};
