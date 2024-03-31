@@ -7,7 +7,7 @@ import type { EmptyObject } from 'ts-lib-extended';
 import { Validator } from './index.js';
 
 /**
- * Validate tuple values
+ * Validator for tuple based values. Each entry has to match its specified validator
  *
  * @export
  * @template {unknown[]} Out
@@ -63,7 +63,7 @@ export class TupleValidator<
     }
 
     if (value_.length < this._itemValidators.length) {
-      this.throwValidationError('too few items');
+      this.throwValidationError('too few entries');
     }
 
     for (let i = 0; i < this._itemValidators.length; i++) {
