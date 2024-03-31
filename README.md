@@ -8,11 +8,11 @@
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-  - [Validation modes](#validation-modes)
-    - [isValid()](#isvalid)
-    - [validate()](#validate)
-  - [Validation order](#validation-order)
-  - [Validation error](#validation-error)
+  - [Basics](#basics)
+  - [Modes](#modes)
+    - [isValid](#isvalid)
+    - [validate](#validate)
+  - [Error evaluation](#error-evaluation)
   - [Validators](#validators)
     - [String](#string)
     - [Number](#number)
@@ -53,11 +53,27 @@ yarn add ts-type-inspector
 
 ## Usage
 
+### Basics
+
+- the validation is terminated immediately when an invalidity occurs.
+- validation order:
+  1. Basic data type
+  2. Conditions
+- conditions can be chained to make the validation more precise
+- validators can be mixed to achieve more complex validation
+
 ```ts
 import ti from 'ts-type-inspector';
 
+// condition chaining
 ti.<VALIDATOR>.<CONDITION1>.<CONDITION2>()...;
 ti.<VALIDATOR>(<VALIDATION_PARAMS>).<CONDITION1>.<CONDITION2>()...;
+
+// mix validators, e.g.:
+ti.object({
+  prop1: ti.<VALIDATOR>.<CONDITION1>.<CONDITION2>()...,
+  prop2: ti.<VALIDATOR>(<VALIDATION_PARAMS>).<CONDITION1>.<CONDITION2>()...
+})
 ```
 
 Parameter | Description
@@ -65,7 +81,8 @@ Parameter | Description
 `<VALIDATOR>` | There are various validators that can be used for validation of diverse value-types (string, number, date, object, ...)
 `<VALIDATION_PARAMS>` | Some validators need configuration parameters to work correctly (array -> item validator, object -> property validators, ...)
 `<CONDITION>` | The TypeInspector uses method-chaining to define special validation conditions. These are additional checks that evaluate the incoming value more precisely
-### Validation modes
+
+### Modes
 
 All validators provide **two** validation modes:
 - `<VALIDATOR>`.isValid(`<UNKNOWN_VALUE>`)
@@ -73,7 +90,7 @@ All validators provide **two** validation modes:
 
 Both modes perform the same validation, but their result outputs are different.
 
-#### isValid()
+#### isValid
 
 This mode uses the [type predicate](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates) feature of Typescript and therefore returns a boolean value as validation result. This assigns an exact type to the (successfully) validated value based on the validator used.
 
@@ -89,7 +106,7 @@ function processIncomingValueAsString(value_: unknown): number {
 }
 ```
 
-#### validate()
+#### validate
 
 This mode throws a `ValidationError` when validation fails. On success it returns the **same** value (same object reference - in contrast to Joi) that was validated but with the correct type information.
 
@@ -106,16 +123,9 @@ function processIncomingValueAsString(value_: unknown): number {
 }
 ```
 
-### Validation order
+### Error evaluation
 
-1. Basic data type
-2. Conditions
-
-The validation is terminated immediately when an invalidity occurs.
-
-### Validation error
-
-The validation error is saved in the validator and can therefore be easily evaluated. Since the validation is terminated immediately when an invalidity occurs, the error only contains information about this specific invalidity.
+The validator saves the last validation error that occurred, making it easy to evaluate. Since the validation is terminated immediately when an invalidity occurs, the error only contains information about this specific invalidity.
 
 ```ts
 import ti from 'ts-type-inspector';
@@ -143,7 +153,7 @@ Parameter | Description
 
 ### Validators
 
-Most of the examples given here indicate generic type information of validators. This is optional, in most cases you can validate values without additional type information. The TypeInspector automatically calculates the resulting value type
+Most of the examples given here indicate generic type information of validators. This is optional, in most cases you can validate values without additional type information. The TypeInspector automatically calculates the resulting value type.
 
 ```ts
 import ti from 'ts-type-inspector';
