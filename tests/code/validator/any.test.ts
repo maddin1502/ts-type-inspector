@@ -1,8 +1,8 @@
 import { TypeInspector } from '@/inspector.js';
-import { AnyValidator } from '@/validator/any.js';
+import { DefaultAnyValidator } from '@/validator/any.js';
 import { describe, expect, test } from 'vitest';
 
-class AnyValidatorWithParams extends AnyValidator<{ test?: string }> {
+class AnyValidatorWithParams extends DefaultAnyValidator<{ test?: string }> {
   constructor() {
     super();
     this.custom((value_, params_) => {
@@ -15,7 +15,7 @@ class AnyValidatorWithParams extends AnyValidator<{ test?: string }> {
 
 const ti = new TypeInspector();
 
-describe(AnyValidator, () => {
+describe(DefaultAnyValidator, () => {
   test('isValid - success', () => {
     expect.assertions(10);
     expect(ti.any.isValid(undefined)).toBe(true);

@@ -1,10 +1,10 @@
 import { TypeInspector } from '@/inspector.js';
-import { TupleValidator } from '@/validator/tuple.js';
+import { DefaultTupleValidator } from '@/validator/tuple.js';
 import { describe, expect, test } from 'vitest';
 
 const ti = new TypeInspector();
 
-describe(TupleValidator, () => {
+describe(DefaultTupleValidator, () => {
   test('isValid - success', () => {
     expect.assertions(3);
     expect(
@@ -206,7 +206,7 @@ describe(TupleValidator, () => {
     expect(ti.tuple().isValid(undefined)).toBe(false);
     expect(ti.tuple().isValid(1)).toBe(false);
     expect(ti.tuple().isValid(() => true)).toBe(false);
-    expect(ti.tuple().isValid(TupleValidator)).toBe(false);
+    expect(ti.tuple().isValid(DefaultTupleValidator)).toBe(false);
     expect(ti.tuple().isValid(null)).toBe(false);
   });
 

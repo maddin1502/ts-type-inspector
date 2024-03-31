@@ -1,33 +1,35 @@
 import type { EmptyObject } from 'ts-lib-extended';
-import type { ExtendedValidationParameters, Validatable } from '../types.js';
-import { Validator } from './index.js';
+import type { ExtendedValidationParameters, Validator } from '../types.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for null values
  *
  * @export
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
- * @since 1.0.0
- */
-export type NullValidatable<
-  EVP extends ExtendedValidationParameters = EmptyObject
-> = Validatable<null, EVP>;
-
-/**
- * Validator for null values
- *
- * @export
- * @class NullValidator
+ * @interface NullValidator
  * @template {ExtendedValidationParameters} [EVP=EmptyObject]
  * @extends {Validator<null, EVP>}
- * @implements {NullValidatable<EVP>}
  * @since 1.0.0
  */
-export class NullValidator<
+export interface NullValidator<
+  EVP extends ExtendedValidationParameters = EmptyObject
+> extends Validator<null, EVP> {}
+
+/**
+ * Validator for null values
+ *
+ * @export
+ * @class DefaultNullValidator
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {DefaultValidator<null, EVP>}
+ * @implements {NullValidator<EVP>}
+ * @since 1.0.0
+ */
+export class DefaultNullValidator<
     EVP extends ExtendedValidationParameters = EmptyObject
   >
-  extends Validator<null, EVP>
-  implements NullValidatable<EVP>
+  extends DefaultValidator<null, EVP>
+  implements NullValidator<EVP>
 {
   protected validateBaseType(value_: unknown): null {
     if (value_ === null) {

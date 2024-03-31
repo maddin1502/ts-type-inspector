@@ -1,10 +1,10 @@
 import { TypeInspector } from '@/inspector.js';
-import { DictionaryValidator } from '@/validator/dictionary.js';
+import { DefaultDictionaryValidator } from '@/validator/dictionary.js';
 import { describe, expect, test } from 'vitest';
 
 const ti = new TypeInspector();
 
-describe(DictionaryValidator, () => {
+describe(DefaultDictionaryValidator, () => {
   test('isValid - success', () => {
     expect.assertions(2);
     expect(ti.dictionary(ti.boolean).isValid({ test: true })).toBe(true);

@@ -1,154 +1,156 @@
 import type { EmptyObject } from 'ts-lib-extended';
-import type { ExtendedValidationParameters, Validatable } from '../types.js';
-import { Validator } from './index.js';
+import type { ExtendedValidationParameters, Validator } from '../types.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for numeric values
  *
  * @export
+ * @interface NumberValidator
  * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {Validator<number, EVP>}
  * @since 1.0.0
  */
-export type NumberValidatable<
+export interface NumberValidator<
   EVP extends ExtendedValidationParameters = EmptyObject
-> = Validatable<number, EVP> & {
+> extends Validator<number, EVP> {
   /**
    * accept positive values only (zero is not positive)
    *
    * @readonly
-   * @type {NumberValidatable<EVP>}
+   * @type {this}
    * @since 1.0.0
    */
-  get positive(): NumberValidatable<EVP>;
+  get positive(): this;
   /**
    * accept negative values only (zero is not negative)
    *
    * @readonly
-   * @type {NumberValidatable<EVP>}
+   * @type {this}
    * @since 1.0.0
    */
-  get negative(): NumberValidatable<EVP>;
+  get negative(): this;
   /**
    * reject NaN and Infinity
    *
    * @readonly
-   * @type {NumberValidatable<EVP>}
+   * @type {this}
    * @since 1.0.0
    */
-  get finite(): NumberValidatable<EVP>;
+  get finite(): this;
   /**
    * reject NaN
    *
    * @readonly
-   * @type {NumberValidatable<EVP>}
+   * @type {this}
    * @since 1.0.0
    */
-  get rejectNaN(): NumberValidatable<EVP>;
+  get rejectNaN(): this;
   /**
    * reject Infinity
    *
    * @readonly
-   * @type {NumberValidatable<EVP>}
+   * @type {this}
    * @since 1.0.0
    */
-  get rejectInfinity(): NumberValidatable<EVP>;
+  get rejectInfinity(): this;
   /**
    * reject 0
    *
    * @readonly
-   * @type {NumberValidatable<EVP>}
+   * @type {this}
    * @since 1.0.0
    */
-  get rejectZero(): NumberValidatable<EVP>;
+  get rejectZero(): this;
   /**
    * validate minimum value
    *
    * @param {number} min_
-   * @returns {NumberValidatable<EVP>}
+   * @returns {this}
    * @since 1.0.0
    */
-  min(min_: number): NumberValidatable<EVP>;
+  min(min_: number): this;
   /**
    * validate maximum value
    *
    * @param {number} max_
-   * @returns {NumberValidatable<EVP>}
+   * @returns {this}
    * @since 1.0.0
    */
-  max(max_: number): NumberValidatable<EVP>;
+  max(max_: number): this;
   /**
    * define accepted numbers
    *
    * @param {...ReadonlyArray<number>} numbers_
-   * @returns {NumberValidatable<EVP>}
+   * @returns {this}
    * @since 1.0.0
    */
-  accept(...numbers_: ReadonlyArray<number>): NumberValidatable<EVP>;
+  accept(...numbers_: ReadonlyArray<number>): this;
   /**
    * define rejected numbers
    *
    * @param {...ReadonlyArray<number>} numbers_
-   * @returns {NumberValidatable<EVP>}
+   * @returns {this}
    * @since 1.0.0
    */
-  reject(...numbers_: ReadonlyArray<number>): NumberValidatable<EVP>;
-};
+  reject(...numbers_: ReadonlyArray<number>): this;
+}
 
 /**
  * Validator for numeric values
  *
  * @export
- * @class NumberValidator
+ * @class DefaultNumberValidator
  * @template {ExtendedValidationParameters} [EVP=EmptyObject]
- * @extends {Validator<number, EVP>}
- * @implements {NumberValidatable<EVP>}
+ * @extends {DefaultValidator<number, EVP>}
+ * @implements {NumberValidator<EVP>}
  * @since 1.0.0
  */
-export class NumberValidator<
+export class DefaultNumberValidator<
     EVP extends ExtendedValidationParameters = EmptyObject
   >
-  extends Validator<number, EVP>
-  implements NumberValidatable<EVP>
+  extends DefaultValidator<number, EVP>
+  implements NumberValidator<EVP>
 {
-  public get positive(): NumberValidatable<EVP> {
+  public get positive(): this {
     return this.setupCondition((value_) => this.checkPositive(value_));
   }
 
-  public get negative(): NumberValidatable<EVP> {
+  public get negative(): this {
     return this.setupCondition((value_) => this.checkNegative(value_));
   }
 
-  public get finite(): NumberValidatable<EVP> {
+  public get finite(): this {
     return this.setupCondition((value_) => this.checkFinite(value_));
   }
 
-  public get rejectNaN(): NumberValidatable<EVP> {
+  public get rejectNaN(): this {
     return this.setupCondition((value_) => this.checkNaN(value_));
   }
 
-  public get rejectInfinity(): NumberValidatable<EVP> {
+  public get rejectInfinity(): this {
     return this.setupCondition((value_) => this.checkInfinity(value_));
   }
 
-  public get rejectZero(): NumberValidatable<EVP> {
+  public get rejectZero(): this {
     return this.setupCondition((value_) => this.checkZero(value_));
   }
 
-  public min(min_: number): NumberValidatable<EVP> {
+  public min(min_: number): this {
     return this.setupCondition((value_) => this.checkMin(value_, min_));
   }
 
-  public max(max_: number): NumberValidatable<EVP> {
+  public max(max_: number): this {
     return this.setupCondition((value_) => this.checkMax(value_, max_));
   }
 
-  public accept(...numbers_: ReadonlyArray<number>): NumberValidatable<EVP> {
+  public accept(...numbers_: ReadonlyArray<number>): this {
     return this.setupCondition((value_) =>
       this.checkAccepted(value_, numbers_)
     );
   }
 
-  public reject(...numbers_: ReadonlyArray<number>): NumberValidatable<EVP> {
+  public reject(...numbers_: ReadonlyArray<number>): this {
     return this.setupCondition((value_) =>
       this.checkRejected(value_, numbers_)
     );

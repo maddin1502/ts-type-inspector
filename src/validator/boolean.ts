@@ -1,56 +1,58 @@
 import type { EmptyObject } from 'ts-lib-extended';
-import type { ExtendedValidationParameters, Validatable } from '../types.js';
-import { Validator } from './index.js';
+import type { ExtendedValidationParameters, Validator } from '../types.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for boolean values
  *
  * @export
+ * @interface BooleanValidator
  * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {Validator<boolean, EVP>}
  * @since 1.0.0
  */
-export type BooleanValidatable<
+export interface BooleanValidator<
   EVP extends ExtendedValidationParameters = EmptyObject
-> = Validatable<boolean, EVP> & {
+> extends Validator<boolean, EVP> {
   /**
    * accept just true
    *
    * @readonly
-   * @type {BooleanValidatable<EVP>}
+   * @type {this}
    * @since 1.0.0
    */
-  get true(): BooleanValidatable<EVP>;
+  get true(): this;
   /**
    * accept just false
    *
    * @readonly
-   * @type {BooleanValidatable<EVP>}
+   * @type {this}
    * @since 1.0.0
    */
-  get false(): BooleanValidatable<EVP>;
-};
+  get false(): this;
+}
 
 /**
  * Validator for boolean values
  *
  * @export
- * @class BooleanValidator
+ * @class DefaultBooleanValidator
  * @template {ExtendedValidationParameters} [EVP=EmptyObject]
- * @extends {Validator<boolean, EVP>}
- * @implements {BooleanValidatable<EVP>}
+ * @extends {DefaultValidator<boolean, EVP>}
+ * @implements {BooleanValidator<EVP>}
  * @since 1.0.0
  */
-export class BooleanValidator<
+export class DefaultBooleanValidator<
     EVP extends ExtendedValidationParameters = EmptyObject
   >
-  extends Validator<boolean, EVP>
-  implements BooleanValidatable<EVP>
+  extends DefaultValidator<boolean, EVP>
+  implements BooleanValidator<EVP>
 {
-  public get true(): BooleanValidatable<EVP> {
+  public get true(): this {
     return this.setupCondition((value_) => this.checkTrue(value_));
   }
 
-  public get false(): BooleanValidatable<EVP> {
+  public get false(): this {
     return this.setupCondition((value_) => this.checkFalse(value_));
   }
 

@@ -1,10 +1,10 @@
 import { TypeInspector } from '@/inspector.js';
-import { BooleanValidator } from '@/validator/boolean.js';
+import { DefaultBooleanValidator } from '@/validator/boolean.js';
 import { describe, expect, test } from 'vitest';
 
 const ti = new TypeInspector();
 
-describe(BooleanValidator, () => {
+describe(DefaultBooleanValidator, () => {
   test('isValid - success', () => {
     expect.assertions(2);
     expect(ti.boolean.isValid(true)).toBe(true);

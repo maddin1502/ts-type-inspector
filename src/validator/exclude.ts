@@ -1,6 +1,6 @@
 import type { EmptyObject } from 'ts-lib-extended';
-import type { ExtendedValidationParameters, Validatable } from '../types.js';
-import { Validator } from './index.js';
+import type { ExtendedValidationParameters, Validator } from '../types.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * This validator is able to validate if a type doesn't exist in a KNOWN union type.
@@ -8,41 +8,43 @@ import { Validator } from './index.js';
  * The passed validator checks whether the undesired types (= In - Out) exist in the value.
  *
  * @export
- * @template {In} Out
- * @template In
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
- * @since 1.1.0
- */
-export type ExcludeValidatable<
-  Out extends In,
-  In,
-  EVP extends ExtendedValidationParameters = EmptyObject
-> = Validatable<Out, EVP>;
-
-/**
- * This validator is able to validate if a type doesn't exist in a KNOWN union type.
- * The generics "Out" and "In" have to be set. "In" describes the incoming union type and "Out" the desired output type.
- * The passed validator checks whether the undesired types (= In - Out) exist in the value.
- *
- * @export
- * @class ExcludeValidator
+ * @interface ExcludeValidator
  * @template {In} Out
  * @template In
  * @template {ExtendedValidationParameters} [EVP=EmptyObject]
  * @extends {Validator<Out, EVP>}
- * @implements {ExcludeValidatable<Out, In, EVP>}
  * @since 1.1.0
  */
-export class ExcludeValidator<
+export interface ExcludeValidator<
+  Out extends In,
+  In,
+  EVP extends ExtendedValidationParameters = EmptyObject
+> extends Validator<Out, EVP> {}
+
+/**
+ * This validator is able to validate if a type doesn't exist in a KNOWN union type.
+ * The generics "Out" and "In" have to be set. "In" describes the incoming union type and "Out" the desired output type.
+ * The passed validator checks whether the undesired types (= In - Out) exist in the value.
+ *
+ * @export
+ * @class DefaultExcludeValidator
+ * @template {In} Out
+ * @template In
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {DefaultValidator<Out, EVP>}
+ * @implements {ExcludeValidator<Out, In, EVP>}
+ * @since 1.1.0
+ */
+export class DefaultExcludeValidator<
     Out extends In,
     In,
     EVP extends ExtendedValidationParameters = EmptyObject
   >
-  extends Validator<Out, EVP>
-  implements ExcludeValidatable<Out, In, EVP>
+  extends DefaultValidator<Out, EVP>
+  implements ExcludeValidator<Out, In, EVP>
 {
   constructor(
-    private readonly _validator: Validator<Exclude<In, Out>> // use Validator class and NOT Validatable type to prevent the use of conditions
+    private readonly _validator: DefaultValidator<Exclude<In, Out>> // use Validator class and NOT Validatable type to prevent the use of conditions
   ) {
     super();
   }

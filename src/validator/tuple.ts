@@ -1,50 +1,52 @@
 import {
   ExtendedValidationParameters,
   TupleItemValidatables,
-  Validatable
+  Validator
 } from '@/types.js';
 import type { EmptyObject } from 'ts-lib-extended';
-import { Validator } from './index.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for tuple based values. Each entry has to match its specified validator
  *
  * @export
+ * @interface TupleValidator
  * @template {unknown[]} Out
  * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {Validator<Out, EVP>}
  * @since 3.0.0
  */
-export type TupleValidatable<
+export interface TupleValidator<
   Out extends unknown[],
   EVP extends ExtendedValidationParameters = EmptyObject
-> = Validatable<Out, EVP> & {
+> extends Validator<Out, EVP> {
   /**
    * Reject tuples that contain more entries than have been validated
    *
    * @readonly
-   * @type {TupleValidatable<Out, EVP>}
+   * @type {this}
    * @since 3.0.0
    */
-  get noOverload(): TupleValidatable<Out, EVP>;
-};
+  get noOverload(): this;
+}
 
 /**
  * Validator for tuple based values. Each entry has to match its specified validator
  *
  * @export
- * @class TupleValidator
+ * @class DefaultTupleValidator
  * @template {unknown[]} Out
  * @template {ExtendedValidationParameters} [EVP=EmptyObject]
- * @extends {Validator<Out, EVP>}
- * @implements {TupleValidatable<Out, EVP>}
+ * @extends {DefaultValidator<Out, EVP>}
+ * @implements {TupleValidator<Out, EVP>}
  * @since 3.0.0
  */
-export class TupleValidator<
+export class DefaultTupleValidator<
     Out extends unknown[],
     EVP extends ExtendedValidationParameters = EmptyObject
   >
-  extends Validator<Out, EVP>
-  implements TupleValidatable<Out, EVP>
+  extends DefaultValidator<Out, EVP>
+  implements TupleValidator<Out, EVP>
 {
   private readonly _itemValidators: TupleItemValidatables<Out>;
 
@@ -53,7 +55,7 @@ export class TupleValidator<
     this._itemValidators = itemValidators_;
   }
 
-  public get noOverload(): TupleValidatable<Out, EVP> {
+  public get noOverload(): this {
     return this.setupCondition((value_) => this.checkOverload(value_));
   }
 

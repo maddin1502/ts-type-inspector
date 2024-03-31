@@ -1,10 +1,10 @@
 import { TypeInspector } from '@/inspector.js';
-import { ObjectValidator } from '@/validator/object.js';
+import { DefaultObjectValidator } from '@/validator/object.js';
 import { describe, expect, test } from 'vitest';
 
 const ti = new TypeInspector();
 
-describe(ObjectValidator, () => {
+describe(DefaultObjectValidator, () => {
   test('isValid - success', () => {
     expect.assertions(2);
     expect(
@@ -205,7 +205,7 @@ describe(ObjectValidator, () => {
     expect(ti.partial({}).isValid(undefined)).toBe(false);
     expect(ti.partial({}).isValid(1)).toBe(false);
     expect(ti.partial({}).isValid(() => true)).toBe(false);
-    expect(ti.partial({}).isValid(ObjectValidator)).toBe(false);
+    expect(ti.partial({}).isValid(DefaultObjectValidator)).toBe(false);
     expect(ti.partial({}).isValid(null)).toBe(false);
   });
 

@@ -5,56 +5,56 @@ import type {
   EnumerableValue
 } from 'ts-lib-extended';
 import { enumerableObject } from 'ts-lib-extended';
-import type { ExtendedValidationParameters, Validatable } from '../types.js';
-import { Validator } from './index.js';
+import type { ExtendedValidationParameters, Validator } from '../types.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for enum values
  *
  * @export
+ * @interface EnumValidator
  * @template {Enumerable} E
  * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {Validator<EnumerableValue<E>, EVP>}
  * @since 1.0.2
  */
-export type EnumValidatable<
+export interface EnumValidator<
   E extends Enumerable,
   EVP extends ExtendedValidationParameters = EmptyObject
-> = Validatable<EnumerableValue<E>, EVP> & {
+> extends Validator<EnumerableValue<E>, EVP> {
   /**
    * additional base type validation for enum values
    *
    * @since 1.0.2
    */
-  values(
-    validator_: Validatable<EnumerableBase<EnumerableValue<E>>>
-  ): EnumValidatable<E, EVP>;
-};
+  values(validator_: Validator<EnumerableBase<EnumerableValue<E>>>): this;
+}
 
 /**
  * Validator for enum values
  *
  * @export
- * @class EnumValidator
+ * @class DefaultEnumValidator
  * @template {Enumerable} E
  * @template {ExtendedValidationParameters} [EVP=EmptyObject]
- * @extends {Validator<EnumerableValue<E>, EVP>}
- * @implements {EnumValidatable<E, EVP>}
+ * @extends {DefaultValidator<EnumerableValue<E>, EVP>}
+ * @implements {EnumValidator<E, EVP>}
  * @since 1.0.2
  */
-export class EnumValidator<
+export class DefaultEnumValidator<
     E extends Enumerable,
     EVP extends ExtendedValidationParameters = EmptyObject
   >
-  extends Validator<EnumerableValue<E>, EVP>
-  implements EnumValidatable<E, EVP>
+  extends DefaultValidator<EnumerableValue<E>, EVP>
+  implements EnumValidator<E, EVP>
 {
   constructor(private readonly _enum: E) {
     super();
   }
 
   public values(
-    validator_: Validatable<EnumerableBase<EnumerableValue<E>>>
-  ): EnumValidatable<E, EVP> {
+    validator_: Validator<EnumerableBase<EnumerableValue<E>>>
+  ): this {
     return this.setupCondition((value_) =>
       this.checkValues(value_, validator_)
     );
@@ -82,7 +82,7 @@ export class EnumValidator<
 
   private checkValues(
     value_: EnumerableValue<E>,
-    validator_: Validatable<EnumerableBase<EnumerableValue<E>>>
+    validator_: Validator<EnumerableBase<EnumerableValue<E>>>
   ): void {
     if (!validator_.isValid(value_)) {
       this.throwValidationError('value does not match enums base type');

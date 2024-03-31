@@ -1,10 +1,10 @@
 import { TypeInspector } from '@/inspector.js';
-import { StringValidator } from '@/validator/string.js';
+import { DefaultStringValidator } from '@/validator/string.js';
 import { describe, expect, test } from 'vitest';
 
 const ti = new TypeInspector();
 
-describe(StringValidator, () => {
+describe(DefaultStringValidator, () => {
   test('isValid - success', () => {
     expect.assertions(3);
     expect(ti.string.isValid('hello world')).toBe(true);

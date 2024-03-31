@@ -1,39 +1,41 @@
 import type { EmptyObject } from 'ts-lib-extended';
-import type { ExtendedValidationParameters, Validatable } from '../types.js';
-import { Validator } from './index.js';
+import type { ExtendedValidationParameters, Validator } from '../types.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for undefined values
  *
  * @export
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
- * @since 1.0.0
- */
-export type UndefinedValidatable<
-  EVP extends ExtendedValidationParameters = EmptyObject
-> = Validatable<undefined, EVP>;
-
-/**
- * Validator for undefined values
- *
- * @export
- * @class UndefinedValidator
+ * @interface UndefinedValidator
  * @template {ExtendedValidationParameters} [EVP=EmptyObject]
  * @extends {Validator<undefined, EVP>}
- * @implements {UndefinedValidatable<EVP>}
  * @since 1.0.0
  */
-export class UndefinedValidator<
+export interface UndefinedValidator<
+  EVP extends ExtendedValidationParameters = EmptyObject
+> extends Validator<undefined, EVP> {}
+
+/**
+ * Validator for undefined values
+ *
+ * @export
+ * @class DefaulUndefinedValidator
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {DefaultValidator<undefined, EVP>}
+ * @implements {UndefinedValidator<EVP>}
+ * @since 1.0.0
+ */
+export class DefaulUndefinedValidator<
     EVP extends ExtendedValidationParameters = EmptyObject
   >
-  extends Validator<undefined, EVP>
-  implements UndefinedValidatable<EVP>
+  extends DefaultValidator<undefined, EVP>
+  implements UndefinedValidator<EVP>
 {
   protected validateBaseType(value_: unknown): undefined {
-    if (value_ !== undefined) {
-      this.throwValidationError('value is defined');
+    if (value_ === undefined) {
+      return value_;
     }
 
-    return value_;
+    this.throwValidationError('value is defined');
   }
 }

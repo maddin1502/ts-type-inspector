@@ -1,231 +1,230 @@
 import { validate as emailValidate } from 'email-validator';
 import type { EmptyObject } from 'ts-lib-extended';
 import { isUri, isWebUri } from 'valid-url';
-import type { ExtendedValidationParameters, Validatable } from '../types.js';
-import { Validator } from './index.js';
+import type { ExtendedValidationParameters, Validator } from '../types.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for string values.
  *
  * @export
+ * @interface StringValidator
  * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {Validator<string, EVP>}
  * @since 1.0.0
  */
-export type StringValidatable<
+export interface StringValidator<
   EVP extends ExtendedValidationParameters = EmptyObject
-> = Validatable<string, EVP> & {
+> extends Validator<string, EVP> {
   /**
    * define minimum string length
    *
    * @param {number} min_
-   * @returns {StringValidatable<EVP>}
+   * @returns {this}
    * @since 1.0.0
    */
-  shortest(min_: number): StringValidatable<EVP>;
+  shortest(min_: number): this;
   /**
    * define maximum string length
    *
    * @param {number} max_
-   * @returns {StringValidatable<EVP>}
+   * @returns {this}
    * @since 1.0.0
    */
-  longest(max_: number): StringValidatable<EVP>;
+  longest(max_: number): this;
   /**
    * define accepted values or patterns
    *
    * @param {...ReadonlyArray<string | RegExp>} accepted_
-   * @returns {StringValidatable<EVP>}
+   * @returns {this}
    * @since 1.0.0
    */
-  accept(...accepted_: ReadonlyArray<string | RegExp>): StringValidatable<EVP>;
+  accept(...accepted_: ReadonlyArray<string | RegExp>): this;
   /**
    * define rejected values or patterns
    *
    * @param {...ReadonlyArray<string | RegExp>} rejected_
-   * @returns {StringValidatable<EVP>}
+   * @returns {this}
    * @since 1.0.0
    */
-  reject(...rejected_: ReadonlyArray<string | RegExp>): StringValidatable<EVP>;
+  reject(...rejected_: ReadonlyArray<string | RegExp>): this;
   /**
    * specify exact string length
    *
    * @param {number} length_
-   * @returns {StringValidatable<EVP>}
+   * @returns {this}
    * @since 1.0.0
    */
-  length(length_: number): StringValidatable<EVP>;
+  length(length_: number): this;
   /**
    * reject empty string
    *
    * @readonly
-   * @type {StringValidatable<EVP>}
+   * @type {this}
    * @since 1.0.0
    */
-  get rejectEmpty(): StringValidatable<EVP>;
+  get rejectEmpty(): this;
   /**
    * value has to be a base64 encoded string
    *
    * @readonly
-   * @type {StringValidatable<EVP>}
+   * @type {this}
    * @since 1.0.0
    */
-  get base64(): StringValidatable<EVP>;
+  get base64(): this;
   /**
    * value has to be a json string (stringified instance)
    * HINT: This check uses try-catch on JSON.parse. Keep this in mind for performance reasons (multiple parsing)
    *
    * @readonly
-   * @type {StringValidatable<EVP>}
+   * @type {this}
    * @since 1.0.0
    */
-  get json(): StringValidatable<EVP>;
+  get json(): this;
   /**
    * string has to be a valid ISO8601 date string
    *
    * @readonly
-   * @type {StringValidatable<EVP>}
+   * @type {this}
    * @since 1.0.0
    */
-  get date(): StringValidatable<EVP>;
+  get date(): this;
   /**
    * string has to be convertable to a number
    *
    * @readonly
-   * @type {StringValidatable<EVP>}
+   * @type {this}
    * @since 1.0.0
    */
-  get numeric(): StringValidatable<EVP>;
+  get numeric(): this;
   /**
    * string has to be an uuid (e.g. db91dc9f-9481-4843-a74b-4d027114102e)
    *
    * @readonly
-   * @type {StringValidatable<EVP>}
+   * @type {this}
    * @since 1.0.0
    */
-  get uuid(): StringValidatable<EVP>;
+  get uuid(): this;
   /**
    * string has to be an email - uses [email-validator](https://www.npmjs.com/package/email-validator)
    *
    * @readonly
-   * @type {StringValidatable<EVP>}
+   * @type {this}
    * @since X1.0.0
    */
-  get email(): StringValidatable<EVP>;
+  get email(): this;
   /**
    * string has to be an uri - uses [url-validator](https://www.npmjs.com/package/url-validator)
    *
    * @readonly
-   * @type {StringValidatable<EVP>}
+   * @type {this}
    * @since 1.0.0
    */
-  get uri(): StringValidatable<EVP>;
+  get uri(): this;
   /**
    * string has to be an web-url (http, https) - uses [url-validator](https://www.npmjs.com/package/url-validator)
    *
    * @readonly
-   * @type {StringValidatable<EVP>}
+   * @type {this}
    * @since 1.0.0
    */
-  get url(): StringValidatable<EVP>;
+  get url(): this;
   /**
    * string has to contain hexadecimal characters only
    *
    * @readonly
-   * @type {StringValidatable<EVP>}
+   * @type {this}
    * @since 1.0.0
    */
-  get hex(): StringValidatable<EVP>;
-};
+  get hex(): this;
+}
 
 /**
  * Validator for string values.
  *
- * @since 1.0.0
  * @export
- * @class StringValidator
- * @extends {Validator<string>}
- * @implements {StringValidatable}
+ * @class DefaultStringValidator
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {DefaultValidator<string, EVP>}
+ * @implements {StringValidator<EVP>}
+ * @since 1.0.0
  */
-export class StringValidator<
+export class DefaultStringValidator<
     EVP extends ExtendedValidationParameters = EmptyObject
   >
-  extends Validator<string, EVP>
-  implements StringValidatable<EVP>
+  extends DefaultValidator<string, EVP>
+  implements StringValidator<EVP>
 {
-  public shortest(min_: number): StringValidatable<EVP> {
+  public shortest(min_: number): this {
     return this.setupCondition((value_) => this.checkShortest(value_, min_));
   }
 
-  public longest(max_: number): StringValidatable<EVP> {
+  public longest(max_: number): this {
     return this.setupCondition((value_) => this.checkLongest(value_, max_));
   }
 
-  public accept(
-    ...accepted_: ReadonlyArray<string | RegExp>
-  ): StringValidatable<EVP> {
+  public accept(...accepted_: ReadonlyArray<string | RegExp>): this {
     return this.setupCondition((value_) =>
       this.checkAccepted(value_, accepted_)
     );
   }
 
-  public reject(
-    ...rejected_: ReadonlyArray<string | RegExp>
-  ): StringValidatable<EVP> {
+  public reject(...rejected_: ReadonlyArray<string | RegExp>): this {
     return this.setupCondition((value_) =>
       this.checkRejected(value_, rejected_)
     );
   }
 
-  public length(length_: number): StringValidatable<EVP> {
+  public length(length_: number): this {
     return this.setupCondition((value_) => this.checkLength(value_, length_));
   }
 
-  public get rejectEmpty(): StringValidatable<EVP> {
+  public get rejectEmpty(): this {
     return this.setupCondition((value_) => this.checkEmpty(value_));
   }
 
-  public get base64(): StringValidatable<EVP> {
+  public get base64(): this {
     return this.setupCondition((value_) => this.checkBase64(value_));
   }
 
-  public get json(): StringValidatable<EVP> {
+  public get json(): this {
     return this.setupCondition((value_) => this.checkJson(value_));
   }
 
-  public get date(): StringValidatable<EVP> {
+  public get date(): this {
     return this.setupCondition((value_) => this.checkDate(value_));
   }
 
-  public get numeric(): StringValidatable<EVP> {
+  public get numeric(): this {
     return this.setupCondition((value_) => this.checkNumeric(value_));
   }
 
-  public get uuid(): StringValidatable<EVP> {
+  public get uuid(): this {
     return this.setupCondition((value_) => this.checkUuid(value_));
   }
 
-  public get email(): StringValidatable<EVP> {
+  public get email(): this {
     return this.setupCondition((value_) => this.checkEmail(value_));
   }
 
-  public get uri(): StringValidatable<EVP> {
+  public get uri(): this {
     return this.setupCondition((value_) => this.checkUri(value_));
   }
 
-  public get url(): StringValidatable<EVP> {
+  public get url(): this {
     return this.setupCondition((value_) => this.checkUrl(value_));
   }
 
-  public get hex(): StringValidatable<EVP> {
+  public get hex(): this {
     return this.setupCondition((value_) => this.checkHex(value_));
   }
 
   protected validateBaseType(value_: unknown): string {
-    if (typeof value_ !== 'string') {
-      this.throwValidationError('value is not a string');
+    if (typeof value_ === 'string') {
+      return value_;
     }
 
-    return value_;
+    this.throwValidationError('value is not a string');
   }
 
   protected matches(item_: string | RegExp, value_: string): boolean {

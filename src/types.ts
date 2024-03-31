@@ -26,7 +26,7 @@ export type CustomValidation<
 export type ValidationErrorHandler<
   EVP extends ExtendedValidationParameters = EmptyObject
 > = (error_: ValidationError, params_?: EVP) => string | void;
-export interface Validatable<
+export interface Validator<
   Out,
   EVP extends ExtendedValidationParameters = EmptyObject
 > {
@@ -71,20 +71,20 @@ export interface Validatable<
   isValid(value_: unknown, params_?: EVP): value_ is Out;
 }
 export type PropertyValidatables<V extends ObjectLike> = {
-  readonly [key in keyof V]-?: Validatable<V[key]>;
+  readonly [key in keyof V]-?: Validator<V[key]>;
 };
 export type PartialPropertyValidatables<V = any> = {
-  readonly [key in keyof V]?: Validatable<V[key]>;
+  readonly [key in keyof V]?: Validator<V[key]>;
 };
 export type SelectPropertyValidatables<
   V extends ObjectLike,
   K extends keyof V
-> = { readonly [key in K]?: Validatable<V[key]> };
-export type UnionValidatables<V = any> = MinArray<Validatable<V>, 2>;
+> = { readonly [key in K]?: Validator<V[key]> };
+export type UnionValidatables<V = any> = MinArray<Validator<V>, 2>;
 export type UnionValidatablesItem<U extends UnionValidatables> =
-  ArrayItem<U> extends Validatable<infer V> ? V : never;
+  ArrayItem<U> extends Validator<infer V> ? V : never;
 export type ValidationCondition<V> = (value_: V) => void | never;
 export type DateLike = string | number | Date;
 export type TupleItemValidatables<A extends unknown[]> = {
-  [index in keyof A]: Validatable<A[index]>;
+  [index in keyof A]: Validator<A[index]>;
 };

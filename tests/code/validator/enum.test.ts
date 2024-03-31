@@ -1,5 +1,5 @@
 import { TypeInspector } from '@/inspector.js';
-import { EnumValidator } from '@/validator/enum.js';
+import { DefaultEnumValidator } from '@/validator/enum.js';
 import { describe, expect, test } from 'vitest';
 
 enum NumberEnum {
@@ -16,7 +16,7 @@ enum StringEnum {
 
 const ti = new TypeInspector();
 
-describe(EnumValidator, () => {
+describe(DefaultEnumValidator, () => {
   test('isValid - success', () => {
     expect.assertions(6);
     expect(ti.enum(NumberEnum).isValid(0)).toBe(true);

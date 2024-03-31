@@ -3,56 +3,58 @@ import type {
   ExtendedValidationParameters,
   ObjectLike,
   PropertyValidatables,
-  Validatable
+  Validator
 } from '../types.js';
-import { Validator } from './index.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for object based values. Each property has to match its specified validator
  *
  * @export
+ * @interface ObjectValidator
  * @template {ObjectLike} Out
  * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {Validator<Out, EVP>}
  * @since 1.0.0
  */
-export type ObjectValidatable<
+export interface ObjectValidator<
   Out extends ObjectLike,
   EVP extends ExtendedValidationParameters = EmptyObject
-> = Validatable<Out, EVP> & {
+> extends Validator<Out, EVP> {
   /**
    * Reject objects that contain more keys than have been validated
    * USE FOR POJOs ONLY!. Getter/Setter/Methods will lead to false negative results
    *
    * @readonly
-   * @type {ObjectValidatable<Out, EVP>}
+   * @type {this}
    * @since 1.0.0
    */
-  get noOverload(): ObjectValidatable<Out, EVP>;
-};
+  get noOverload(): this;
+}
 
 /**
  * Validator for object based values. Each property has to match its specified validator
  *
  * @export
- * @class ObjectValidator
+ * @class DefaultObjectValidator
  * @template {ObjectLike} Out
  * @template {ExtendedValidationParameters} [EVP=EmptyObject]
- * @extends {Validator<Out, EVP>}
- * @implements {ObjectValidatable<Out, EVP>}
+ * @extends {DefaultValidator<Out, EVP>}
+ * @implements {ObjectValidator<Out, EVP>}
  * @since 1.0.0
  */
-export class ObjectValidator<
+export class DefaultObjectValidator<
     Out extends ObjectLike,
     EVP extends ExtendedValidationParameters = EmptyObject
   >
-  extends Validator<Out, EVP>
-  implements ObjectValidatable<Out, EVP>
+  extends DefaultValidator<Out, EVP>
+  implements ObjectValidator<Out, EVP>
 {
   constructor(private readonly _propertyValidators: PropertyValidatables<Out>) {
     super();
   }
 
-  public get noOverload(): ObjectValidatable<Out, EVP> {
+  public get noOverload(): this {
     return this.setupCondition((value_) => this.checkOverload(value_));
   }
 

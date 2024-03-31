@@ -2,118 +2,120 @@ import type { EmptyObject } from 'ts-lib-extended';
 import type {
   ContainerExtendedValidationParameters,
   ExtendedValidationParameters,
-  Validatable
+  Validator
 } from '../types.js';
-import { Validator } from './index.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for array values
  *
  * @export
+ * @interface ArrayValidator
  * @template Out
  * @template {ExtendedValidationParameters} [EVP=EmptyObject]
  * @template {ContainerExtendedValidationParameters<EVP>} [CEVP=EmptyObject]
+ * @extends {Validator<Out[], CEVP>}
  * @since 1.0.0
  */
-export type ArrayValidatable<
+export interface ArrayValidator<
   Out,
   EVP extends ExtendedValidationParameters = EmptyObject,
   CEVP extends ContainerExtendedValidationParameters<EVP> = EmptyObject
-> = Validatable<Out[], CEVP> & {
+> extends Validator<Out[], CEVP> {
   /**
    * validate exact array length
    *
    * @param {number} length_
-   * @returns {ArrayValidatable<Out, EVP, CEVP>}
+   * @returns {this}
    * @since 1.0.0
    */
-  length(length_: number): ArrayValidatable<Out, EVP, CEVP>;
+  length(length_: number): this;
   /**
    * validate minimum array length
    *
    * @param {number} min_
-   * @returns {ArrayValidatable<Out, EVP, CEVP>}
+   * @returns {this}
    * @since 1.0.0
    */
-  min(min_: number): ArrayValidatable<Out, EVP, CEVP>;
+  min(min_: number): this;
   /**
    * validate maximum array length
    *
    * @param {number} max_
-   * @returns {ArrayValidatable<Out, EVP, CEVP>}
+   * @returns {this}
    * @since 1.0.0
    */
-  max(max_: number): ArrayValidatable<Out, EVP, CEVP>;
+  max(max_: number): this;
   /**
    * define accepted values
    *
    * @param {...ReadonlyArray<Out>} items_
-   * @returns {ArrayValidatable<Out, EVP, CEVP>}
+   * @returns {this}
    * @since 1.0.0
    */
-  accept(...items_: ReadonlyArray<Out>): ArrayValidatable<Out, EVP, CEVP>;
+  accept(...items_: ReadonlyArray<Out>): this;
   /**
    * define rejected values
    *
    * @param {...ReadonlyArray<Out>} items_
-   * @returns {ArrayValidatable<Out, EVP, CEVP>}
+   * @returns {this}
    * @since 1.0.0
    */
-  reject(...items_: ReadonlyArray<Out>): ArrayValidatable<Out, EVP, CEVP>;
+  reject(...items_: ReadonlyArray<Out>): this;
 };
 
 /**
  * Validator for array values
  *
  * @export
- * @class ArrayValidator
+ * @class DefaultArrayValidator
  * @template Out
  * @template {ExtendedValidationParameters} [EVP=EmptyObject]
  * @template {ContainerExtendedValidationParameters<EVP>} [CEVP=EmptyObject]
- * @extends {Validator<Out[], CEVP>}
- * @implements {ArrayValidatable<Out, EVP, CEVP>}
+ * @extends {DefaultValidator<Out[], CEVP>}
+ * @implements {ArrayValidator<Out, EVP, CEVP>}
  * @since 1.0.0
  */
-export class ArrayValidator<
+export class DefaultArrayValidator<
     const Out,
     EVP extends ExtendedValidationParameters = EmptyObject,
     CEVP extends ContainerExtendedValidationParameters<EVP> = EmptyObject
   >
-  extends Validator<Out[], CEVP>
-  implements ArrayValidatable<Out, EVP, CEVP>
+  extends DefaultValidator<Out[], CEVP>
+  implements ArrayValidator<Out, EVP, CEVP>
 {
   /**
    * Creates an instance of ArrayValidator.
    *
    * @constructor
-   * @param {Validatable<Out, EVP>} _itemValidator
+   * @param {Validator<Out, EVP>} _itemValidator
    * @since 1.0.0
    */
-  constructor(private readonly _itemValidator: Validatable<Out, EVP>) {
+  constructor(private readonly _itemValidator: Validator<Out, EVP>) {
     super();
   }
 
-  public length(length_: number): ArrayValidatable<Out, EVP, CEVP> {
+  public length(length_: number): this {
     return this.setupCondition((value_) => this.checkLength(value_, length_));
   }
 
-  public min(min_: number): ArrayValidatable<Out, EVP, CEVP> {
+  public min(min_: number): this {
     return this.setupCondition((value_) => this.checkMin(value_, min_));
   }
 
-  public max(max_: number): ArrayValidatable<Out, EVP, CEVP> {
+  public max(max_: number): this {
     return this.setupCondition((value_) => this.checkMax(value_, max_));
   }
 
   public accept(
     ...items_: ReadonlyArray<Out>
-  ): ArrayValidatable<Out, EVP, CEVP> {
+  ): this {
     return this.setupCondition((value_) => this.checkAccepted(value_, items_));
   }
 
   public reject(
     ...items_: ReadonlyArray<Out>
-  ): ArrayValidatable<Out, EVP, CEVP> {
+  ): this {
     return this.setupCondition((value_) => this.checkRejected(value_, items_));
   }
 

@@ -2,42 +2,44 @@ import type { ArrayItem, EmptyObject } from 'ts-lib-extended';
 import type {
   AnyLike,
   ExtendedValidationParameters,
-  Validatable
+  Validator
 } from '../types.js';
-import { Validator } from './index.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for precisely defined values (not just of specific type)
  * Keep in mind that object are compaired by reference (equality)
  *
  * @export
- * @template {AnyLike[]} V
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
- * @since 1.0.0
- */
-export type StrictValidatable<
-  V extends AnyLike[],
-  EVP extends ExtendedValidationParameters = EmptyObject
-> = Validatable<ArrayItem<V>, EVP>;
-
-/**
- * Validator for precisely defined values (not just of specific type)
- * Keep in mind that object are compaired by reference (equality)
- *
- * @export
- * @class StrictValidator
+ * @interface StrictValidator
  * @template {AnyLike[]} V
  * @template {ExtendedValidationParameters} [EVP=EmptyObject]
  * @extends {Validator<ArrayItem<V>, EVP>}
- * @implements {StrictValidatable<V, EVP>}
  * @since 1.0.0
  */
-export class StrictValidator<
+export interface StrictValidator<
+  V extends AnyLike[],
+  EVP extends ExtendedValidationParameters = EmptyObject
+> extends Validator<ArrayItem<V>, EVP> {}
+
+/**
+ * Validator for precisely defined values (not just of specific type)
+ * Keep in mind that object are compaired by reference (equality)
+ *
+ * @export
+ * @class DefaultStrictValidator
+ * @template {AnyLike[]} V
+ * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @extends {DefaultValidator<ArrayItem<V>, EVP>}
+ * @implements {StrictValidator<V, EVP>}
+ * @since 1.0.0
+ */
+export class DefaultStrictValidator<
     V extends AnyLike[],
     EVP extends ExtendedValidationParameters = EmptyObject
   >
-  extends Validator<ArrayItem<V>, EVP>
-  implements StrictValidatable<V, EVP>
+  extends DefaultValidator<ArrayItem<V>, EVP>
+  implements StrictValidator<V, EVP>
 {
   private readonly _strictValues: V;
 

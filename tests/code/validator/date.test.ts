@@ -1,5 +1,5 @@
 import { TypeInspector } from '@/inspector.js';
-import { DateValidator } from '@/validator/date.js';
+import { DefaultDateValidator } from '@/validator/date.js';
 import { describe, expect, test } from 'vitest';
 
 const ti = new TypeInspector();
@@ -11,7 +11,7 @@ const dateString2 = '2021-01-01T00:00:00';
 const date2 = new Date(dateString2);
 const dateNumber2 = date2.getTime();
 
-describe(DateValidator, () => {
+describe(DefaultDateValidator, () => {
   test('isValid - success', () => {
     expect.assertions(3);
     expect(ti.date.isValid(new Date())).toBe(true);

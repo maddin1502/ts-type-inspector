@@ -1,10 +1,10 @@
 import { TypeInspector } from '@/inspector.js';
-import { OptionalValidator } from '@/validator/optional.js';
+import { DefaultOptionalValidator } from '@/validator/optional.js';
 import { describe, expect, test } from 'vitest';
 
 const ti = new TypeInspector();
 
-describe(OptionalValidator, () => {
+describe(DefaultOptionalValidator, () => {
   test('isValid - success', () => {
     expect.assertions(2);
     expect(ti.optional(ti.number).isValid(42)).toBe(true);

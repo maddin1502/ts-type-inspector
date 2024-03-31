@@ -1,10 +1,10 @@
 import { TypeInspector } from '@/inspector.js';
-import { ExcludeValidator } from '@/validator/exclude.js';
+import { DefaultExcludeValidator } from '@/validator/exclude.js';
 import { describe, expect, test } from 'vitest';
 
 const ti = new TypeInspector();
 
-describe(ExcludeValidator, () => {
+describe(DefaultExcludeValidator, () => {
   test('isValid - success', () => {
     expect.assertions(2);
     expect(
