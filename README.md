@@ -1,9 +1,40 @@
-# ts-type-inspector
+# ts-type-inspector <!-- omit in toc -->
 > The TypeInspector is a data validation tool that is heavily inspired by [Joi](https://www.npmjs.com/package/joi). Due to the type-safety, it can prevent a misconfigured data validation (in contrast to Joi).
 
 [![npm version](https://badge.fury.io/js/ts-type-inspector.svg)](https://badge.fury.io/js/ts-type-inspector)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![npm downloads](https://badgen.net/npm/dw/ts-type-inspector)](https://badge.fury.io/js/ts-type-inspector)
+
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Validation modes](#validation-modes)
+    - [isValid()](#isvalid)
+    - [validate()](#validate)
+  - [Validation order](#validation-order)
+  - [Validation error](#validation-error)
+  - [Validators](#validators)
+    - [String](#string)
+    - [Number](#number)
+    - [Object](#object)
+    - [Partial](#partial)
+    - [Dictionary](#dictionary)
+    - [Array](#array)
+    - [Tuple](#tuple)
+    - [Date](#date)
+    - [Method](#method)
+    - [Union](#union)
+    - [Strict](#strict)
+    - [Optional](#optional)
+    - [Any](#any)
+    - [Custom](#custom)
+    - [Enum](#enum)
+    - [Exclude](#exclude)
+    - [Boolean](#boolean)
+    - [Undefined](#undefined)
+    - [Null](#null)
+    - [Nullish](#nullish)
+
 
 ## Features
 - type safe
