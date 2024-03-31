@@ -174,35 +174,6 @@ Validator for number values.
 | accept | accept specific numbers only |
 | reject | reject specific numbers |
 
-#### Boolean
-
-> since 1.0.0
-
-Validator for boolean values.
-
-| Condition | Description |
-|---|---|
-| true | only true is valid |
-| false | only false is valid |
-
-#### Undefined
-
-> since 1.0.0
-
-This validator rejects all values that are defined (!== undefined).
-
-#### Null
-
-> since 1.0.0
-
-This validator rejects all values that are not null.
-
-#### Nullish
-
-> since 1.0.0
-
-This validator rejects all values that are not null or undefined.
-
 #### Object
 
 > since 1.0.0
@@ -307,6 +278,28 @@ ti.array<DataArrayType>(
     prop1: ti.string,
     prop2: ti.number
   })
+);
+```
+
+#### Tuple
+
+> since 3.0.0
+
+Validator for tuple based values (e.g. `[string, number]`).
+
+| Condition | Description |
+|---|---|
+| noOverload | reject tuples that contain more entries than have been validated |
+
+```ts
+import ti from 'ts-type-inspector';
+
+type DataTuple = [string, number, 'mode1' | 'mode2']
+
+ti.tuple<DataTuple>(
+  ti.string,
+  ti.number,
+  ti.strict('mode1', 'mode2')
 );
 ```
 
@@ -499,3 +492,32 @@ function filter2(input_: Input): string {
   ).validate(input_);
 }
 ```
+
+#### Boolean
+
+> since 1.0.0
+
+Validator for boolean values.
+
+| Condition | Description |
+|---|---|
+| true | only true is valid |
+| false | only false is valid |
+
+#### Undefined
+
+> since 1.0.0
+
+This validator rejects all values that are defined (!== undefined).
+
+#### Null
+
+> since 1.0.0
+
+This validator rejects all values that are not null.
+
+#### Nullish
+
+> since 1.0.0
+
+This validator rejects all values that are not null or undefined.
