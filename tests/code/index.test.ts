@@ -1,5 +1,5 @@
+import ti, { TypeInspector, ti as ti2 } from '@/index.js';
 import { describe, expect, test } from 'vitest';
-import ti, { TypeInspector, ti as ti2 } from '../../src/index.js';
 
 describe('root export', () => {
   test('default', () => {

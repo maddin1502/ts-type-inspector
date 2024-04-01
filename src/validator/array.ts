@@ -62,7 +62,7 @@ export interface ArrayValidator<
    * @since 1.0.0
    */
   reject(...items_: ReadonlyArray<Out>): this;
-};
+}
 
 /**
  * Validator for array values
@@ -107,15 +107,11 @@ export class DefaultArrayValidator<
     return this.setupCondition((value_) => this.checkMax(value_, max_));
   }
 
-  public accept(
-    ...items_: ReadonlyArray<Out>
-  ): this {
+  public accept(...items_: ReadonlyArray<Out>): this {
     return this.setupCondition((value_) => this.checkAccepted(value_, items_));
   }
 
-  public reject(
-    ...items_: ReadonlyArray<Out>
-  ): this {
+  public reject(...items_: ReadonlyArray<Out>): this {
     return this.setupCondition((value_) => this.checkRejected(value_, items_));
   }
 
