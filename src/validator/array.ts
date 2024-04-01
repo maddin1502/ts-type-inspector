@@ -79,7 +79,7 @@ export interface ArrayValidator<
 export class DefaultArrayValidator<
     const Out,
     EVP extends ExtendedValidationParameters = EmptyObject,
-    CEVP extends ContainerExtendedValidationParameters<EVP> = EmptyObject
+    CEVP extends ContainerExtendedValidationParameters<EVP> = ContainerExtendedValidationParameters<EVP>
   >
   extends DefaultValidator<Out[], CEVP>
   implements ArrayValidator<Out, EVP, CEVP>

@@ -83,7 +83,10 @@ export type SelectPropertyValidatables<
 export type UnionValidatables<V = any> = MinArray<Validator<V>, 2>;
 export type UnionValidatablesItem<U extends UnionValidatables> =
   ArrayItem<U> extends Validator<infer V> ? V : never;
-export type ValidationCondition<V> = (value_: V) => void | never;
+export type ValidationCondition<
+  V,
+  P extends ExtendedValidationParameters = EmptyObject
+> = (value_: V, params_?: P) => void | never;
 export type DateLike = string | number | Date;
 export type TupleItemValidatables<A extends unknown[]> = {
   [index in keyof A]: Validator<A[index]>;

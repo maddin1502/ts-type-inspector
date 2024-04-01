@@ -3,9 +3,9 @@ import { VALIDATION_ERROR_MARKER, ValidationError } from '../error.js';
 import type {
   CustomValidation,
   ExtendedValidationParameters,
-  Validator,
   ValidationCondition,
-  ValidationErrorHandler
+  ValidationErrorHandler,
+  Validator
 } from '../types.js';
 
 export abstract class DefaultValidator<
@@ -16,7 +16,7 @@ export abstract class DefaultValidator<
   private _validationError: ValidationError | undefined;
   private readonly _customValidations: CustomValidation<Out, P>[];
   private readonly _errorHandlers: ValidationErrorHandler<P>[];
-  private readonly _conditions: ValidationCondition<Out>[];
+  private readonly _conditions: ValidationCondition<Out, P>[];
 
   constructor() {
     this._conditions = [];
@@ -42,7 +42,7 @@ export abstract class DefaultValidator<
     const value = this.validateBaseType(value_, params_);
 
     for (let i = 0; i < this._conditions.length; i++) {
-      this._conditions[i](value);
+      this._conditions[i](value, params_);
     }
 
     for (let i = 0; i < this._customValidations.length; i++) {
@@ -140,7 +140,7 @@ export abstract class DefaultValidator<
     throw (this._validationError = validationError);
   }
 
-  protected setupCondition(condition_: ValidationCondition<Out>): this {
+  protected setupCondition(condition_: ValidationCondition<Out, P>): this {
     this._conditions.push(condition_);
     return this;
   }

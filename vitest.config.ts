@@ -10,7 +10,7 @@ export default defineConfig({
   test: {
     coverage: {
       reporter: ['text', 'html', 'cobertura'],
-      src: ['./src'],
+      include: ['src/**/*.*'],
       reportsDirectory: './tests/reports/coverage',
       clean: true,
       cleanOnRerun: true
