@@ -13,7 +13,8 @@
     - [isValid](#isvalid)
     - [validate](#validate)
   - [Error evaluation](#error-evaluation)
-  - [Validators](#validators)
+  - [Validation depending on external influences](#validation-depending-on-external-influences)
+  - [Predefined validators](#predefined-validators)
     - [String](#string)
     - [Number](#number)
     - [Object](#object)
@@ -37,10 +38,12 @@
 
 
 ## Features
-- type safe
+- type safe (no automatic type conversions/casting)
+- determine the value's data type based on the validators used (generic type arguments are mostly optional)
 - custom error messages
-- additional custom validation
-- predefined validators for most data types
+- flexibel & additional custom validation
+- predefined default-validators for most common data types
+- extendable valdators to take external dependencies into account
 
 ## Installation
 ```bash
@@ -146,12 +149,16 @@ function processIncomingValueAsString(value_: unknown): number {
 Parameter | Description
 --- | ---
 `<VALIDATION_ERROR>` | Undefined if validation succeeds; Defined else; Contains reason for failed validation
-`-> propertyPath` | Trace/Path of property keys (array index, property name) to invalid value; only set if validation value is a complex data type (object, array) >> example: `propertyX.5.propertyY`
-`-> propertyTrace` | equivalent to `propertyPath` but stored as array >> `[propertyX, 5, propertyY]`
-`-> subErrors` | Each chained validator has its own validation error instance. Errors are caught, processed/expanded and then thrown again by parent validators. Each validator captures thrown child validation errors.
-`-> message` | Specific message describing the invalidity
+&rarr; `propertyPath` | Trace/Path of property keys (array index, property name) to invalid value; only set if validation value is a complex data type (object, array) >> example: `propertyX.5.propertyY`
+&rarr; `propertyTrace` | equivalent to `propertyPath` but stored as array >> `[propertyX, 5, propertyY]`
+&rarr; `subErrors` | Each chained validator has its own validation error instance. Errors are caught, processed/expanded and then thrown again by parent validators. Each validator captures thrown child validation errors.
+&rarr; `message` | Specific message describing the invalidity
 
-### Validators
+### Validation depending on external influences
+
+!!! WIP !!!
+
+### Predefined validators
 
 Most of the examples given here indicate generic type information of validators. This is optional, in most cases you can validate values without additional type information. The TypeInspector automatically calculates the resulting value type.
 
@@ -220,11 +227,11 @@ Validator for number values.
 > since 1.0.0
 
 Validator for object based values.
-- `null` is rejected
+- `null` is rejected by default
 
 | Condition | Description |
 |---|---|
-| noOverload | reject objects that contain more keys than have been validated **USE FOR POJOs ONLY!**. Getter/Setter or private properties will lead to false negative results |
+| noOverload | reject objects that contain more keys than have been validated. **USE FOR POJOs ONLY!**. Getters/setters or private properties can produce false negatives. |
 
 ```ts
 import ti from 'ts-type-inspector';
