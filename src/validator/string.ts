@@ -1,7 +1,11 @@
 import { validate as emailValidate } from 'email-validator';
-import type { EmptyObject } from 'ts-lib-extended';
+
 import { isUri, isWebUri } from 'valid-url';
-import type { ExtendedValidationParameters, Validator } from '../types.js';
+import type {
+  ExtendedValidationParameters,
+  NoParameters,
+  Validator
+} from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -9,12 +13,12 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface StringValidator
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {Validator<string, EVP>}
  * @since 1.0.0
  */
 export interface StringValidator<
-  EVP extends ExtendedValidationParameters = EmptyObject
+  EVP extends ExtendedValidationParameters = NoParameters
 > extends Validator<string, EVP> {
   /**
    * define minimum string length
@@ -144,13 +148,13 @@ export interface StringValidator<
  *
  * @export
  * @class DefaultStringValidator
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {DefaultValidator<string, EVP>}
  * @implements {StringValidator<EVP>}
  * @since 1.0.0
  */
 export class DefaultStringValidator<
-    EVP extends ExtendedValidationParameters = EmptyObject
+    EVP extends ExtendedValidationParameters = NoParameters
   >
   extends DefaultValidator<string, EVP>
   implements StringValidator<EVP>

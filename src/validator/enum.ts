@@ -1,11 +1,14 @@
 import type {
-  EmptyObject,
   Enumerable,
   EnumerableBase,
   EnumerableValue
 } from 'ts-lib-extended';
 import { enumerableObject } from 'ts-lib-extended';
-import type { ExtendedValidationParameters, Validator } from '../types.js';
+import type {
+  ExtendedValidationParameters,
+  NoParameters,
+  Validator
+} from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -14,13 +17,13 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface EnumValidator
  * @template {Enumerable} E
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {Validator<EnumerableValue<E>, EVP>}
  * @since 1.0.2
  */
 export interface EnumValidator<
   E extends Enumerable,
-  EVP extends ExtendedValidationParameters = EmptyObject
+  EVP extends ExtendedValidationParameters = NoParameters
 > extends Validator<EnumerableValue<E>, EVP> {
   /**
    * additional base type validation for enum values
@@ -36,14 +39,14 @@ export interface EnumValidator<
  * @export
  * @class DefaultEnumValidator
  * @template {Enumerable} E
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {DefaultValidator<EnumerableValue<E>, EVP>}
  * @implements {EnumValidator<E, EVP>}
  * @since 1.0.2
  */
 export class DefaultEnumValidator<
     E extends Enumerable,
-    EVP extends ExtendedValidationParameters = EmptyObject
+    EVP extends ExtendedValidationParameters = NoParameters
   >
   extends DefaultValidator<EnumerableValue<E>, EVP>
   implements EnumValidator<E, EVP>

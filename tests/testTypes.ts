@@ -11,7 +11,6 @@ export class ExtendedValidationParametersValidator extends DefaultValidator<
   constructor() {
     super();
     this.custom((_, params_) => {
-      console.log('custom', params_)
       if (params_?.failOn === 'custom') {
         return 'extended failure on custom';
       }
@@ -20,7 +19,6 @@ export class ExtendedValidationParametersValidator extends DefaultValidator<
 
   public get extendedFailureCondition() {
     this.setupCondition((_, params_) => {
-      console.log('setupCondition', params_)
       if (params_?.failOn === 'condition') {
         this.throwValidationError('extended failure on condition');
       }
@@ -32,7 +30,6 @@ export class ExtendedValidationParametersValidator extends DefaultValidator<
     value_: unknown,
     params_?: TestExtendedValidationParameters | undefined
   ): unknown {
-    console.log('validateBaseType', params_)
     if (params_?.failOn === 'validate') {
       this.throwValidationError('extended failure on validate');
     }

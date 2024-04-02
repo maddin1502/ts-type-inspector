@@ -1,8 +1,8 @@
-import type { EmptyObject } from 'ts-lib-extended';
 import { VALIDATION_ERROR_MARKER, ValidationError } from '../error.js';
 import type {
   CustomValidation,
   ExtendedValidationParameters,
+  NoParameters,
   ValidationCondition,
   ValidationErrorHandler,
   Validator
@@ -10,7 +10,7 @@ import type {
 
 export abstract class DefaultValidator<
   Out,
-  P extends ExtendedValidationParameters = EmptyObject
+  P extends ExtendedValidationParameters = NoParameters
 > implements Validator<Out, P>
 {
   private _validationError: ValidationError | undefined;

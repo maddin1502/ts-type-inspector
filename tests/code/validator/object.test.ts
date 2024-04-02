@@ -1,6 +1,7 @@
 import { TypeInspector } from '@/inspector.js';
 import { DefaultObjectValidator } from '@/validator/object.js';
 import { describe, expect, test } from 'vitest';
+import { ExtendedValidationParametersValidator } from '../../testTypes.js';
 
 const ti = new TypeInspector();
 
@@ -432,5 +433,63 @@ describe(DefaultObjectValidator, () => {
         })
         .validate({})
     ).toThrow('value is not a string');
+  });
+
+  test('extended validation params', () => {
+    expect.assertions(8);
+    const dovEvpv = new DefaultObjectValidator({
+      prop1: new ExtendedValidationParametersValidator()
+        .extendedFailureCondition
+    });
+    expect(dovEvpv.isValid({ hello: 'world' })).toBe(true);
+    expect(() => dovEvpv.validate({ hello: 'world' })).not.toThrow();
+    expect(
+      dovEvpv.isValid(
+        { hello: 'world' },
+        {
+          extendedItemValidationParameters: { failOn: 'condition' }
+        }
+      )
+    ).toBe(false);
+    expect(() =>
+      dovEvpv.validate(
+        { hello: 'world' },
+        {
+          extendedItemValidationParameters: { failOn: 'condition' }
+        }
+      )
+    ).toThrow('extended failure on condition');
+    expect(
+      dovEvpv.isValid(
+        { hello: 'world' },
+        {
+          extendedItemValidationParameters: { failOn: 'custom' }
+        }
+      )
+    ).toBe(false);
+    expect(() =>
+      dovEvpv.validate(
+        { hello: 'world' },
+        {
+          extendedItemValidationParameters: { failOn: 'custom' }
+        }
+      )
+    ).toThrow('extended failure on custom');
+    expect(
+      dovEvpv.isValid(
+        { hello: 'world' },
+        {
+          extendedItemValidationParameters: { failOn: 'validate' }
+        }
+      )
+    ).toBe(false);
+    expect(() =>
+      dovEvpv.validate(
+        { hello: 'world' },
+        {
+          extendedItemValidationParameters: { failOn: 'validate' }
+        }
+      )
+    ).toThrow('extended failure on validate');
   });
 });

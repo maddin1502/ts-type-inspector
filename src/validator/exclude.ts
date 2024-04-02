@@ -1,5 +1,8 @@
-import type { EmptyObject } from 'ts-lib-extended';
-import type { ExtendedValidationParameters, Validator } from '../types.js';
+import type {
+  ExtendedValidationParameters,
+  NoParameters,
+  Validator
+} from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -11,14 +14,14 @@ import { DefaultValidator } from './index.js';
  * @interface ExcludeValidator
  * @template {In} Out
  * @template In
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {Validator<Out, EVP>}
  * @since 1.1.0
  */
 export interface ExcludeValidator<
   Out extends In,
   In,
-  EVP extends ExtendedValidationParameters = EmptyObject
+  EVP extends ExtendedValidationParameters = NoParameters
 > extends Validator<Out, EVP> {}
 
 /**
@@ -30,7 +33,7 @@ export interface ExcludeValidator<
  * @class DefaultExcludeValidator
  * @template {In} Out
  * @template In
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {DefaultValidator<Out, EVP>}
  * @implements {ExcludeValidator<Out, In, EVP>}
  * @since 1.1.0
@@ -38,7 +41,7 @@ export interface ExcludeValidator<
 export class DefaultExcludeValidator<
     Out extends In,
     In,
-    EVP extends ExtendedValidationParameters = EmptyObject
+    EVP extends ExtendedValidationParameters = NoParameters
   >
   extends DefaultValidator<Out, EVP>
   implements ExcludeValidator<Out, In, EVP>

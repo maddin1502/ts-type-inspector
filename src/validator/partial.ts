@@ -1,6 +1,6 @@
-import type { EmptyObject } from 'ts-lib-extended';
 import type {
   ExtendedValidationParameters,
+  NoParameters,
   ObjectLike,
   PartialPropertyValidatables,
   Validator
@@ -13,13 +13,13 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface PartialValidator
  * @template {ObjectLike} Out
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {Validator<Out, EVP>}
  * @since 2.0.0
  */
 export interface PartialValidator<
   Out extends ObjectLike,
-  EVP extends ExtendedValidationParameters = EmptyObject
+  EVP extends ExtendedValidationParameters = NoParameters
 > extends Validator<Out, EVP> {}
 
 /**
@@ -28,14 +28,14 @@ export interface PartialValidator<
  * @export
  * @class DefaultPartialValidator
  * @template {ObjectLike} Out
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {DefaultValidator<Out, EVP>}
  * @implements {PartialValidator<Out, EVP>}
  * @since 2.0.0
  */
 export class DefaultPartialValidator<
     Out extends ObjectLike,
-    EVP extends ExtendedValidationParameters = EmptyObject
+    EVP extends ExtendedValidationParameters = NoParameters
   >
   extends DefaultValidator<Out, EVP>
   implements PartialValidator<Out, EVP>

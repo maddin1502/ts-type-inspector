@@ -36,7 +36,6 @@
     - [Null](#null)
     - [Nullish](#nullish)
 
-
 ## Features
 - type safe (no automatic type conversions/casting)
 - determine the value's data type based on the validators used (generic type arguments are mostly optional)
@@ -48,10 +47,6 @@
 ## Installation
 ```bash
 npm i ts-type-inspector
-```
-or
-```bash
-yarn add ts-type-inspector
 ```
 
 ## Usage

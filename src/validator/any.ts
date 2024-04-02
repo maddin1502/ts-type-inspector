@@ -1,5 +1,8 @@
-import type { EmptyObject } from 'ts-lib-extended';
-import type { ExtendedValidationParameters, Validator } from '../types.js';
+import type {
+  ExtendedValidationParameters,
+  NoParameters,
+  Validator
+} from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -7,12 +10,12 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface AnyValidator
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {Validator<any, EVP>}
  * @since 1.0.0
  */
 export interface AnyValidator<
-  EVP extends ExtendedValidationParameters = EmptyObject
+  EVP extends ExtendedValidationParameters = NoParameters
 > extends Validator<any, EVP> {
   /**
    * reject nullish values (undefined, null)
@@ -37,13 +40,13 @@ export interface AnyValidator<
  *
  * @export
  * @class DefaultAnyValidator
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {DefaultValidator<any, EVP>}
  * @implements {AnyValidator<EVP>}
  * @since 1.0.0
  */
 export class DefaultAnyValidator<
-    EVP extends ExtendedValidationParameters = EmptyObject
+    EVP extends ExtendedValidationParameters = NoParameters
   >
   extends DefaultValidator<any, EVP>
   implements AnyValidator<EVP>

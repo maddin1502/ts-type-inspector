@@ -1,5 +1,8 @@
-import type { EmptyObject } from 'ts-lib-extended';
-import type { ExtendedValidationParameters, Validator } from '../types.js';
+import type {
+  ExtendedValidationParameters,
+  NoParameters,
+  Validator
+} from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -8,13 +11,13 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface OptionalValidator
  * @template V
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {Validator<undefined | V, EVP>}
  * @since 1.0.0
  */
 export interface OptionalValidator<
   V,
-  EVP extends ExtendedValidationParameters = EmptyObject
+  EVP extends ExtendedValidationParameters = NoParameters
 > extends Validator<undefined | V, EVP> {}
 
 /**
@@ -23,14 +26,14 @@ export interface OptionalValidator<
  * @export
  * @class DefaultOptionalValidator
  * @template V
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {DefaultValidator<undefined | V, EVP>}
  * @implements {OptionalValidator<V, EVP>}
  * @since 1.0.0
  */
 export class DefaultOptionalValidator<
     V,
-    EVP extends ExtendedValidationParameters = EmptyObject
+    EVP extends ExtendedValidationParameters = NoParameters
   >
   extends DefaultValidator<undefined | V, EVP>
   implements OptionalValidator<V, EVP>

@@ -1,17 +1,8 @@
-import { describe, expect, test } from 'vitest';
 import { ValidationError } from '@/error.js';
 import { TypeInspector } from '@/inspector.js';
-// import { Validator } from '@/types.js';
-// import { ExtendedValidationParametersValidator } from '../testTypes.js';
+import { describe, expect, test } from 'vitest';
 
 const ti = new TypeInspector();
-
-// const x: Validator<number[]> = ti.array(ti.number);
-
-// ti.object({
-//   prop1: x,
-//   prop2: new ExtendedValidationParametersValidator()
-// })
 
 describe('complex', () => {
   test('object - failure - complex property path', () => {

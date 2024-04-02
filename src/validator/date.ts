@@ -1,7 +1,7 @@
-import type { EmptyObject } from 'ts-lib-extended';
 import type {
   DateLike,
   ExtendedValidationParameters,
+  NoParameters,
   Validator
 } from '../types.js';
 import { DefaultValidator } from './index.js';
@@ -11,12 +11,12 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface DateValidator
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {Validator<Date, EVP>}
  * @since 1.0.0
  */
 export interface DateValidator<
-  EVP extends ExtendedValidationParameters = EmptyObject
+  EVP extends ExtendedValidationParameters = NoParameters
 > extends Validator<Date, EVP> {
   /**
    * define earliest accepted date
@@ -57,13 +57,13 @@ export interface DateValidator<
  *
  * @export
  * @class DefaultDateValidator
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {DefaultValidator<Date, EVP>}
  * @implements {DateValidator<EVP>}
  * @since 1.0.0
  */
 export class DefaultDateValidator<
-    EVP extends ExtendedValidationParameters = EmptyObject
+    EVP extends ExtendedValidationParameters = NoParameters
   >
   extends DefaultValidator<Date, EVP>
   implements DateValidator<EVP>

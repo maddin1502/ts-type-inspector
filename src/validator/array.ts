@@ -1,7 +1,7 @@
-import type { EmptyObject } from 'ts-lib-extended';
 import type {
   ContainerExtendedValidationParameters,
   ExtendedValidationParameters,
+  NoParameters,
   Validator
 } from '../types.js';
 import { DefaultValidator } from './index.js';
@@ -12,15 +12,15 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface ArrayValidator
  * @template Out
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
- * @template {ContainerExtendedValidationParameters<EVP>} [CEVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
+ * @template {ContainerExtendedValidationParameters<EVP>} [CEVP=ContainerExtendedValidationParameters<EVP>]
  * @extends {Validator<Out[], CEVP>}
  * @since 1.0.0
  */
 export interface ArrayValidator<
   Out,
-  EVP extends ExtendedValidationParameters = EmptyObject,
-  CEVP extends ContainerExtendedValidationParameters<EVP> = EmptyObject
+  EVP extends ExtendedValidationParameters = NoParameters,
+  CEVP extends ContainerExtendedValidationParameters<EVP> = ContainerExtendedValidationParameters<EVP>
 > extends Validator<Out[], CEVP> {
   /**
    * validate exact array length
@@ -70,15 +70,15 @@ export interface ArrayValidator<
  * @export
  * @class DefaultArrayValidator
  * @template Out
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
- * @template {ContainerExtendedValidationParameters<EVP>} [CEVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
+ * @template {ContainerExtendedValidationParameters<EVP>} [CEVP=ContainerExtendedValidationParameters<EVP>]
  * @extends {DefaultValidator<Out[], CEVP>}
  * @implements {ArrayValidator<Out, EVP, CEVP>}
  * @since 1.0.0
  */
 export class DefaultArrayValidator<
     const Out,
-    EVP extends ExtendedValidationParameters = EmptyObject,
+    EVP extends ExtendedValidationParameters = NoParameters,
     CEVP extends ContainerExtendedValidationParameters<EVP> = ContainerExtendedValidationParameters<EVP>
   >
   extends DefaultValidator<Out[], CEVP>

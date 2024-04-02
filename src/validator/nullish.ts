@@ -1,5 +1,8 @@
-import type { EmptyObject } from 'ts-lib-extended';
-import type { ExtendedValidationParameters, Validator } from '../types.js';
+import type {
+  ExtendedValidationParameters,
+  NoParameters,
+  Validator
+} from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -7,12 +10,12 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface NullishValidator
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {Validator<null | undefined, EVP>}
  * @since 1.0.0
  */
 export interface NullishValidator<
-  EVP extends ExtendedValidationParameters = EmptyObject
+  EVP extends ExtendedValidationParameters = NoParameters
 > extends Validator<null | undefined, EVP> {}
 
 /**
@@ -20,13 +23,13 @@ export interface NullishValidator<
  *
  * @export
  * @class DefaultNullishValidator
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {DefaultValidator<null | undefined, EVP>}
  * @implements {NullishValidator<EVP>}
  * @since 1.0.0
  */
 export class DefaultNullishValidator<
-    EVP extends ExtendedValidationParameters = EmptyObject
+    EVP extends ExtendedValidationParameters = NoParameters
   >
   extends DefaultValidator<null | undefined, EVP>
   implements NullishValidator<EVP>

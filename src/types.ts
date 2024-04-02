@@ -1,9 +1,10 @@
-import type { ArrayItem, EmptyObject, MinArray } from 'ts-lib-extended';
+import type { ArrayItem, MinArray } from 'ts-lib-extended';
 import type { ValidationError } from './error.js';
 
 export type ExtendedValidationParameters = Record<string, any>;
+export type NoParameters = NonNullable<unknown>;
 export type ContainerExtendedValidationParameters<
-  EVP extends ExtendedValidationParameters = EmptyObject
+  EVP extends ExtendedValidationParameters = NoParameters
 > = {
   [key: string]: any;
   extendedItemValidationParameters?: EVP;
@@ -21,14 +22,14 @@ export type AnyLike =
   | null;
 export type CustomValidation<
   V,
-  EVP extends ExtendedValidationParameters = EmptyObject
+  EVP extends ExtendedValidationParameters = NoParameters
 > = (value_: V, params_?: EVP) => string | undefined;
 export type ValidationErrorHandler<
-  EVP extends ExtendedValidationParameters = EmptyObject
+  EVP extends ExtendedValidationParameters = NoParameters
 > = (error_: ValidationError, params_?: EVP) => string | void;
 export interface Validator<
   Out,
-  EVP extends ExtendedValidationParameters = EmptyObject
+  EVP extends ExtendedValidationParameters = NoParameters
 > {
   /**
    * retrieve error from last validation; undefined if validation succeeded
@@ -85,9 +86,9 @@ export type UnionValidatablesItem<U extends UnionValidatables> =
   ArrayItem<U> extends Validator<infer V> ? V : never;
 export type ValidationCondition<
   V,
-  P extends ExtendedValidationParameters = EmptyObject
+  P extends ExtendedValidationParameters = NoParameters
 > = (value_: V, params_?: P) => void | never;
 export type DateLike = string | number | Date;
-export type TupleItemValidatables<A extends unknown[]> = {
+export type TupleItemValidators<A extends unknown[]> = {
   [index in keyof A]: Validator<A[index]>;
 };

@@ -1,6 +1,6 @@
-import type { EmptyObject } from 'ts-lib-extended';
 import type {
   ExtendedValidationParameters,
+  NoParameters,
   UnionValidatables,
   UnionValidatablesItem,
   Validator
@@ -13,13 +13,13 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface UnionValidator
  * @template {UnionValidatables} V
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {Validator<UnionValidatablesItem<V>, EVP>}
  * @since 1.0.0
  */
 export interface UnionValidator<
   V extends UnionValidatables,
-  EVP extends ExtendedValidationParameters = EmptyObject
+  EVP extends ExtendedValidationParameters = NoParameters
 > extends Validator<UnionValidatablesItem<V>, EVP> {}
 
 /**
@@ -28,14 +28,14 @@ export interface UnionValidator<
  * @export
  * @class DefaultUnionValidator
  * @template {UnionValidatables} V
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {DefaultValidator<UnionValidatablesItem<V>, EVP>}
  * @implements {UnionValidator<V, EVP>}
  * @since 1.0.0
  */
 export class DefaultUnionValidator<
     V extends UnionValidatables,
-    EVP extends ExtendedValidationParameters = EmptyObject
+    EVP extends ExtendedValidationParameters = NoParameters
   >
   extends DefaultValidator<UnionValidatablesItem<V>, EVP>
   implements UnionValidator<V, EVP>

@@ -6,7 +6,7 @@ import type {
   ObjectLike,
   PartialPropertyValidatables,
   PropertyValidatables,
-  TupleItemValidatables,
+  TupleItemValidators,
   UnionValidatables,
   Validator
 } from './types.js';
@@ -275,7 +275,9 @@ export class TypeInspector {
    * @returns {DefaultEnumValidator<E>}
    * @since 1.0.2
    */
-  public enum<E extends Enumerable<unknown>>(enum_: E): DefaultEnumValidator<E> {
+  public enum<E extends Enumerable<unknown>>(
+    enum_: E
+  ): DefaultEnumValidator<E> {
     return new DefaultEnumValidator(enum_);
   }
 
@@ -302,12 +304,12 @@ export class TypeInspector {
    *
    * @public
    * @template {unknown[]} Out
-   * @param {...TupleItemValidatables<Out>} itemValidators_ ordered set of validators for each tuple entry
+   * @param {...TupleItemValidators<Out>} itemValidators_ ordered set of validators for each tuple item
    * @returns {DefaultTupleValidator<Out>}
    * @since 3.0.0
    */
   public tuple<Out extends unknown[]>(
-    ...itemValidators_: TupleItemValidatables<Out>
+    ...itemValidators_: TupleItemValidators<Out>
   ): DefaultTupleValidator<Out> {
     return new DefaultTupleValidator<Out>(...itemValidators_);
   }

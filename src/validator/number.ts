@@ -1,5 +1,8 @@
-import type { EmptyObject } from 'ts-lib-extended';
-import type { ExtendedValidationParameters, Validator } from '../types.js';
+import type {
+  ExtendedValidationParameters,
+  NoParameters,
+  Validator
+} from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -7,12 +10,12 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface NumberValidator
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {Validator<number, EVP>}
  * @since 1.0.0
  */
 export interface NumberValidator<
-  EVP extends ExtendedValidationParameters = EmptyObject
+  EVP extends ExtendedValidationParameters = NoParameters
 > extends Validator<number, EVP> {
   /**
    * accept positive values only (zero is not positive)
@@ -101,13 +104,13 @@ export interface NumberValidator<
  *
  * @export
  * @class DefaultNumberValidator
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {DefaultValidator<number, EVP>}
  * @implements {NumberValidator<EVP>}
  * @since 1.0.0
  */
 export class DefaultNumberValidator<
-    EVP extends ExtendedValidationParameters = EmptyObject
+    EVP extends ExtendedValidationParameters = NoParameters
   >
   extends DefaultValidator<number, EVP>
   implements NumberValidator<EVP>

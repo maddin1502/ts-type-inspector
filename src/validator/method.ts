@@ -1,7 +1,7 @@
-import type { EmptyObject } from 'ts-lib-extended';
 import type {
   ExtendedValidationParameters,
   MethodLike,
+  NoParameters,
   Validator
 } from '../types.js';
 import { DefaultValidator } from './index.js';
@@ -13,13 +13,13 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface MethodValidator
  * @template {MethodLike} Out
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {Validator<Out, EVP>}
  * @since 1.0.0
  */
 export interface MethodValidator<
   Out extends MethodLike,
-  EVP extends ExtendedValidationParameters = EmptyObject
+  EVP extends ExtendedValidationParameters = NoParameters
 > extends Validator<Out, EVP> {
   /**
    * validate exact params count
@@ -54,14 +54,14 @@ export interface MethodValidator<
  * @export
  * @class DefaultMethodValidator
  * @template {MethodLike} Out
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {DefaultValidator<Out, EVP>}
  * @implements {MethodValidator<Out, EVP>}
  * @since 1.0.0
  */
 export class DefaultMethodValidator<
     Out extends MethodLike,
-    EVP extends ExtendedValidationParameters = EmptyObject
+    EVP extends ExtendedValidationParameters = NoParameters
   >
   extends DefaultValidator<Out, EVP>
   implements MethodValidator<Out, EVP>

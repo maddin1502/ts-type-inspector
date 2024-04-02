@@ -1,5 +1,8 @@
-import type { EmptyObject } from 'ts-lib-extended';
-import type { ExtendedValidationParameters, Validator } from '../types.js';
+import type {
+  ExtendedValidationParameters,
+  NoParameters,
+  Validator
+} from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -7,12 +10,12 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface BooleanValidator
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {Validator<boolean, EVP>}
  * @since 1.0.0
  */
 export interface BooleanValidator<
-  EVP extends ExtendedValidationParameters = EmptyObject
+  EVP extends ExtendedValidationParameters = NoParameters
 > extends Validator<boolean, EVP> {
   /**
    * accept just true
@@ -37,13 +40,13 @@ export interface BooleanValidator<
  *
  * @export
  * @class DefaultBooleanValidator
- * @template {ExtendedValidationParameters} [EVP=EmptyObject]
+ * @template {ExtendedValidationParameters} [EVP=NoParameters]
  * @extends {DefaultValidator<boolean, EVP>}
  * @implements {BooleanValidator<EVP>}
  * @since 1.0.0
  */
 export class DefaultBooleanValidator<
-    EVP extends ExtendedValidationParameters = EmptyObject
+    EVP extends ExtendedValidationParameters = NoParameters
   >
   extends DefaultValidator<boolean, EVP>
   implements BooleanValidator<EVP>
