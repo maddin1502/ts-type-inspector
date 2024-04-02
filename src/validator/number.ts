@@ -159,7 +159,7 @@ export class DefaultNumberValidator<
     );
   }
 
-  protected validateBaseType(value_: unknown): number {
+  protected validateBaseType(value_: unknown, _params_?: EVP): number {
     if (typeof value_ === 'number') {
       return value_;
     }

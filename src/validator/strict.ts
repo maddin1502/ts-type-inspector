@@ -49,7 +49,7 @@ export class DefaultStrictValidator<
     this._strictValues = strictValues_;
   }
 
-  protected validateBaseType(value_: unknown): ArrayItem<V> {
+  protected validateBaseType(value_: unknown, _params_?: EVP): ArrayItem<V> {
     if (!this._strictValues.some((strictValue_) => strictValue_ === value_)) {
       this.throwValidationError('no equality found');
     }

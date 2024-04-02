@@ -78,7 +78,7 @@ export class DefaultMethodValidator<
     return this.setupCondition((value_) => this.checkMax(value_, max_));
   }
 
-  protected validateBaseType(value_: unknown): Out {
+  protected validateBaseType(value_: unknown, _params_?: EVP): Out {
     if (typeof value_ === 'function') {
       return value_ as Out;
     }

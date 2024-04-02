@@ -4,10 +4,10 @@ import type {
   CustomValidation,
   MethodLike,
   ObjectLike,
-  PartialPropertyValidatables,
-  PropertyValidatables,
+  PartialPropertyValidators,
+  PropertyValidators,
   TupleItemValidators,
-  UnionValidatables,
+  UnionValidators,
   Validator
 } from './types.js';
 import { DefaultAnyValidator } from './validator/any.js';
@@ -170,12 +170,12 @@ export class TypeInspector {
    * At least one validator have to match for a positive result
    *
    * @public
-   * @template {UnionValidatables} V
+   * @template {UnionValidators} V
    * @param {...V} validators_ Validators for each part of the union type
    * @returns {DefaultUnionValidator<V>}
    * @since 1.0.0
    */
-  public union<V extends UnionValidatables>(
+  public union<V extends UnionValidators>(
     ...validators_: V
   ): DefaultUnionValidator<V> {
     return new DefaultUnionValidator<V>(...validators_);
@@ -186,12 +186,12 @@ export class TypeInspector {
    *
    * @public
    * @template {ObjectLike} Out
-   * @param {PropertyValidatables<Out>} propertyValidators_ Validators for each object property
+   * @param {PropertyValidators<Out>} propertyValidators_ Validators for each object property
    * @returns {DefaultObjectValidator<Out>}
    * @since 1.0.0
    */
   public object<Out extends ObjectLike>(
-    propertyValidators_: PropertyValidatables<Out>
+    propertyValidators_: PropertyValidators<Out>
   ): DefaultObjectValidator<Out> {
     return new DefaultObjectValidator<Out>(propertyValidators_);
   }
@@ -201,12 +201,12 @@ export class TypeInspector {
    *
    * @public
    * @template {ObjectLike} Out
-   * @param {PartialPropertyValidatables<Out>} propertyValidators_
+   * @param {PartialPropertyValidators<Out>} propertyValidators_
    * @returns {DefaultPartialValidator<Out>}
    * @since 2.0.0
    */
   public partial<Out extends ObjectLike>(
-    propertyValidators_: PartialPropertyValidatables<Out>
+    propertyValidators_: PartialPropertyValidators<Out>
   ): DefaultPartialValidator<Out> {
     return new DefaultPartialValidator<Out>(propertyValidators_);
   }

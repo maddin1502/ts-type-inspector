@@ -10,12 +10,12 @@ export type {
   MethodLike,
   NoParameters,
   ObjectLike,
-  PartialPropertyValidatables,
-  PropertyValidatables,
-  SelectPropertyValidatables,
+  PartialPropertyValidators,
+  PropertyValidators,
+  SelectPropertyValidators,
   TupleItemValidators,
-  UnionValidatables,
-  UnionValidatablesItem,
+  UnionValidators,
+  UnionValidatorsItem,
   ValidationCondition,
   ValidationErrorHandler,
   Validator
@@ -62,6 +62,10 @@ export {
   type ObjectValidator
 } from './validator/object.js';
 export {
+  DefaultOptionalValidator,
+  type OptionalValidator
+} from './validator/optional.js';
+export {
   DefaultPartialValidator,
   type PartialValidator
 } from './validator/partial.js';
@@ -73,6 +77,10 @@ export {
   DefaultStringValidator,
   type StringValidator
 } from './validator/string.js';
+export {
+  DefaultTupleValidator,
+  type TupleValidator
+} from './validator/tuple.js';
 export {
   DefaulUndefinedValidator,
   type UndefinedValidator

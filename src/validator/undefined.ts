@@ -34,7 +34,7 @@ export class DefaulUndefinedValidator<
   extends DefaultValidator<undefined, EVP>
   implements UndefinedValidator<EVP>
 {
-  protected validateBaseType(value_: unknown): undefined {
+  protected validateBaseType(value_: unknown, _params_?: EVP): undefined {
     if (value_ === undefined) {
       return value_;
     }

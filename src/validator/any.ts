@@ -59,7 +59,7 @@ export class DefaultAnyValidator<
     return this.setupCondition((value_) => this.checkFalsy(value_));
   }
 
-  protected validateBaseType(value_: unknown): any {
+  protected validateBaseType(value_: unknown, _params_?: EVP): any {
     return value_;
   }
 

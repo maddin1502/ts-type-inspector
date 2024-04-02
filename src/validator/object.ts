@@ -3,7 +3,7 @@ import type {
   ExtendedValidationParameters,
   NoParameters,
   ObjectLike,
-  PropertyValidatables,
+  PropertyValidators,
   Validator
 } from '../types.js';
 import { DefaultValidator } from './index.js';
@@ -14,16 +14,14 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface ObjectValidator
  * @template {ObjectLike} Out
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @template {ContainerExtendedValidationParameters<EVP>} [CEVP=ContainerExtendedValidationParameters<EVP>]
+ * @template {ContainerExtendedValidationParameters<ExtendedValidationParameters>} [EVP=NoParameters]
  * @extends {Validator<Out, EVP>}
  * @since 1.0.0
  */
 export interface ObjectValidator<
   Out extends ObjectLike,
-  EVP extends ExtendedValidationParameters = NoParameters,
-  CEVP extends ContainerExtendedValidationParameters<EVP> = ContainerExtendedValidationParameters<EVP>
-> extends Validator<Out, CEVP> {
+  EVP extends ContainerExtendedValidationParameters<ExtendedValidationParameters> = NoParameters
+> extends Validator<Out, EVP> {
   /**
    * Reject objects that contain more keys than have been validated
    * USE FOR POJOs ONLY!. Getter/Setter/Methods will lead to false negative results
@@ -41,21 +39,19 @@ export interface ObjectValidator<
  * @export
  * @class DefaultObjectValidator
  * @template {ObjectLike} Out
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @template {ContainerExtendedValidationParameters<EVP>} [CEVP=ContainerExtendedValidationParameters<EVP>]
+ * @template {ContainerExtendedValidationParameters<ExtendedValidationParameters>} [EVP=NoParameters]
  * @extends {DefaultValidator<Out, EVP>}
  * @implements {ObjectValidator<Out, EVP>}
  * @since 1.0.0
  */
 export class DefaultObjectValidator<
     Out extends ObjectLike,
-    EVP extends ExtendedValidationParameters = NoParameters,
-    CEVP extends ContainerExtendedValidationParameters<EVP> = ContainerExtendedValidationParameters<EVP>
+    EVP extends ContainerExtendedValidationParameters<ExtendedValidationParameters> = NoParameters
   >
-  extends DefaultValidator<Out, CEVP>
-  implements ObjectValidator<Out, EVP, CEVP>
+  extends DefaultValidator<Out, EVP>
+  implements ObjectValidator<Out, EVP>
 {
-  constructor(private readonly _propertyValidators: PropertyValidatables<Out>) {
+  constructor(private readonly _propertyValidators: PropertyValidators<Out>) {
     super();
   }
 
@@ -63,7 +59,7 @@ export class DefaultObjectValidator<
     return this.setupCondition((value_) => this.checkOverload(value_));
   }
 
-  protected validateBaseType(value_: unknown, params_?: CEVP): Out {
+  protected validateBaseType(value_: unknown, params_?: EVP): Out {
     if (!this.isObjectLike(value_)) {
       this.throwValidationError('value is not an object');
     }

@@ -42,7 +42,7 @@ export class DefaultOptionalValidator<
     super();
   }
 
-  protected validateBaseType(value_: unknown): undefined | V {
+  protected validateBaseType(value_: unknown, _params_?: EVP): undefined | V {
     if (typeof value_ === 'undefined') {
       return value_;
     }

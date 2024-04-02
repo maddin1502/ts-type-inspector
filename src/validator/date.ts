@@ -86,7 +86,7 @@ export class DefaultDateValidator<
     return this.setupCondition((value_) => this.checkRejected(value_, items_));
   }
 
-  protected validateBaseType(value_: unknown): Date {
+  protected validateBaseType(value_: unknown, _params_?: EVP): Date {
     if (!this.isDate(value_)) {
       this.throwValidationError('value is not a date');
     }

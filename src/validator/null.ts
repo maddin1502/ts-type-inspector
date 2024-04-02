@@ -34,7 +34,7 @@ export class DefaultNullValidator<
   extends DefaultValidator<null, EVP>
   implements NullValidator<EVP>
 {
-  protected validateBaseType(value_: unknown): null {
+  protected validateBaseType(value_: unknown, _params_?: EVP): null {
     if (value_ === null) {
       return value_;
     }

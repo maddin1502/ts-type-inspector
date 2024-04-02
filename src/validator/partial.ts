@@ -2,7 +2,7 @@ import type {
   ExtendedValidationParameters,
   NoParameters,
   ObjectLike,
-  PartialPropertyValidatables,
+  PartialPropertyValidators,
   Validator
 } from '../types.js';
 import { DefaultValidator } from './index.js';
@@ -41,12 +41,12 @@ export class DefaultPartialValidator<
   implements PartialValidator<Out, EVP>
 {
   constructor(
-    private readonly _propertyValidators: PartialPropertyValidatables<Out>
+    private readonly _propertyValidators: PartialPropertyValidators<Out>
   ) {
     super();
   }
 
-  protected validateBaseType(value_: unknown): Out {
+  protected validateBaseType(value_: unknown, _params_?: EVP): Out {
     if (!this.isObjectLike(value_)) {
       this.throwValidationError('value is not an object');
     }

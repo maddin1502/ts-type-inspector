@@ -223,7 +223,7 @@ export class DefaultStringValidator<
     return this.setupCondition((value_) => this.checkHex(value_));
   }
 
-  protected validateBaseType(value_: unknown): string {
+  protected validateBaseType(value_: unknown, _params_?: EVP): string {
     if (typeof value_ === 'string') {
       return value_;
     }

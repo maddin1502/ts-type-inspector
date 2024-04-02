@@ -63,7 +63,7 @@ export class DefaultEnumValidator<
     );
   }
 
-  protected validateBaseType(value_: unknown): EnumerableValue<E> {
+  protected validateBaseType(value_: unknown, _params_?: EVP): EnumerableValue<E> {
     if (this.isEnumValue(this._enum, value_)) {
       return value_;
     }

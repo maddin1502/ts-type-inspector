@@ -52,7 +52,7 @@ export class DefaultExcludeValidator<
     super();
   }
 
-  protected validateBaseType(value_: In): Out {
+  protected validateBaseType(value_: In, _params_?: EVP): Out {
     if (this._validator.isValid(value_)) {
       this.throwValidationError('value is excluded');
     }

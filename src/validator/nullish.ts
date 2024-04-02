@@ -34,7 +34,7 @@ export class DefaultNullishValidator<
   extends DefaultValidator<null | undefined, EVP>
   implements NullishValidator<EVP>
 {
-  protected validateBaseType(value_: unknown): null | undefined {
+  protected validateBaseType(value_: unknown, _params_?: EVP): null | undefined {
     if (value_ === null || value_ === undefined) {
       return value_;
     }

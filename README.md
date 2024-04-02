@@ -7,34 +7,36 @@
 
 - [Features](#features)
 - [Installation](#installation)
-- [Usage](#usage)
-  - [Basics](#basics)
-  - [Modes](#modes)
-    - [isValid](#isvalid)
-    - [validate](#validate)
-  - [Error evaluation](#error-evaluation)
-  - [Validation depending on external influences](#validation-depending-on-external-influences)
-  - [Predefined validators](#predefined-validators)
-    - [String](#string)
-    - [Number](#number)
-    - [Object](#object)
-    - [Partial](#partial)
-    - [Dictionary](#dictionary)
-    - [Array](#array)
-    - [Tuple](#tuple)
-    - [Date](#date)
-    - [Method](#method)
-    - [Union](#union)
-    - [Strict](#strict)
-    - [Optional](#optional)
-    - [Any](#any)
-    - [Custom](#custom)
-    - [Enum](#enum)
-    - [Exclude](#exclude)
-    - [Boolean](#boolean)
-    - [Undefined](#undefined)
-    - [Null](#null)
-    - [Nullish](#nullish)
+- [Basics](#basics)
+- [Validation modes](#validation-modes)
+  - [isValid](#isvalid)
+  - [validate](#validate)
+- [Error evaluation](#error-evaluation)
+- [How to define custom validators](#how-to-define-custom-validators)
+  - [Create specialized (data type related) validators](#create-specialized-data-type-related-validators)
+  - [Validation based on external influences](#validation-based-on-external-influences)
+  - [Validation based on external influences](#validation-based-on-external-influences-1)
+- [Predefined validators](#predefined-validators)
+  - [String](#string)
+  - [Number](#number)
+  - [Object](#object)
+  - [Partial](#partial)
+  - [Dictionary](#dictionary)
+  - [Array](#array)
+  - [Tuple](#tuple)
+  - [Date](#date)
+  - [Method](#method)
+  - [Union](#union)
+  - [Strict](#strict)
+  - [Optional](#optional)
+  - [Any](#any)
+  - [Custom](#custom)
+  - [Enum](#enum)
+  - [Exclude](#exclude)
+  - [Boolean](#boolean)
+  - [Undefined](#undefined)
+  - [Null](#null)
+  - [Nullish](#nullish)
 
 ## Features
 - type safe (no automatic type conversions/casting)
@@ -49,9 +51,7 @@
 npm i ts-type-inspector
 ```
 
-## Usage
-
-### Basics
+## Basics
 
 - the validation is terminated immediately when an invalidity occurs.
 - validation order:
@@ -80,7 +80,7 @@ Parameter | Description
 `<VALIDATION_PARAMS>` | Some validators need configuration parameters to work correctly (array -> item validator, object -> property validators, ...)
 `<CONDITION>` | The TypeInspector uses method-chaining to define special validation conditions. These are additional checks that evaluate the incoming value more precisely
 
-### Modes
+## Validation modes
 
 All validators provide **two** validation modes:
 - `<VALIDATOR>`.isValid(`<UNKNOWN_VALUE>`)
@@ -88,7 +88,7 @@ All validators provide **two** validation modes:
 
 Both modes perform the same validation, but their result outputs are different.
 
-#### isValid
+### isValid
 
 This mode uses the [type predicate](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates) feature of Typescript and therefore returns a boolean value as validation result. This assigns an exact type to the (successfully) validated value based on the validator used.
 
@@ -104,7 +104,7 @@ function processIncomingValueAsString(value_: unknown): number {
 }
 ```
 
-#### validate
+### validate
 
 This mode throws a `ValidationError` when validation fails. On success it returns the **same** value (same object reference - in contrast to Joi) that was validated but with the correct type information.
 
@@ -121,7 +121,7 @@ function processIncomingValueAsString(value_: unknown): number {
 }
 ```
 
-### Error evaluation
+## Error evaluation
 
 The validator saves the last validation error that occurred, making it easy to evaluate. Since the validation is terminated immediately when an invalidity occurs, the error only contains information about this specific invalidity.
 
@@ -149,11 +149,103 @@ Parameter | Description
 &rarr; `subErrors` | Each chained validator has its own validation error instance. Errors are caught, processed/expanded and then thrown again by parent validators. Each validator captures thrown child validation errors.
 &rarr; `message` | Specific message describing the invalidity
 
-### Validation depending on external influences
+## How to define custom validators
 
-!!! WIP !!!
+### Create specialized (data type related) validators
 
-### Predefined validators
+All predefined default validators can be inherited to create custom validators for specific data types. Validation of complex data types can therefore be easily centralized for reuse.
+
+```ts
+import { DefaultObjectValidator, ti } from 'ts-type-inspector';
+
+export type CommonData = {
+  data: string | undefined;
+};
+
+export class CommonDataValidator extends DefaultObjectValidator<CommonData> {
+  constructor() {
+    super({
+      data: ti.optional(ti.string)
+    });
+  }
+}
+
+const cdv = new CommonDataValidator();
+cdv.isValide({ data: undefined }) // true
+cdv.isValide({ data: false }) // false
+```
+
+### Validation based on external influences
+
+Sometimes data validation depends on external influences that limit the actual data type or its range of values. These influencing factors can be defined for custom validators and passed during validation. This means that a new validator does not necessarily have to be developed for every use case.
+
+This simple example demonstrates 3 options to implement extended validation:
+
+```ts
+import { ti, DefaultOptionalValidator } from 'ts-type-inspector';
+
+export type MyData = string | undefined;
+
+export type MyDataExtendedValidationParameter = {
+  valueRequired?: boolean;
+};
+
+export class MyDataOptionalValidator extends DefaultOptionalValidator<
+  MyData,
+  MyDataExtendedValidationParameter
+> {
+  constructor() {
+    super(ti.string);
+
+    // 1. option - use the custom condition
+    this.custom((value_, params_) => {
+      if (params_?.valueRequired && value_ === undefined) {
+        return 'data is required';
+      }
+    });
+  }
+
+  // 2. option - create a new condition
+  public get failWhenRequired() {
+    this.setupCondition((value_, params_) => {
+      if (params_?.valueRequired && value_ === undefined) {
+        this.throwValidationError('data is required');
+      }
+    });
+    return this;
+  }
+
+  // 3. option - extend base type validation
+  protected validateBaseType(
+    value_: unknown,
+    params_?: MyDataExtendedValidationParameter | undefined
+  ): MyData {
+    const base = super.validateBaseType(value_);
+
+    if (params_?.valueRequired && base === undefined) {
+      this.throwValidationError('data is required');
+    }
+
+    return base;
+  }
+}
+
+const mdov = new MyDataOptionalValidator();
+const value: MyData = undefined;
+// using 1. or 3. option
+mdov.isValid(value); // true
+mdov.isValid(value, { valueRequired: true }); // false
+
+// using 2. option
+mdov.failWhenRequired.isValid(value); // true
+mdov.failWhenRequired.isValid(value, { valueRequired: true }); // false
+```
+
+### Validation based on external influences
+
+WIP
+
+## Predefined validators
 
 Most of the examples given here indicate generic type information of validators. This is optional, in most cases you can validate values without additional type information. The TypeInspector automatically calculates the resulting value type.
 
@@ -174,7 +266,7 @@ const <VALUE> = ti.object({
 */
 ```
 
-#### String
+### String
 
 > since 1.0.0
 
@@ -198,7 +290,7 @@ Validator for string values.
 | url | string has to match url pattern |
 | hex | accept just hexadecimal strings |
 
-#### Number
+### Number
 
 > since 1.0.0
 
@@ -217,7 +309,7 @@ Validator for number values.
 | accept | accept specific numbers only |
 | reject | reject specific numbers |
 
-#### Object
+### Object
 
 > since 1.0.0
 
@@ -242,7 +334,7 @@ ti.object<DataInterface>({
 });
 ```
 
-#### Partial
+### Partial
 
 > since 2.0.0
 
@@ -262,7 +354,7 @@ ti.partial<DataInterface>({
 });
 ```
 
-#### Dictionary
+### Dictionary
 
 > since 1.0.0
 
@@ -292,7 +384,7 @@ ti.dictionary<DictionaryDataInterface>(
 );
 ```
 
-#### Array
+### Array
 
 > since 1.0.0
 
@@ -324,7 +416,7 @@ ti.array<DataArrayType>(
 );
 ```
 
-#### Tuple
+### Tuple
 
 > since 3.0.0
 
@@ -346,7 +438,7 @@ ti.tuple<DataTuple>(
 );
 ```
 
-#### Date
+### Date
 
 > since 1.0.0
 
@@ -362,7 +454,7 @@ Validator for date objects.
 
 \* `string` (ISO8601), `number` (timestamp) and `date` can be used.
 
-#### Method
+### Method
 
 > since 1.0.0
 
@@ -378,7 +470,7 @@ Unfortunately (for technical reasons), this validator can only validate the numb
 | accept | accept methods with specific params count only |
 | reject | reject methods with specific params count |
 
-#### Union
+### Union
 
 > since 1.0.0
 
@@ -397,7 +489,7 @@ ti.union<UnionDataType>(
 );
 ```
 
-#### Strict
+### Strict
 
 > since 1.0.0
 
@@ -413,7 +505,7 @@ const <VALUE> = ti.strict<StrictType>('hello', 'world');
 
 > In contrast to `union` the strict validator validates the exact value and not just the value type. The resulting `<VALUE>` will be of type `'hello' | 'world'` (and not just `string`)
 
-#### Optional
+### Optional
 
 > since 1.0.0
 
@@ -451,7 +543,7 @@ ti.object<MoreDataInterface>(
 );
 ```
 
-#### Any
+### Any
 
 > since 1.0.0
 
@@ -462,7 +554,7 @@ This validator should only be used when a value is indeterminate or when you wan
 | notNullish | reject null or undefined |
 | notFalsy | reject null, undefined, 0, '', false, NaN, ... |
 
-#### Custom
+### Custom
 
 > since 1.0.0
 
@@ -480,7 +572,7 @@ ti.custom(value_ => {
 
 > Return an error message if validation fails. Don't throw your own error!
 
-#### Enum
+### Enum
 
 > since 1.0.2
 
@@ -507,7 +599,7 @@ ti.enum(StringEnum).values(ti.string.reject(StringEnum.bar));
 |---|---|
 | values | add validator for additional base type validation |
 
-#### Exclude
+### Exclude
 
 > since 1.1.0
 
@@ -536,7 +628,7 @@ function filter2(input_: Input): string {
 }
 ```
 
-#### Boolean
+### Boolean
 
 > since 1.0.0
 
@@ -547,19 +639,19 @@ Validator for boolean values.
 | true | only true is valid |
 | false | only false is valid |
 
-#### Undefined
+### Undefined
 
 > since 1.0.0
 
 This validator rejects all values that are defined (!== undefined).
 
-#### Null
+### Null
 
 > since 1.0.0
 
 This validator rejects all values that are not null.
 
-#### Nullish
+### Nullish
 
 > since 1.0.0
 

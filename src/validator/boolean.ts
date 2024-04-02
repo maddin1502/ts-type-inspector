@@ -59,7 +59,7 @@ export class DefaultBooleanValidator<
     return this.setupCondition((value_) => this.checkFalse(value_));
   }
 
-  protected validateBaseType(value_: unknown): boolean {
+  protected validateBaseType(value_: unknown, _params_?: EVP): boolean {
     if (typeof value_ === 'boolean') {
       return value_;
     }

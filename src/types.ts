@@ -71,18 +71,18 @@ export interface Validator<
    */
   isValid(value_: unknown, params_?: EVP): value_ is Out;
 }
-export type PropertyValidatables<V extends ObjectLike> = {
+export type PropertyValidators<V extends ObjectLike> = {
   readonly [key in keyof V]-?: Validator<V[key]>;
 };
-export type PartialPropertyValidatables<V = any> = {
+export type PartialPropertyValidators<V = any> = {
   readonly [key in keyof V]?: Validator<V[key]>;
 };
-export type SelectPropertyValidatables<
+export type SelectPropertyValidators<
   V extends ObjectLike,
   K extends keyof V
 > = { readonly [key in K]?: Validator<V[key]> };
-export type UnionValidatables<V = any> = MinArray<Validator<V>, 2>;
-export type UnionValidatablesItem<U extends UnionValidatables> =
+export type UnionValidators<V = any> = MinArray<Validator<V>, 2>;
+export type UnionValidatorsItem<U extends UnionValidators> =
   ArrayItem<U> extends Validator<infer V> ? V : never;
 export type ValidationCondition<
   V,

@@ -1,7 +1,11 @@
 import { TypeInspector } from '@/inspector.js';
+import { ContainerExtendedValidationParameters } from '@/types.js';
 import { DefaultObjectValidator } from '@/validator/object.js';
 import { describe, expect, test } from 'vitest';
-import { ExtendedValidationParametersValidator } from '../../testTypes.js';
+import {
+  ExtendedValidationParametersValidator,
+  TestExtendedValidationParameters
+} from '../../testTypes.js';
 
 const ti = new TypeInspector();
 
@@ -437,7 +441,10 @@ describe(DefaultObjectValidator, () => {
 
   test('extended validation params', () => {
     expect.assertions(8);
-    const dovEvpv = new DefaultObjectValidator({
+    const dovEvpv = new DefaultObjectValidator<
+      { prop1: unknown },
+      ContainerExtendedValidationParameters<TestExtendedValidationParameters>
+    >({
       prop1: new ExtendedValidationParametersValidator()
         .extendedFailureCondition
     });

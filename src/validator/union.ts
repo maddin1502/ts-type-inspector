@@ -1,8 +1,8 @@
 import type {
   ExtendedValidationParameters,
   NoParameters,
-  UnionValidatables,
-  UnionValidatablesItem,
+  UnionValidators,
+  UnionValidatorsItem,
   Validator
 } from '../types.js';
 import { DefaultValidator } from './index.js';
@@ -12,32 +12,32 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface UnionValidator
- * @template {UnionValidatables} V
+ * @template {UnionValidators} V
  * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {Validator<UnionValidatablesItem<V>, EVP>}
+ * @extends {Validator<UnionValidatorsItem<V>, EVP>}
  * @since 1.0.0
  */
 export interface UnionValidator<
-  V extends UnionValidatables,
+  V extends UnionValidators,
   EVP extends ExtendedValidationParameters = NoParameters
-> extends Validator<UnionValidatablesItem<V>, EVP> {}
+> extends Validator<UnionValidatorsItem<V>, EVP> {}
 
 /**
  * Validator for union type values (like "string | number")
  *
  * @export
  * @class DefaultUnionValidator
- * @template {UnionValidatables} V
+ * @template {UnionValidators} V
  * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {DefaultValidator<UnionValidatablesItem<V>, EVP>}
+ * @extends {DefaultValidator<UnionValidatorsItem<V>, EVP>}
  * @implements {UnionValidator<V, EVP>}
  * @since 1.0.0
  */
 export class DefaultUnionValidator<
-    V extends UnionValidatables,
+    V extends UnionValidators,
     EVP extends ExtendedValidationParameters = NoParameters
   >
-  extends DefaultValidator<UnionValidatablesItem<V>, EVP>
+  extends DefaultValidator<UnionValidatorsItem<V>, EVP>
   implements UnionValidator<V, EVP>
 {
   private readonly _validators: V;
@@ -47,7 +47,7 @@ export class DefaultUnionValidator<
     this._validators = validators_;
   }
 
-  protected validateBaseType(value_: unknown): UnionValidatablesItem<V> {
+  protected validateBaseType(value_: unknown, _params_?: EVP): UnionValidatorsItem<V> {
     const errors: Error[] = [];
 
     for (let i = 0; i < this._validators.length; i++) {
@@ -69,6 +69,6 @@ export class DefaultUnionValidator<
       );
     }
 
-    return value_ as UnionValidatablesItem<V>;
+    return value_ as UnionValidatorsItem<V>;
   }
 }
