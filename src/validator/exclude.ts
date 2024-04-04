@@ -1,8 +1,4 @@
-import type {
-  ExtendedValidationParameters,
-  NoParameters,
-  Validator
-} from '../types.js';
+import type { Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -14,15 +10,15 @@ import { DefaultValidator } from './index.js';
  * @interface ExcludeValidator
  * @template {In} Out
  * @template In
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {Validator<Out, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {Validator<Out, ValidationParams>}
  * @since 1.1.0
  */
 export interface ExcludeValidator<
   Out extends In,
   In,
-  EVP extends ExtendedValidationParameters = NoParameters
-> extends Validator<Out, EVP> {}
+  ValidationParams = any
+> extends Validator<Out, ValidationParams> {}
 
 /**
  * This validator is able to validate if a type doesn't exist in a KNOWN union type.
@@ -33,26 +29,32 @@ export interface ExcludeValidator<
  * @class DefaultExcludeValidator
  * @template {In} Out
  * @template In
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {DefaultValidator<Out, EVP>}
- * @implements {ExcludeValidator<Out, In, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<Out, ValidationParams>}
+ * @implements {ExcludeValidator<Out, In, ValidationParams>}
  * @since 1.1.0
  */
 export class DefaultExcludeValidator<
     Out extends In,
     In,
-    EVP extends ExtendedValidationParameters = NoParameters
+    ValidationParams = any
   >
-  extends DefaultValidator<Out, EVP>
-  implements ExcludeValidator<Out, In, EVP>
+  extends DefaultValidator<Out, ValidationParams>
+  implements ExcludeValidator<Out, In, ValidationParams>
 {
+  /**
+   * Creates an instance of DefaultExcludeValidator.
+   *
+   * @constructor
+   * @param {DefaultValidator<Exclude<In, Out>>} _validator DO NOT USE CONDITIONS
+   */
   constructor(
-    private readonly _validator: DefaultValidator<Exclude<In, Out>> // use Validator class and NOT Validatable type to prevent the use of conditions
+    private readonly _validator: DefaultValidator<Exclude<In, Out>> // use DefaultValidator class and NOT Validator type to prevent the use of conditions
   ) {
     super();
   }
 
-  protected validateBaseType(value_: In, _params_?: EVP): Out {
+  protected validateBaseType(value_: In, _params_?: ValidationParams): Out {
     if (this._validator.isValid(value_)) {
       this.throwValidationError('value is excluded');
     }

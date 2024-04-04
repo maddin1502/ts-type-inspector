@@ -1,11 +1,7 @@
 import { validate as emailValidate } from 'email-validator';
 
 import { isUri, isWebUri } from 'valid-url';
-import type {
-  ExtendedValidationParameters,
-  NoParameters,
-  Validator
-} from '../types.js';
+import type { Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -13,13 +9,12 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface StringValidator
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {Validator<string, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {Validator<string, ValidationParams>}
  * @since 1.0.0
  */
-export interface StringValidator<
-  EVP extends ExtendedValidationParameters = NoParameters
-> extends Validator<string, EVP> {
+export interface StringValidator<ValidationParams = any>
+  extends Validator<string, ValidationParams> {
   /**
    * define minimum string length
    *
@@ -148,16 +143,14 @@ export interface StringValidator<
  *
  * @export
  * @class DefaultStringValidator
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {DefaultValidator<string, EVP>}
- * @implements {StringValidator<EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<string, ValidationParams>}
+ * @implements {StringValidator<ValidationParams>}
  * @since 1.0.0
  */
-export class DefaultStringValidator<
-    EVP extends ExtendedValidationParameters = NoParameters
-  >
-  extends DefaultValidator<string, EVP>
-  implements StringValidator<EVP>
+export class DefaultStringValidator<ValidationParams = any>
+  extends DefaultValidator<string, ValidationParams>
+  implements StringValidator<ValidationParams>
 {
   public shortest(min_: number): this {
     return this.setupCondition((value_) => this.checkShortest(value_, min_));
@@ -223,7 +216,10 @@ export class DefaultStringValidator<
     return this.setupCondition((value_) => this.checkHex(value_));
   }
 
-  protected validateBaseType(value_: unknown, _params_?: EVP): string {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): string {
     if (typeof value_ === 'string') {
       return value_;
     }

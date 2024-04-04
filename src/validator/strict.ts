@@ -1,10 +1,5 @@
 import type { ArrayItem } from 'ts-lib-extended';
-import type {
-  AnyLike,
-  ExtendedValidationParameters,
-  NoParameters,
-  Validator
-} from '../types.js';
+import type { AnyLike, Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -14,14 +9,14 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface StrictValidator
  * @template {AnyLike[]} V
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {Validator<ArrayItem<V>, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {Validator<ArrayItem<V>, ValidationParams>}
  * @since 1.0.0
  */
 export interface StrictValidator<
   V extends AnyLike[],
-  EVP extends ExtendedValidationParameters = NoParameters
-> extends Validator<ArrayItem<V>, EVP> {}
+  ValidationParams = any
+> extends Validator<ArrayItem<V>, ValidationParams> {}
 
 /**
  * Validator for precisely defined values (not just of specific type)
@@ -30,17 +25,17 @@ export interface StrictValidator<
  * @export
  * @class DefaultStrictValidator
  * @template {AnyLike[]} V
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {DefaultValidator<ArrayItem<V>, EVP>}
- * @implements {StrictValidator<V, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<ArrayItem<V>, ValidationParams>}
+ * @implements {StrictValidator<V, ValidationParams>}
  * @since 1.0.0
  */
 export class DefaultStrictValidator<
     V extends AnyLike[],
-    EVP extends ExtendedValidationParameters = NoParameters
+    ValidationParams = any
   >
-  extends DefaultValidator<ArrayItem<V>, EVP>
-  implements StrictValidator<V, EVP>
+  extends DefaultValidator<ArrayItem<V>, ValidationParams>
+  implements StrictValidator<V, ValidationParams>
 {
   private readonly _strictValues: V;
 
@@ -49,7 +44,10 @@ export class DefaultStrictValidator<
     this._strictValues = strictValues_;
   }
 
-  protected validateBaseType(value_: unknown, _params_?: EVP): ArrayItem<V> {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): ArrayItem<V> {
     if (!this._strictValues.some((strictValue_) => strictValue_ === value_)) {
       this.throwValidationError('no equality found');
     }

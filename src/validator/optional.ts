@@ -1,8 +1,4 @@
-import type {
-  ExtendedValidationParameters,
-  NoParameters,
-  Validator
-} from '../types.js';
+import type { Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -11,14 +7,12 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface OptionalValidator
  * @template V
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {Validator<undefined | V, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {Validator<undefined | V, ValidationParams>}
  * @since 1.0.0
  */
-export interface OptionalValidator<
-  V,
-  EVP extends ExtendedValidationParameters = NoParameters
-> extends Validator<undefined | V, EVP> {}
+export interface OptionalValidator<V, ValidationParams = any>
+  extends Validator<undefined | V, ValidationParams> {}
 
 /**
  * Validator for optional (maybe undefined) properties/values
@@ -26,23 +20,23 @@ export interface OptionalValidator<
  * @export
  * @class DefaultOptionalValidator
  * @template V
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {DefaultValidator<undefined | V, EVP>}
- * @implements {OptionalValidator<V, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<undefined | V, ValidationParams>}
+ * @implements {OptionalValidator<V, ValidationParams>}
  * @since 1.0.0
  */
-export class DefaultOptionalValidator<
-    V,
-    EVP extends ExtendedValidationParameters = NoParameters
-  >
-  extends DefaultValidator<undefined | V, EVP>
-  implements OptionalValidator<V, EVP>
+export class DefaultOptionalValidator<V, ValidationParams = any>
+  extends DefaultValidator<undefined | V, ValidationParams>
+  implements OptionalValidator<V, ValidationParams>
 {
   constructor(private readonly _validator: Validator<V>) {
     super();
   }
 
-  protected validateBaseType(value_: unknown, _params_?: EVP): undefined | V {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): undefined | V {
     if (typeof value_ === 'undefined') {
       return value_;
     }

@@ -1,9 +1,4 @@
-import type {
-  CustomValidation,
-  ExtendedValidationParameters,
-  NoParameters,
-  Validator
-} from '../types.js';
+import type { CustomValidation, Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -12,14 +7,12 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface CustomValidator
  * @template Out
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {Validator<Out, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {Validator<Out, ValidationParams>}
  * @since 1.0.0
  */
-export interface CustomValidator<
-  Out,
-  EVP extends ExtendedValidationParameters = NoParameters
-> extends Validator<Out, EVP> {}
+export interface CustomValidator<Out, ValidationParams = any>
+  extends Validator<Out, ValidationParams> {}
 
 /**
  * Validator for custom value validation.
@@ -27,31 +20,34 @@ export interface CustomValidator<
  * @export
  * @class DefaultCustomValidator
  * @template Out
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {DefaultValidator<Out, EVP>}
- * @implements {CustomValidator<Out, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<Out, ValidationParams>}
+ * @implements {CustomValidator<Out, ValidationParams>}
  * @since 1.0.0
  */
-export class DefaultCustomValidator<
-    Out,
-    EVP extends ExtendedValidationParameters = NoParameters
-  >
-  extends DefaultValidator<Out, EVP>
-  implements CustomValidator<Out, EVP>
+export class DefaultCustomValidator<Out, ValidationParams = any>
+  extends DefaultValidator<Out, ValidationParams>
+  implements CustomValidator<Out, ValidationParams>
 {
   /**
    * Creates an instance of CustomValidator.
    *
    * @constructor
-   * @param {CustomValidation<unknown, EVP>} _validationCallback  Return an error message if validation fails; else undefined
+   * @param {CustomValidation<unknown, ValidationParams>} _validationCallback  Return an error message if validation fails; else undefined
    */
   constructor(
-    private readonly _validationCallback: CustomValidation<unknown, EVP>
+    private readonly _validationCallback: CustomValidation<
+      unknown,
+      ValidationParams
+    >
   ) {
     super();
   }
 
-  protected validateBaseType(value_: unknown, _params_?: EVP): Out {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): Out {
     const result = this._validationCallback(value_);
 
     if (result === undefined) {

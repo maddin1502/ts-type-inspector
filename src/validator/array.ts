@@ -1,9 +1,4 @@
-import type {
-  ContainerExtendedValidationParameters,
-  ExtendedValidationParameters,
-  NoParameters,
-  Validator
-} from '../types.js';
+import type { ContainerValidationParameters, Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -12,16 +7,16 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface ArrayValidator
  * @template Out
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @template {ContainerExtendedValidationParameters<EVP>} [CEVP=ContainerExtendedValidationParameters<EVP>]
- * @extends {Validator<Out[], CEVP>}
+ * @template [ItemValidationParams=any]
+ * @template {ContainerValidationParameters<ItemValidationParams>} [ValidationParams=ContainerValidationParameters<ItemValidationParams>]
+ * @extends {Validator<Out[], ValidationParams>}
  * @since 1.0.0
  */
 export interface ArrayValidator<
   Out,
-  EVP extends ExtendedValidationParameters = NoParameters,
-  CEVP extends ContainerExtendedValidationParameters<EVP> = ContainerExtendedValidationParameters<EVP>
-> extends Validator<Out[], CEVP> {
+  ItemValidationParams = any,
+  ValidationParams extends ContainerValidationParameters<ItemValidationParams> = ContainerValidationParameters<ItemValidationParams>
+> extends Validator<Out[], ValidationParams> {
   /**
    * validate exact array length
    *
@@ -70,28 +65,23 @@ export interface ArrayValidator<
  * @export
  * @class DefaultArrayValidator
  * @template Out
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @template {ContainerExtendedValidationParameters<EVP>} [CEVP=ContainerExtendedValidationParameters<EVP>]
- * @extends {DefaultValidator<Out[], CEVP>}
- * @implements {ArrayValidator<Out, EVP, CEVP>}
+ * @template [ItemValidationParams=any]
+ * @template {ContainerValidationParameters<ItemValidationParams>} [ValidationParams=ContainerValidationParameters<ItemValidationParams>]
+ * @extends {DefaultValidator<Out[], ValidationParams>}
+ * @implements {ArrayValidator<Out, ItemValidationParams, ValidationParams>}
  * @since 1.0.0
  */
 export class DefaultArrayValidator<
     const Out,
-    EVP extends ExtendedValidationParameters = NoParameters,
-    CEVP extends ContainerExtendedValidationParameters<EVP> = ContainerExtendedValidationParameters<EVP>
+    ItemValidationParams = any,
+    ValidationParams extends ContainerValidationParameters<ItemValidationParams> = ContainerValidationParameters<ItemValidationParams>
   >
-  extends DefaultValidator<Out[], CEVP>
-  implements ArrayValidator<Out, EVP, CEVP>
+  extends DefaultValidator<Out[], ValidationParams>
+  implements ArrayValidator<Out, ItemValidationParams, ValidationParams>
 {
-  /**
-   * Creates an instance of ArrayValidator.
-   *
-   * @constructor
-   * @param {Validator<Out, EVP>} _itemValidator
-   * @since 1.0.0
-   */
-  constructor(private readonly _itemValidator: Validator<Out, EVP>) {
+  constructor(
+    private readonly _itemValidator: Validator<Out, ItemValidationParams>
+  ) {
     super();
   }
 
@@ -115,17 +105,17 @@ export class DefaultArrayValidator<
     return this.setupCondition((value_) => this.checkRejected(value_, items_));
   }
 
-  protected validateBaseType(value_: unknown, params_?: CEVP): Out[] {
+  protected validateBaseType(
+    value_: unknown,
+    params_?: ValidationParams
+  ): Out[] {
     if (!Array.isArray(value_)) {
       this.throwValidationError('value is not an array');
     }
 
     for (let i = 0; i < value_.length; i++) {
       try {
-        this._itemValidator.validate(
-          value_[i],
-          params_?.extendedItemValidationParameters
-        );
+        this._itemValidator.validate(value_[i], params_?.itemValidationParams);
       } catch (reason_) {
         this.rethrowError(reason_, i);
       }

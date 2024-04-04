@@ -1,6 +1,5 @@
+import { ContainerExtendedValidationParameters } from '@/index.js';
 import type {
-  ExtendedValidationParameters,
-  NoParameters,
   ObjectLike,
   PartialPropertyValidators,
   Validator
@@ -13,14 +12,16 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface PartialValidator
  * @template {ObjectLike} Out
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {Validator<Out, EVP>}
+ * @template [ItemValidationParams=any]
+ * @template {ContainerExtendedValidationParameters<ItemValidationParams>} [ValidationParams=ContainerExtendedValidationParameters<ItemValidationParams>]
+ * @extends {Validator<Out, ValidationParams>}
  * @since 2.0.0
  */
 export interface PartialValidator<
   Out extends ObjectLike,
-  EVP extends ExtendedValidationParameters = NoParameters
-> extends Validator<Out, EVP> {}
+  ItemValidationParams = any,
+  ValidationParams extends ContainerExtendedValidationParameters<ItemValidationParams> = ContainerExtendedValidationParameters<ItemValidationParams>
+> extends Validator<Out, ValidationParams> {}
 
 /**
  * Validator for object based values. This is an **UNSAFE** validator that only validates some properties and ignores others
@@ -28,25 +29,33 @@ export interface PartialValidator<
  * @export
  * @class DefaultPartialValidator
  * @template {ObjectLike} Out
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {DefaultValidator<Out, EVP>}
- * @implements {PartialValidator<Out, EVP>}
+ * @template [ItemValidationParams=any]
+ * @template {ContainerExtendedValidationParameters<ItemValidationParams>} [ValidationParams=ContainerExtendedValidationParameters<ItemValidationParams>]
+ * @extends {DefaultValidator<Out, ValidationParams>}
+ * @implements {PartialValidator<Out, ValidationParams>}
  * @since 2.0.0
  */
 export class DefaultPartialValidator<
     Out extends ObjectLike,
-    EVP extends ExtendedValidationParameters = NoParameters
+    ItemValidationParams = any,
+    ValidationParams extends ContainerExtendedValidationParameters<ItemValidationParams> = ContainerExtendedValidationParameters<ItemValidationParams>
   >
-  extends DefaultValidator<Out, EVP>
-  implements PartialValidator<Out, EVP>
+  extends DefaultValidator<Out, ValidationParams>
+  implements PartialValidator<Out, ItemValidationParams, ValidationParams>
 {
   constructor(
-    private readonly _propertyValidators: PartialPropertyValidators<Out>
+    private readonly _propertyValidators: PartialPropertyValidators<
+      Out,
+      ItemValidationParams
+    >
   ) {
     super();
   }
 
-  protected validateBaseType(value_: unknown, _params_?: EVP): Out {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): Out {
     if (!this.isObjectLike(value_)) {
       this.throwValidationError('value is not an object');
     }

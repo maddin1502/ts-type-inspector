@@ -1,8 +1,4 @@
-import type {
-  ExtendedValidationParameters,
-  NoParameters,
-  Validator
-} from '../types.js';
+import type { Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -10,31 +6,31 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface UndefinedValidator
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {Validator<undefined, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {Validator<undefined, ValidationParams>}
  * @since 1.0.0
  */
-export interface UndefinedValidator<
-  EVP extends ExtendedValidationParameters = NoParameters
-> extends Validator<undefined, EVP> {}
+export interface UndefinedValidator<ValidationParams = any>
+  extends Validator<undefined, ValidationParams> {}
 
 /**
  * Validator for undefined values
  *
  * @export
  * @class DefaulUndefinedValidator
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {DefaultValidator<undefined, EVP>}
- * @implements {UndefinedValidator<EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<undefined, ValidationParams>}
+ * @implements {UndefinedValidator<ValidationParams>}
  * @since 1.0.0
  */
-export class DefaulUndefinedValidator<
-    EVP extends ExtendedValidationParameters = NoParameters
-  >
-  extends DefaultValidator<undefined, EVP>
-  implements UndefinedValidator<EVP>
+export class DefaulUndefinedValidator<ValidationParams = any>
+  extends DefaultValidator<undefined, ValidationParams>
+  implements UndefinedValidator<ValidationParams>
 {
-  protected validateBaseType(value_: unknown, _params_?: EVP): undefined {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): undefined {
     if (value_ === undefined) {
       return value_;
     }

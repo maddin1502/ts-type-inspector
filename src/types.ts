@@ -1,13 +1,8 @@
 import type { ArrayItem, MinArray } from 'ts-lib-extended';
 import type { ValidationError } from './error.js';
 
-export type ExtendedValidationParameters = Record<string, any>;
-export type NoParameters = NonNullable<unknown>;
-export type ContainerExtendedValidationParameters<
-  EVP extends ExtendedValidationParameters = NoParameters
-> = {
-  [key: string]: any;
-  extendedItemValidationParameters?: EVP;
+export type ContainerValidationParameters<ValidationParams = any> = {
+  itemValidationParams?: ValidationParams;
 };
 export type MethodLike = (...args_: any[]) => any;
 export type ObjectLike = Record<PropertyKey, any>;
@@ -20,17 +15,15 @@ export type AnyLike =
   | undefined
   | symbol
   | null;
-export type CustomValidation<
-  V,
-  EVP extends ExtendedValidationParameters = NoParameters
-> = (value_: V, params_?: EVP) => string | undefined;
-export type ValidationErrorHandler<
-  EVP extends ExtendedValidationParameters = NoParameters
-> = (error_: ValidationError, params_?: EVP) => string | void;
-export interface Validator<
-  Out,
-  EVP extends ExtendedValidationParameters = NoParameters
-> {
+export type CustomValidation<V, ValidationParams = any> = (
+  value_: V,
+  params_?: ValidationParams
+) => string | undefined;
+export type ValidationErrorHandler<ValidationParams> = (
+  error_: ValidationError,
+  params_?: ValidationParams
+) => string | void;
+export interface Validator<Out, ValidationParams = any> {
   /**
    * retrieve error from last validation; undefined if validation succeeded
    *
@@ -41,41 +34,47 @@ export interface Validator<
   /**
    * add a custom validation; return a error message if validation fails
    *
-   * @param {CustomValidation<Out, EVP>} validation_
-   * @param {?EVP} [params_]
+   * @param {CustomValidation<Out, ValidationParams>} validation_
+   * @param {?ValidationParams} [params_]
    * @returns {this}
    */
-  custom(validation_: CustomValidation<Out, EVP>, params_?: EVP): this;
+  custom(
+    validation_: CustomValidation<Out, ValidationParams>,
+    params_?: ValidationParams
+  ): this;
   /**
    * Perform an action when a validation error occurs.
    * HINT: can also be used to customize the error message
    *
-   * @param {ValidationErrorHandler<EVP>} handler_
+   * @param {ValidationErrorHandler<ValidationParams>} handler_
    * @returns {this}
    */
-  onError(handler_: ValidationErrorHandler<EVP>): this;
+  onError(handler_: ValidationErrorHandler<ValidationParams>): this;
   /**
    * validate value; throws an error on failure
    *
    * @param {unknown} value_
-   * @param {?EVP} [params_]
+   * @param {?ValidationParams} [params_]
    * @returns {Out}
    */
-  validate(value_: unknown, params_?: EVP): Out;
+  validate(value_: unknown, params_?: ValidationParams): Out;
   /**
    * validate value
    *
    * @param {unknown} value_
-   * @param {?EVP} [params_]
+   * @param {?ValidationParams} [params_]
    * @returns {value_ is Out} true if valid; false if invalid; this is a type predicate - asserted type will be associated to value if true
    */
-  isValid(value_: unknown, params_?: EVP): value_ is Out;
+  isValid(value_: unknown, params_?: ValidationParams): value_ is Out;
 }
-export type PropertyValidators<V extends ObjectLike> = {
-  readonly [key in keyof V]-?: Validator<V[key]>;
+export type PropertyValidators<
+  V extends ObjectLike,
+  ValidationParams = any
+> = {
+  readonly [key in keyof V]-?: Validator<V[key], ValidationParams>;
 };
-export type PartialPropertyValidators<V = any> = {
-  readonly [key in keyof V]?: Validator<V[key]>;
+export type PartialPropertyValidators<V, ValidationParams = any> = {
+  readonly [key in keyof V]?: Validator<V[key], ValidationParams>;
 };
 export type SelectPropertyValidators<
   V extends ObjectLike,
@@ -84,11 +83,14 @@ export type SelectPropertyValidators<
 export type UnionValidators<V = any> = MinArray<Validator<V>, 2>;
 export type UnionValidatorsItem<U extends UnionValidators> =
   ArrayItem<U> extends Validator<infer V> ? V : never;
-export type ValidationCondition<
-  V,
-  P extends ExtendedValidationParameters = NoParameters
-> = (value_: V, params_?: P) => void | never;
+export type ValidationCondition<V, ValidationParams = any> = (
+  value_: V,
+  params_?: ValidationParams
+) => void | never;
 export type DateLike = string | number | Date;
-export type TupleItemValidators<A extends unknown[]> = {
-  [index in keyof A]: Validator<A[index]>;
+export type TupleItemValidators<
+  A extends unknown[],
+  ValidationParams = any
+> = {
+  [index in keyof A]: Validator<A[index], ValidationParams>;
 };

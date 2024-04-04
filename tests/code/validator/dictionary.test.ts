@@ -78,7 +78,7 @@ describe(DefaultDictionaryValidator, () => {
       ddvEvpv.isValid(
         { hello: 'world' },
         {
-          extendedItemValidationParameters: { failOn: 'condition' }
+          itemValidationParams: { failOn: 'condition' }
         }
       )
     ).toBe(false);
@@ -86,7 +86,7 @@ describe(DefaultDictionaryValidator, () => {
       ddvEvpv.validate(
         { hello: 'world' },
         {
-          extendedItemValidationParameters: { failOn: 'condition' }
+          itemValidationParams: { failOn: 'condition' }
         }
       )
     ).toThrow('extended failure on condition');
@@ -94,7 +94,7 @@ describe(DefaultDictionaryValidator, () => {
       ddvEvpv.isValid(
         { hello: 'world' },
         {
-          extendedItemValidationParameters: { failOn: 'custom' }
+          itemValidationParams: { failOn: 'custom' }
         }
       )
     ).toBe(false);
@@ -102,7 +102,7 @@ describe(DefaultDictionaryValidator, () => {
       ddvEvpv.validate(
         { hello: 'world' },
         {
-          extendedItemValidationParameters: { failOn: 'custom' }
+          itemValidationParams: { failOn: 'custom' }
         }
       )
     ).toThrow('extended failure on custom');
@@ -110,7 +110,7 @@ describe(DefaultDictionaryValidator, () => {
       ddvEvpv.isValid(
         { hello: 'world' },
         {
-          extendedItemValidationParameters: { failOn: 'validate' }
+          itemValidationParams: { failOn: 'validate' }
         }
       )
     ).toBe(false);
@@ -118,7 +118,7 @@ describe(DefaultDictionaryValidator, () => {
       ddvEvpv.validate(
         { hello: 'world' },
         {
-          extendedItemValidationParameters: { failOn: 'validate' }
+          itemValidationParams: { failOn: 'validate' }
         }
       )
     ).toThrow('extended failure on validate');

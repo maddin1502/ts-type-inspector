@@ -1,5 +1,5 @@
 import { TypeInspector } from '@/inspector.js';
-import { ContainerExtendedValidationParameters } from '@/types.js';
+import { ContainerValidationParameters } from '@/types.js';
 import { DefaultObjectValidator } from '@/validator/object.js';
 import { describe, expect, test } from 'vitest';
 import {
@@ -443,7 +443,7 @@ describe(DefaultObjectValidator, () => {
     expect.assertions(8);
     const dovEvpv = new DefaultObjectValidator<
       { prop1: unknown },
-      ContainerExtendedValidationParameters<TestExtendedValidationParameters>
+      ContainerValidationParameters<TestExtendedValidationParameters>
     >({
       prop1: new ExtendedValidationParametersValidator()
         .extendedFailureCondition
@@ -454,7 +454,7 @@ describe(DefaultObjectValidator, () => {
       dovEvpv.isValid(
         { hello: 'world' },
         {
-          extendedItemValidationParameters: { failOn: 'condition' }
+          itemValidationParams: { failOn: 'condition' }
         }
       )
     ).toBe(false);
@@ -462,7 +462,7 @@ describe(DefaultObjectValidator, () => {
       dovEvpv.validate(
         { hello: 'world' },
         {
-          extendedItemValidationParameters: { failOn: 'condition' }
+          itemValidationParams: { failOn: 'condition' }
         }
       )
     ).toThrow('extended failure on condition');
@@ -470,7 +470,7 @@ describe(DefaultObjectValidator, () => {
       dovEvpv.isValid(
         { hello: 'world' },
         {
-          extendedItemValidationParameters: { failOn: 'custom' }
+          itemValidationParams: { failOn: 'custom' }
         }
       )
     ).toBe(false);
@@ -478,7 +478,7 @@ describe(DefaultObjectValidator, () => {
       dovEvpv.validate(
         { hello: 'world' },
         {
-          extendedItemValidationParameters: { failOn: 'custom' }
+          itemValidationParams: { failOn: 'custom' }
         }
       )
     ).toThrow('extended failure on custom');
@@ -486,7 +486,7 @@ describe(DefaultObjectValidator, () => {
       dovEvpv.isValid(
         { hello: 'world' },
         {
-          extendedItemValidationParameters: { failOn: 'validate' }
+          itemValidationParams: { failOn: 'validate' }
         }
       )
     ).toBe(false);
@@ -494,7 +494,7 @@ describe(DefaultObjectValidator, () => {
       dovEvpv.validate(
         { hello: 'world' },
         {
-          extendedItemValidationParameters: { failOn: 'validate' }
+          itemValidationParams: { failOn: 'validate' }
         }
       )
     ).toThrow('extended failure on validate');

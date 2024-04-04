@@ -62,32 +62,32 @@ describe(DefaultArrayValidator, () => {
     expect(() => davEvpv.validate([undefined])).not.toThrow();
     expect(
       davEvpv.isValid([undefined], {
-        extendedItemValidationParameters: { failOn: 'condition' }
+        itemValidationParams: { failOn: 'condition' }
       })
     ).toBe(false);
     expect(() =>
       davEvpv.validate([undefined], {
-        extendedItemValidationParameters: { failOn: 'condition' }
+        itemValidationParams: { failOn: 'condition' }
       })
     ).toThrow('extended failure on condition');
     expect(
       davEvpv.isValid([undefined], {
-        extendedItemValidationParameters: { failOn: 'custom' }
+        itemValidationParams: { failOn: 'custom' }
       })
     ).toBe(false);
     expect(() =>
       davEvpv.validate([undefined], {
-        extendedItemValidationParameters: { failOn: 'custom' }
+        itemValidationParams: { failOn: 'custom' }
       })
     ).toThrow('extended failure on custom');
     expect(
       davEvpv.isValid([undefined], {
-        extendedItemValidationParameters: { failOn: 'validate' }
+        itemValidationParams: { failOn: 'validate' }
       })
     ).toBe(false);
     expect(() =>
       davEvpv.validate([undefined], {
-        extendedItemValidationParameters: { failOn: 'validate' }
+        itemValidationParams: { failOn: 'validate' }
       })
     ).toThrow('extended failure on validate');
   });

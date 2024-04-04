@@ -3,12 +3,10 @@ import { TypeInspector } from './inspector.js';
 export { ValidationError } from './error.js';
 export type {
   AnyLike,
-  ContainerExtendedValidationParameters,
+  ContainerValidationParameters as ContainerExtendedValidationParameters,
   CustomValidation,
   DateLike,
-  ExtendedValidationParameters,
   MethodLike,
-  NoParameters,
   ObjectLike,
   PartialPropertyValidators,
   PropertyValidators,

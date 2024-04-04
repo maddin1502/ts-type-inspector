@@ -1,9 +1,4 @@
-import type {
-  DateLike,
-  ExtendedValidationParameters,
-  NoParameters,
-  Validator
-} from '../types.js';
+import type { DateLike, Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -11,13 +6,12 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface DateValidator
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {Validator<Date, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {Validator<Date, ValidationParams>}
  * @since 1.0.0
  */
-export interface DateValidator<
-  EVP extends ExtendedValidationParameters = NoParameters
-> extends Validator<Date, EVP> {
+export interface DateValidator<ValidationParams = any>
+  extends Validator<Date, ValidationParams> {
   /**
    * define earliest accepted date
    *
@@ -57,16 +51,14 @@ export interface DateValidator<
  *
  * @export
  * @class DefaultDateValidator
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {DefaultValidator<Date, EVP>}
- * @implements {DateValidator<EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<Date, ValidationParams>}
+ * @implements {DateValidator<ValidationParams>}
  * @since 1.0.0
  */
-export class DefaultDateValidator<
-    EVP extends ExtendedValidationParameters = NoParameters
-  >
-  extends DefaultValidator<Date, EVP>
-  implements DateValidator<EVP>
+export class DefaultDateValidator<ValidationParams = any>
+  extends DefaultValidator<Date, ValidationParams>
+  implements DateValidator<ValidationParams>
 {
   public earliest(earliest_: DateLike): this {
     return this.setupCondition((value_) =>
@@ -86,7 +78,10 @@ export class DefaultDateValidator<
     return this.setupCondition((value_) => this.checkRejected(value_, items_));
   }
 
-  protected validateBaseType(value_: unknown, _params_?: EVP): Date {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): Date {
     if (!this.isDate(value_)) {
       this.throwValidationError('value is not a date');
     }

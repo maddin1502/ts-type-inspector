@@ -4,11 +4,7 @@ import type {
   EnumerableValue
 } from 'ts-lib-extended';
 import { enumerableObject } from 'ts-lib-extended';
-import type {
-  ExtendedValidationParameters,
-  NoParameters,
-  Validator
-} from '../types.js';
+import type { Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -17,14 +13,14 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface EnumValidator
  * @template {Enumerable} E
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {Validator<EnumerableValue<E>, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {Validator<EnumerableValue<E>, ValidationParams>}
  * @since 1.0.2
  */
 export interface EnumValidator<
   E extends Enumerable,
-  EVP extends ExtendedValidationParameters = NoParameters
-> extends Validator<EnumerableValue<E>, EVP> {
+  ValidationParams = any
+> extends Validator<EnumerableValue<E>, ValidationParams> {
   /**
    * additional base type validation for enum values
    *
@@ -39,17 +35,17 @@ export interface EnumValidator<
  * @export
  * @class DefaultEnumValidator
  * @template {Enumerable} E
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {DefaultValidator<EnumerableValue<E>, EVP>}
- * @implements {EnumValidator<E, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<EnumerableValue<E>, ValidationParams>}
+ * @implements {EnumValidator<E, ValidationParams>}
  * @since 1.0.2
  */
 export class DefaultEnumValidator<
     E extends Enumerable,
-    EVP extends ExtendedValidationParameters = NoParameters
+    ValidationParams = any
   >
-  extends DefaultValidator<EnumerableValue<E>, EVP>
-  implements EnumValidator<E, EVP>
+  extends DefaultValidator<EnumerableValue<E>, ValidationParams>
+  implements EnumValidator<E, ValidationParams>
 {
   constructor(private readonly _enum: E) {
     super();
@@ -63,7 +59,10 @@ export class DefaultEnumValidator<
     );
   }
 
-  protected validateBaseType(value_: unknown, _params_?: EVP): EnumerableValue<E> {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): EnumerableValue<E> {
     if (this.isEnumValue(this._enum, value_)) {
       return value_;
     }

@@ -1,8 +1,4 @@
-import type {
-  ExtendedValidationParameters,
-  NoParameters,
-  Validator
-} from '../types.js';
+import type { Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -10,13 +6,12 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface BooleanValidator
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {Validator<boolean, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {Validator<boolean, ValidationParams>}
  * @since 1.0.0
  */
-export interface BooleanValidator<
-  EVP extends ExtendedValidationParameters = NoParameters
-> extends Validator<boolean, EVP> {
+export interface BooleanValidator<ValidationParams = any>
+  extends Validator<boolean, ValidationParams> {
   /**
    * accept just true
    *
@@ -40,16 +35,14 @@ export interface BooleanValidator<
  *
  * @export
  * @class DefaultBooleanValidator
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {DefaultValidator<boolean, EVP>}
- * @implements {BooleanValidator<EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<boolean, ValidationParams>}
+ * @implements {BooleanValidator<ValidationParams>}
  * @since 1.0.0
  */
-export class DefaultBooleanValidator<
-    EVP extends ExtendedValidationParameters = NoParameters
-  >
-  extends DefaultValidator<boolean, EVP>
-  implements BooleanValidator<EVP>
+export class DefaultBooleanValidator<ValidationParams = any>
+  extends DefaultValidator<boolean, ValidationParams>
+  implements BooleanValidator<ValidationParams>
 {
   public get true(): this {
     return this.setupCondition((value_) => this.checkTrue(value_));
@@ -59,7 +52,10 @@ export class DefaultBooleanValidator<
     return this.setupCondition((value_) => this.checkFalse(value_));
   }
 
-  protected validateBaseType(value_: unknown, _params_?: EVP): boolean {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): boolean {
     if (typeof value_ === 'boolean') {
       return value_;
     }

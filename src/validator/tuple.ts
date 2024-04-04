@@ -1,7 +1,5 @@
 import {
-  ContainerExtendedValidationParameters,
-  ExtendedValidationParameters,
-  NoParameters,
+  ContainerValidationParameters,
   TupleItemValidators,
   Validator
 } from '@/types.js';
@@ -14,16 +12,16 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface TupleValidator
  * @template {unknown[]} Out
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @template {ContainerExtendedValidationParameters<EVP>} [CEVP=ContainerExtendedValidationParameters<EVP>]
- * @extends {Validator<Out, EVP>}
+ * @template [ItemValidationParams=any]
+ * @template {ContainerValidationParameters<ItemValidationParams>} [ValidationParams=ContainerValidationParameters<ItemValidationParams>]
+ * @extends {Validator<Out, ValidationParams>}
  * @since 3.0.0
  */
 export interface TupleValidator<
   Out extends unknown[],
-  EVP extends ExtendedValidationParameters = NoParameters,
-  CEVP extends ContainerExtendedValidationParameters<EVP> = ContainerExtendedValidationParameters<EVP>
-> extends Validator<Out, CEVP> {
+  ItemValidationParams = any,
+  ValidationParams extends ContainerValidationParameters<ItemValidationParams> = ContainerValidationParameters<ItemValidationParams>
+> extends Validator<Out, ValidationParams> {
   /**
    * Reject tuples that contain more items than have been validated
    *
@@ -40,23 +38,31 @@ export interface TupleValidator<
  * @export
  * @class DefaultTupleValidator
  * @template {unknown[]} Out
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @template {ContainerExtendedValidationParameters<EVP>} [CEVP=ContainerExtendedValidationParameters<EVP>]
- * @extends {DefaultValidator<Out, EVP>}
- * @implements {TupleValidator<Out, EVP>}
+ * @template [ItemValidationParams=any]
+ * @template {ContainerValidationParameters<ItemValidationParams>} [ValidationParams=ContainerValidationParameters<ItemValidationParams>]
+ * @extends {DefaultValidator<Out, ValidationParams>}
+ * @implements {TupleValidator<Out, ValidationParams>}
  * @since 3.0.0
  */
 export class DefaultTupleValidator<
     Out extends unknown[],
-    EVP extends ExtendedValidationParameters = NoParameters,
-    CEVP extends ContainerExtendedValidationParameters<EVP> = ContainerExtendedValidationParameters<EVP>
+    ItemValidationParams = any,
+    ValidationParams extends ContainerValidationParameters<ItemValidationParams> = ContainerValidationParameters<ItemValidationParams>
   >
-  extends DefaultValidator<Out, CEVP>
-  implements TupleValidator<Out, EVP, CEVP>
+  extends DefaultValidator<Out, ValidationParams>
+  implements TupleValidator<Out, ItemValidationParams, ValidationParams>
 {
-  private readonly _itemValidators: TupleItemValidators<Out>;
+  private readonly _itemValidators: TupleItemValidators<
+    Out,
+    ItemValidationParams
+  >;
 
-  constructor(...itemValidators_: TupleItemValidators<Out>) {
+  constructor(
+    ...itemValidators_: TupleItemValidators<
+    Out,
+    ItemValidationParams
+  >//{[index in keyof Out]: Validator<Out[index], ItemValidationParams>}
+  ) {
     super();
     this._itemValidators = itemValidators_;
   }
@@ -65,7 +71,7 @@ export class DefaultTupleValidator<
     return this.setupCondition((value_) => this.checkOverload(value_));
   }
 
-  protected validateBaseType(value_: unknown, params_?: CEVP): Out {
+  protected validateBaseType(value_: unknown, params_?: ValidationParams): Out {
     if (!Array.isArray(value_)) {
       this.throwValidationError('value is not an tuple');
     }
@@ -78,7 +84,7 @@ export class DefaultTupleValidator<
       try {
         this._itemValidators[i].validate(
           value_[i],
-          params_?.extendedItemValidationParameters
+          params_?.itemValidationParams
         );
       } catch (reason_) {
         this.rethrowError(reason_, i);

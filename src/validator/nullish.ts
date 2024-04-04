@@ -1,8 +1,4 @@
-import type {
-  ExtendedValidationParameters,
-  NoParameters,
-  Validator
-} from '../types.js';
+import type { Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -10,31 +6,31 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface NullishValidator
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {Validator<null | undefined, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {Validator<null | undefined, ValidationParams>}
  * @since 1.0.0
  */
-export interface NullishValidator<
-  EVP extends ExtendedValidationParameters = NoParameters
-> extends Validator<null | undefined, EVP> {}
+export interface NullishValidator<ValidationParams = any>
+  extends Validator<null | undefined, ValidationParams> {}
 
 /**
  * Validator for nullish values (null or undefined)
  *
  * @export
  * @class DefaultNullishValidator
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {DefaultValidator<null | undefined, EVP>}
- * @implements {NullishValidator<EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<null | undefined, ValidationParams>}
+ * @implements {NullishValidator<ValidationParams>}
  * @since 1.0.0
  */
-export class DefaultNullishValidator<
-    EVP extends ExtendedValidationParameters = NoParameters
-  >
-  extends DefaultValidator<null | undefined, EVP>
-  implements NullishValidator<EVP>
+export class DefaultNullishValidator<ValidationParams = any>
+  extends DefaultValidator<null | undefined, ValidationParams>
+  implements NullishValidator<ValidationParams>
 {
-  protected validateBaseType(value_: unknown, _params_?: EVP): null | undefined {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): null | undefined {
     if (value_ === null || value_ === undefined) {
       return value_;
     }

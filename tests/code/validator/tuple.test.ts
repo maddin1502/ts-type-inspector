@@ -1,7 +1,7 @@
 import { TypeInspector } from '@/inspector.js';
 import { DefaultTupleValidator } from '@/validator/tuple.js';
 import { describe, expect, test } from 'vitest';
-import { ExtendedValidationParametersValidator } from '../../testTypes.js';
+import { ExtendedValidationParametersValidator, TestExtendedValidationParameters } from '../../testTypes.js';
 
 const ti = new TypeInspector();
 
@@ -430,32 +430,32 @@ describe(DefaultTupleValidator, () => {
     expect(() => dtvEvpv.validate([undefined])).not.toThrow();
     expect(
       dtvEvpv.isValid([undefined], {
-        extendedItemValidationParameters: { failOn: 'condition' }
+        itemValidationParams: { failOn: 'condition' }
       })
     ).toBe(false);
     expect(() =>
       dtvEvpv.validate([undefined], {
-        extendedItemValidationParameters: { failOn: 'condition' }
+        itemValidationParams: { failOn: 'condition' }
       })
     ).toThrow('extended failure on condition');
     expect(
       dtvEvpv.isValid([undefined], {
-        extendedItemValidationParameters: { failOn: 'custom' }
+        itemValidationParams: { failOn: 'custom' }
       })
     ).toBe(false);
     expect(() =>
       dtvEvpv.validate([undefined], {
-        extendedItemValidationParameters: { failOn: 'custom' }
+        itemValidationParams: { failOn: 'custom' }
       })
     ).toThrow('extended failure on custom');
     expect(
       dtvEvpv.isValid([undefined], {
-        extendedItemValidationParameters: { failOn: 'validate' }
+        itemValidationParams: { failOn: 'validate' }
       })
     ).toBe(false);
     expect(() =>
       dtvEvpv.validate([undefined], {
-        extendedItemValidationParameters: { failOn: 'validate' }
+        itemValidationParams: { failOn: 'validate' }
       })
     ).toThrow('extended failure on validate');
   });

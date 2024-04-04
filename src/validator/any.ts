@@ -1,8 +1,4 @@
-import type {
-  ExtendedValidationParameters,
-  NoParameters,
-  Validator
-} from '../types.js';
+import type { Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -10,13 +6,12 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface AnyValidator
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {Validator<any, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {Validator<any, ValidationParams>}
  * @since 1.0.0
  */
-export interface AnyValidator<
-  EVP extends ExtendedValidationParameters = NoParameters
-> extends Validator<any, EVP> {
+export interface AnyValidator<ValidationParams = any>
+  extends Validator<any, ValidationParams> {
   /**
    * reject nullish values (undefined, null)
    *
@@ -40,16 +35,14 @@ export interface AnyValidator<
  *
  * @export
  * @class DefaultAnyValidator
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {DefaultValidator<any, EVP>}
- * @implements {AnyValidator<EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<any, ValidationParams>}
+ * @implements {AnyValidator<ValidationParams>}
  * @since 1.0.0
  */
-export class DefaultAnyValidator<
-    EVP extends ExtendedValidationParameters = NoParameters
-  >
-  extends DefaultValidator<any, EVP>
-  implements AnyValidator<EVP>
+export class DefaultAnyValidator<ValidationParams = any>
+  extends DefaultValidator<any, ValidationParams>
+  implements AnyValidator<ValidationParams>
 {
   public get notNullish(): this {
     return this.setupCondition((value_) => this.checkNullish(value_));
@@ -59,7 +52,10 @@ export class DefaultAnyValidator<
     return this.setupCondition((value_) => this.checkFalsy(value_));
   }
 
-  protected validateBaseType(value_: unknown, _params_?: EVP): any {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): any {
     return value_;
   }
 

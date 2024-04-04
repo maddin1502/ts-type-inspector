@@ -1,6 +1,4 @@
 import type {
-  ExtendedValidationParameters,
-  NoParameters,
   UnionValidators,
   UnionValidatorsItem,
   Validator
@@ -13,14 +11,14 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface UnionValidator
  * @template {UnionValidators} V
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {Validator<UnionValidatorsItem<V>, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {Validator<UnionValidatorsItem<V>, ValidationParams>}
  * @since 1.0.0
  */
 export interface UnionValidator<
   V extends UnionValidators,
-  EVP extends ExtendedValidationParameters = NoParameters
-> extends Validator<UnionValidatorsItem<V>, EVP> {}
+  ValidationParams = any
+> extends Validator<UnionValidatorsItem<V>, ValidationParams> {}
 
 /**
  * Validator for union type values (like "string | number")
@@ -28,17 +26,17 @@ export interface UnionValidator<
  * @export
  * @class DefaultUnionValidator
  * @template {UnionValidators} V
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {DefaultValidator<UnionValidatorsItem<V>, EVP>}
- * @implements {UnionValidator<V, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<UnionValidatorsItem<V>, ValidationParams>}
+ * @implements {UnionValidator<V, ValidationParams>}
  * @since 1.0.0
  */
 export class DefaultUnionValidator<
     V extends UnionValidators,
-    EVP extends ExtendedValidationParameters = NoParameters
+    ValidationParams = any
   >
-  extends DefaultValidator<UnionValidatorsItem<V>, EVP>
-  implements UnionValidator<V, EVP>
+  extends DefaultValidator<UnionValidatorsItem<V>, ValidationParams>
+  implements UnionValidator<V, ValidationParams>
 {
   private readonly _validators: V;
 
@@ -47,7 +45,10 @@ export class DefaultUnionValidator<
     this._validators = validators_;
   }
 
-  protected validateBaseType(value_: unknown, _params_?: EVP): UnionValidatorsItem<V> {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): UnionValidatorsItem<V> {
     const errors: Error[] = [];
 
     for (let i = 0; i < this._validators.length; i++) {

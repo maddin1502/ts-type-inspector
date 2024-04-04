@@ -1,9 +1,4 @@
-import type {
-  ExtendedValidationParameters,
-  MethodLike,
-  NoParameters,
-  Validator
-} from '../types.js';
+import type { MethodLike, Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -13,14 +8,14 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface MethodValidator
  * @template {MethodLike} Out
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {Validator<Out, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {Validator<Out, ValidationParams>}
  * @since 1.0.0
  */
 export interface MethodValidator<
   Out extends MethodLike,
-  EVP extends ExtendedValidationParameters = NoParameters
-> extends Validator<Out, EVP> {
+  ValidationParams = any
+> extends Validator<Out, ValidationParams> {
   /**
    * validate exact params count
    *
@@ -54,17 +49,17 @@ export interface MethodValidator<
  * @export
  * @class DefaultMethodValidator
  * @template {MethodLike} Out
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {DefaultValidator<Out, EVP>}
- * @implements {MethodValidator<Out, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<Out, ValidationParams>}
+ * @implements {MethodValidator<Out, ValidationParams>}
  * @since 1.0.0
  */
 export class DefaultMethodValidator<
     Out extends MethodLike,
-    EVP extends ExtendedValidationParameters = NoParameters
+    ValidationParams = any
   >
-  extends DefaultValidator<Out, EVP>
-  implements MethodValidator<Out, EVP>
+  extends DefaultValidator<Out, ValidationParams>
+  implements MethodValidator<Out, ValidationParams>
 {
   public count(count_: number): this {
     return this.setupCondition((value_) => this.checkCount(value_, count_));
@@ -78,7 +73,10 @@ export class DefaultMethodValidator<
     return this.setupCondition((value_) => this.checkMax(value_, max_));
   }
 
-  protected validateBaseType(value_: unknown, _params_?: EVP): Out {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): Out {
     if (typeof value_ === 'function') {
       return value_ as Out;
     }

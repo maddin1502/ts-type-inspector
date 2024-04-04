@@ -1,8 +1,4 @@
-import type {
-  ExtendedValidationParameters,
-  NoParameters,
-  Validator
-} from '../types.js';
+import type { Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -10,13 +6,12 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface NumberValidator
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {Validator<number, EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {Validator<number, ValidationParams>}
  * @since 1.0.0
  */
-export interface NumberValidator<
-  EVP extends ExtendedValidationParameters = NoParameters
-> extends Validator<number, EVP> {
+export interface NumberValidator<ValidationParams = any>
+  extends Validator<number, ValidationParams> {
   /**
    * accept positive values only (zero is not positive)
    *
@@ -104,16 +99,14 @@ export interface NumberValidator<
  *
  * @export
  * @class DefaultNumberValidator
- * @template {ExtendedValidationParameters} [EVP=NoParameters]
- * @extends {DefaultValidator<number, EVP>}
- * @implements {NumberValidator<EVP>}
+ * @template [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<number, ValidationParams>}
+ * @implements {NumberValidator<ValidationParams>}
  * @since 1.0.0
  */
-export class DefaultNumberValidator<
-    EVP extends ExtendedValidationParameters = NoParameters
-  >
-  extends DefaultValidator<number, EVP>
-  implements NumberValidator<EVP>
+export class DefaultNumberValidator<ValidationParams = any>
+  extends DefaultValidator<number, ValidationParams>
+  implements NumberValidator<ValidationParams>
 {
   public get positive(): this {
     return this.setupCondition((value_) => this.checkPositive(value_));
@@ -159,7 +152,10 @@ export class DefaultNumberValidator<
     );
   }
 
-  protected validateBaseType(value_: unknown, _params_?: EVP): number {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): number {
     if (typeof value_ === 'number') {
       return value_;
     }
