@@ -17,10 +17,8 @@ import { DefaultValidator } from './index.js';
  * @extends {Validator<EnumerableValue<E>, ValidationParams>}
  * @since 1.0.2
  */
-export interface EnumValidator<
-  E extends Enumerable,
-  ValidationParams = any
-> extends Validator<EnumerableValue<E>, ValidationParams> {
+export interface EnumValidator<E extends Enumerable, ValidationParams = any>
+  extends Validator<EnumerableValue<E>, ValidationParams> {
   /**
    * additional base type validation for enum values
    *
@@ -40,10 +38,7 @@ export interface EnumValidator<
  * @implements {EnumValidator<E, ValidationParams>}
  * @since 1.0.2
  */
-export class DefaultEnumValidator<
-    E extends Enumerable,
-    ValidationParams = any
-  >
+export class DefaultEnumValidator<E extends Enumerable, ValidationParams = any>
   extends DefaultValidator<EnumerableValue<E>, ValidationParams>
   implements EnumValidator<E, ValidationParams>
 {

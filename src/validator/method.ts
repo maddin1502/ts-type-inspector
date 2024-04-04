@@ -12,10 +12,8 @@ import { DefaultValidator } from './index.js';
  * @extends {Validator<Out, ValidationParams>}
  * @since 1.0.0
  */
-export interface MethodValidator<
-  Out extends MethodLike,
-  ValidationParams = any
-> extends Validator<Out, ValidationParams> {
+export interface MethodValidator<Out extends MethodLike, ValidationParams = any>
+  extends Validator<Out, ValidationParams> {
   /**
    * validate exact params count
    *

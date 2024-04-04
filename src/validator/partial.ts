@@ -1,4 +1,3 @@
-import { ContainerExtendedValidationParameters } from '@/index.js';
 import type {
   ObjectLike,
   PartialPropertyValidators,
@@ -12,15 +11,13 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface PartialValidator
  * @template {ObjectLike} Out
- * @template [ItemValidationParams=any]
- * @template {ContainerExtendedValidationParameters<ItemValidationParams>} [ValidationParams=ContainerExtendedValidationParameters<ItemValidationParams>]
+ * @template [ValidationParams=any] extended validation parameters
  * @extends {Validator<Out, ValidationParams>}
  * @since 2.0.0
  */
 export interface PartialValidator<
   Out extends ObjectLike,
-  ItemValidationParams = any,
-  ValidationParams extends ContainerExtendedValidationParameters<ItemValidationParams> = ContainerExtendedValidationParameters<ItemValidationParams>
+  ValidationParams = any
 > extends Validator<Out, ValidationParams> {}
 
 /**
@@ -29,25 +26,20 @@ export interface PartialValidator<
  * @export
  * @class DefaultPartialValidator
  * @template {ObjectLike} Out
- * @template [ItemValidationParams=any]
- * @template {ContainerExtendedValidationParameters<ItemValidationParams>} [ValidationParams=ContainerExtendedValidationParameters<ItemValidationParams>]
+ * @template [ValidationParams=any] extended validation parameters
  * @extends {DefaultValidator<Out, ValidationParams>}
  * @implements {PartialValidator<Out, ValidationParams>}
  * @since 2.0.0
  */
 export class DefaultPartialValidator<
     Out extends ObjectLike,
-    ItemValidationParams = any,
-    ValidationParams extends ContainerExtendedValidationParameters<ItemValidationParams> = ContainerExtendedValidationParameters<ItemValidationParams>
+    ValidationParams = any
   >
   extends DefaultValidator<Out, ValidationParams>
-  implements PartialValidator<Out, ItemValidationParams, ValidationParams>
+  implements PartialValidator<Out, ValidationParams>
 {
   constructor(
-    private readonly _propertyValidators: PartialPropertyValidators<
-      Out,
-      ItemValidationParams
-    >
+    private readonly _propertyValidators: PartialPropertyValidators<Out>
   ) {
     super();
   }

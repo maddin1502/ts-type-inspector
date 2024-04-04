@@ -3,7 +3,7 @@ import type {
   DictionaryKey,
   DictionaryValue
 } from 'ts-lib-extended';
-import type { ContainerValidationParameters, Validator } from '../types.js';
+import type { Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -12,15 +12,13 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface DictionaryValidator
  * @template {Dictionary} Out
- * @template [ItemValidationParams=any]
- * @template {ContainerValidationParameters<ItemValidationParams>} [ValidationParams=ContainerValidationParameters<ItemValidationParams>]
+ * @template [ValidationParams=any] extended validation parameters
  * @extends {Validator<Out, ValidationParams>}
  * @since 1.0.0
  */
 export interface DictionaryValidator<
   Out extends Dictionary,
-  ItemValidationParams = any,
-  ValidationParams extends ContainerValidationParameters<ItemValidationParams> = ContainerValidationParameters<ItemValidationParams>
+  ValidationParams = any
 > extends Validator<Out, ValidationParams> {
   /**
    * additional dictionary key validation
@@ -38,25 +36,20 @@ export interface DictionaryValidator<
  * @export
  * @class DefaultDictionaryValidator
  * @template {Dictionary} Out
- * @template [ItemValidationParams=any]
- * @template {ContainerValidationParameters<ItemValidationParams>} [ValidationParams=ContainerValidationParameters<ItemValidationParams>]
+ * @template [ValidationParams=any] extended validation parameters
  * @extends {DefaultValidator<Out, ValidationParams>}
  * @implements {DictionaryValidator<Out, ValidationParams, ValidationParams>}
  * @since 1.0.0
  */
 export class DefaultDictionaryValidator<
     Out extends Dictionary,
-    ItemValidationParams = any,
-    ValidationParams extends ContainerValidationParameters<ItemValidationParams> = ContainerValidationParameters<ItemValidationParams>
+    ValidationParams = any
   >
   extends DefaultValidator<Out, ValidationParams>
-  implements DictionaryValidator<Out, ItemValidationParams, ValidationParams>
+  implements DictionaryValidator<Out, ValidationParams>
 {
   constructor(
-    private readonly _itemValidator: Validator<
-      DictionaryValue<Out>,
-      ItemValidationParams
-    >
+    private readonly _itemValidator: Validator<DictionaryValue<Out>>
   ) {
     super();
   }
@@ -65,17 +58,17 @@ export class DefaultDictionaryValidator<
     return this.setupCondition((value_) => this.checkKeys(value_, validator_));
   }
 
-  protected validateBaseType(value_: unknown, params_?: ValidationParams): Out {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): Out {
     if (!this.isDictionary(value_)) {
       this.throwValidationError('value is not a dictionary');
     }
 
     for (const dictionaryKey in value_) {
       try {
-        this._itemValidator.validate(
-          value_[dictionaryKey],
-          params_?.itemValidationParams
-        );
+        this._itemValidator.validate(value_[dictionaryKey]);
       } catch (reason_) {
         this.rethrowError(reason_, dictionaryKey);
       }

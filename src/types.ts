@@ -1,9 +1,6 @@
 import type { ArrayItem, MinArray } from 'ts-lib-extended';
 import type { ValidationError } from './error.js';
 
-export type ContainerValidationParameters<ValidationParams = any> = {
-  itemValidationParams?: ValidationParams;
-};
 export type MethodLike = (...args_: any[]) => any;
 export type ObjectLike = Record<PropertyKey, any>;
 export type AnyLike =
@@ -67,10 +64,7 @@ export interface Validator<Out, ValidationParams = any> {
    */
   isValid(value_: unknown, params_?: ValidationParams): value_ is Out;
 }
-export type PropertyValidators<
-  V extends ObjectLike,
-  ValidationParams = any
-> = {
+export type PropertyValidators<V extends ObjectLike, ValidationParams = any> = {
   readonly [key in keyof V]-?: Validator<V[key], ValidationParams>;
 };
 export type PartialPropertyValidators<V, ValidationParams = any> = {
@@ -88,9 +82,6 @@ export type ValidationCondition<V, ValidationParams = any> = (
   params_?: ValidationParams
 ) => void | never;
 export type DateLike = string | number | Date;
-export type TupleItemValidators<
-  A extends unknown[],
-  ValidationParams = any
-> = {
+export type TupleItemValidators<A extends unknown[], ValidationParams = any> = {
   [index in keyof A]: Validator<A[index], ValidationParams>;
 };

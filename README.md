@@ -15,7 +15,6 @@
 - [How to define custom validators](#how-to-define-custom-validators)
   - [Create specialized (data type related) validators](#create-specialized-data-type-related-validators)
   - [Validation based on external influences](#validation-based-on-external-influences)
-  - [Validation based on external influences](#validation-based-on-external-influences-1)
 - [Predefined validators](#predefined-validators)
   - [String](#string)
   - [Number](#number)
@@ -182,24 +181,28 @@ Sometimes data validation depends on external influences that limit the actual d
 This simple example demonstrates 3 options to implement extended validation:
 
 ```ts
-import { ti, DefaultOptionalValidator } from 'ts-type-inspector';
+import { DefaultObjectValidator, ti } from 'ts-type-inspector';
 
-export type MyData = string | undefined;
+export type CommonData = {
+  data: string | undefined;
+};
 
-export type MyDataExtendedValidationParameter = {
+export type CommonDataValidationParameter = {
   valueRequired?: boolean;
 };
 
-export class MyDataOptionalValidator extends DefaultOptionalValidator<
-  MyData,
-  MyDataExtendedValidationParameter
+export class CommonDataValidator extends DefaultObjectValidator<
+  CommonData,
+  CommonDataValidationParameter
 > {
   constructor() {
-    super(ti.string);
+    super({
+      data: ti.optional(ti.string)
+    });
 
     // 1. option - use the custom condition
     this.custom((value_, params_) => {
-      if (params_?.valueRequired && value_ === undefined) {
+      if (params_?.valueRequired && value_.data === undefined) {
         return 'data is required';
       }
     });
@@ -208,7 +211,7 @@ export class MyDataOptionalValidator extends DefaultOptionalValidator<
   // 2. option - create a new condition
   public get failWhenRequired() {
     this.setupCondition((value_, params_) => {
-      if (params_?.valueRequired && value_ === undefined) {
+      if (params_?.valueRequired && value_.data === undefined) {
         this.throwValidationError('data is required');
       }
     });
@@ -218,11 +221,11 @@ export class MyDataOptionalValidator extends DefaultOptionalValidator<
   // 3. option - extend base type validation
   protected validateBaseType(
     value_: unknown,
-    params_?: MyDataExtendedValidationParameter | undefined
-  ): MyData {
-    const base = super.validateBaseType(value_);
+    params_?: CommonDataValidationParameter
+  ): CommonData {
+    const base = super.validateBaseType(value_, params_);
 
-    if (params_?.valueRequired && base === undefined) {
+    if (params_?.valueRequired && base.data === undefined) {
       this.throwValidationError('data is required');
     }
 
@@ -230,20 +233,17 @@ export class MyDataOptionalValidator extends DefaultOptionalValidator<
   }
 }
 
-const mdov = new MyDataOptionalValidator();
-const value: MyData = undefined;
+const cdv = new CommonDataValidator();
+const value: CommonData = { data: undefined };
+
 // using 1. or 3. option
-mdov.isValid(value); // true
-mdov.isValid(value, { valueRequired: true }); // false
+cdv.isValid(value); // true
+cdv.isValid(value, { valueRequired: true }); // false
 
 // using 2. option
-mdov.failWhenRequired.isValid(value); // true
-mdov.failWhenRequired.isValid(value, { valueRequired: true }); // false
+cdv.isValid(value, { valueRequired: true }); // true
+cdv.failWhenRequired.isValid(value, { valueRequired: true }); // false
 ```
-
-### Validation based on external influences
-
-WIP
 
 ## Predefined validators
 

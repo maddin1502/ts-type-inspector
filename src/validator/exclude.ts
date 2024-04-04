@@ -14,11 +14,8 @@ import { DefaultValidator } from './index.js';
  * @extends {Validator<Out, ValidationParams>}
  * @since 1.1.0
  */
-export interface ExcludeValidator<
-  Out extends In,
-  In,
-  ValidationParams = any
-> extends Validator<Out, ValidationParams> {}
+export interface ExcludeValidator<Out extends In, In, ValidationParams = any>
+  extends Validator<Out, ValidationParams> {}
 
 /**
  * This validator is able to validate if a type doesn't exist in a KNOWN union type.
@@ -34,11 +31,7 @@ export interface ExcludeValidator<
  * @implements {ExcludeValidator<Out, In, ValidationParams>}
  * @since 1.1.0
  */
-export class DefaultExcludeValidator<
-    Out extends In,
-    In,
-    ValidationParams = any
-  >
+export class DefaultExcludeValidator<Out extends In, In, ValidationParams = any>
   extends DefaultValidator<Out, ValidationParams>
   implements ExcludeValidator<Out, In, ValidationParams>
 {

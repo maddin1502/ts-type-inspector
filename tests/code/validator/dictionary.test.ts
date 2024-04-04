@@ -1,7 +1,6 @@
 import { TypeInspector } from '@/inspector.js';
 import { DefaultDictionaryValidator } from '@/validator/dictionary.js';
 import { describe, expect, test } from 'vitest';
-import { ExtendedValidationParametersValidator } from '../../testTypes.js';
 
 const ti = new TypeInspector();
 
@@ -65,62 +64,5 @@ describe(DefaultDictionaryValidator, () => {
           test3: false
         })
     ).toBe(false);
-  });
-
-  test('extended validation params', () => {
-    expect.assertions(8);
-    const ddvEvpv = new DefaultDictionaryValidator(
-      new ExtendedValidationParametersValidator().extendedFailureCondition
-    );
-    expect(ddvEvpv.isValid({ hello: 'world' })).toBe(true);
-    expect(() => ddvEvpv.validate({ hello: 'world' })).not.toThrow();
-    expect(
-      ddvEvpv.isValid(
-        { hello: 'world' },
-        {
-          itemValidationParams: { failOn: 'condition' }
-        }
-      )
-    ).toBe(false);
-    expect(() =>
-      ddvEvpv.validate(
-        { hello: 'world' },
-        {
-          itemValidationParams: { failOn: 'condition' }
-        }
-      )
-    ).toThrow('extended failure on condition');
-    expect(
-      ddvEvpv.isValid(
-        { hello: 'world' },
-        {
-          itemValidationParams: { failOn: 'custom' }
-        }
-      )
-    ).toBe(false);
-    expect(() =>
-      ddvEvpv.validate(
-        { hello: 'world' },
-        {
-          itemValidationParams: { failOn: 'custom' }
-        }
-      )
-    ).toThrow('extended failure on custom');
-    expect(
-      ddvEvpv.isValid(
-        { hello: 'world' },
-        {
-          itemValidationParams: { failOn: 'validate' }
-        }
-      )
-    ).toBe(false);
-    expect(() =>
-      ddvEvpv.validate(
-        { hello: 'world' },
-        {
-          itemValidationParams: { failOn: 'validate' }
-        }
-      )
-    ).toThrow('extended failure on validate');
   });
 });
