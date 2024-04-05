@@ -20,3 +20,6 @@ jobs:
       - name: 'Report Coverage'
         if: always()
         uses:  davelosert/vitest-coverage-report-action@v2.3.0
+        with:
+          json-summary-path: ${working-directory}/tests/reports/coverage-summary.json
+          json-final-path: ${working-directory}/tests/reports/coverage-final.json
