@@ -9,11 +9,12 @@ export default defineConfig({
   },
   test: {
     coverage: {
-      reporter: ['text', 'html', 'cobertura'],
-      include: ['src/**/*.*'],
+      reporter: ['text', 'html', 'cobertura', 'json-summary', 'json'],
+      include: ['src/'],
       reportsDirectory: './tests/reports/coverage',
       clean: true,
-      cleanOnRerun: true
+      cleanOnRerun: true,
+      reportOnFailure: true
     },
     reporters: ['default', 'junit'],
     dir: './tests',

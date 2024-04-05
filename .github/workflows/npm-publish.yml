@@ -14,7 +14,7 @@ jobs:
       - name: Setup
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
           registry-url: https://registry.npmjs.org/
       - name: Produce (install, build, test)
         run: npm run produce
@@ -23,12 +23,6 @@ jobs:
         with:
           name: test-reports
           path: tests/reports/
-          if-no-files-found: error
-      - name: Archive package-lock
-        uses: actions/upload-artifact@v3.1.0
-        with:
-          name: package-lock.json
-          path: package-lock.json
           if-no-files-found: error
       - name: Publish package
         run: npm publish
