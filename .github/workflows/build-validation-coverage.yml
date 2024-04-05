@@ -29,7 +29,7 @@ jobs:
         run: npm install
       - name: Test
         run: npm test
-      - name: Prepare a unique name for artifacts
+      - name: Generate upload artifact name
         run: |
           name=$(echo -n "${{ matrix.branch }}" | sed -e 's/[ \t:\/\\"<>|*?]/-/g' -e 's/--*/-/g')
           echo "ARTIFACT_NAME=$name" >> $GITHUB_ENV
@@ -43,10 +43,14 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
+      - name: Generate upload artifact name
+        run: |
+          name=$(echo -n "${{ matrix.branch }}" | sed -e 's/[ \t:\/\\"<>|*?]/-/g' -e 's/--*/-/g')
+          echo "ARTIFACT_NAME=$name" >> $GITHUB_ENV
       - name: Download Coverage Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: coverage-${{ github.head_ref }}
+          name: coverage-${{ env.ARTIFACT_NAME }}
           path: coverage
       - uses: actions/download-artifact@v4
         with:
