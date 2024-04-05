@@ -17,3 +17,9 @@ jobs:
           node-version: 20.x
       - name: Validate (install, build, test)
         run: npm run produce
+      - name: 'Report Coverage'
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2.3.0
+        with:
+          json-summary-path: tests/reports/coverage/coverage-summary.json
+          json-final-path: tests/reports/coverage/coverage-final.json
