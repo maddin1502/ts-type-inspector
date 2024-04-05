@@ -1,32 +1,40 @@
-import type { Validatable } from '../types.js';
-import { Validator } from './index.js';
+import type { ObjectLike, Validator } from '../types.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for undefined values
  *
- * @since 1.0.0
  * @export
+ * @interface UndefinedValidator
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {Validator<undefined, ValidationParams>}
+ * @since 1.0.0
  */
-export type UndefinedValidatable = Validatable<undefined>;
+export interface UndefinedValidator<ValidationParams extends ObjectLike = any>
+  extends Validator<undefined, ValidationParams> {}
 
 /**
  * Validator for undefined values
  *
- * @since 1.0.0
  * @export
- * @class UndefinedValidator
- * @extends {Validator<undefined>}
- * @implements {UndefinedValidatable}
+ * @class DefaulUndefinedValidator
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<undefined, ValidationParams>}
+ * @implements {UndefinedValidator<ValidationParams>}
+ * @since 1.0.0
  */
-export class UndefinedValidator
-  extends Validator<undefined>
-  implements UndefinedValidatable
+export class DefaulUndefinedValidator<ValidationParams extends ObjectLike = any>
+  extends DefaultValidator<undefined, ValidationParams>
+  implements UndefinedValidator<ValidationParams>
 {
-  protected validateBaseType(value_: unknown): undefined {
-    if (value_ !== undefined) {
-      this.throwValidationError('value is defined');
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): undefined {
+    if (value_ === undefined) {
+      return value_;
     }
 
-    return value_;
+    this.throwValidationError('value is defined');
   }
 }

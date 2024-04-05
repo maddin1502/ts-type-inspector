@@ -1,138 +1,166 @@
-import type { Validatable } from '../types.js';
-import { Validator } from './index.js';
+import type { ObjectLike, Validator } from '../types.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for numeric values
  *
- * @since 1.0.0
  * @export
+ * @interface NumberValidator
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {Validator<number, ValidationParams>}
+ * @since 1.0.0
  */
-export type NumberValidatable = Validatable<number> & {
+export interface NumberValidator<ValidationParams extends ObjectLike = any>
+  extends Validator<number, ValidationParams> {
   /**
    * accept positive values only (zero is not positive)
    *
+   * @readonly
+   * @type {this}
    * @since 1.0.0
    */
-  get positive(): NumberValidatable;
+  get positive(): this;
   /**
    * accept negative values only (zero is not negative)
    *
+   * @readonly
+   * @type {this}
    * @since 1.0.0
    */
-  get negative(): NumberValidatable;
+  get negative(): this;
   /**
    * reject NaN and Infinity
    *
+   * @readonly
+   * @type {this}
    * @since 1.0.0
    */
-  get finite(): NumberValidatable;
+  get finite(): this;
   /**
    * reject NaN
    *
+   * @readonly
+   * @type {this}
    * @since 1.0.0
    */
-  get rejectNaN(): NumberValidatable;
+  get rejectNaN(): this;
   /**
    * reject Infinity
    *
+   * @readonly
+   * @type {this}
    * @since 1.0.0
    */
-  get rejectInfinity(): NumberValidatable;
+  get rejectInfinity(): this;
   /**
    * reject 0
    *
+   * @readonly
+   * @type {this}
    * @since 1.0.0
    */
-  get rejectZero(): NumberValidatable;
+  get rejectZero(): this;
   /**
    * validate minimum value
    *
+   * @param {number} min_
+   * @returns {this}
    * @since 1.0.0
    */
-  min(min_: number): NumberValidatable;
+  min(min_: number): this;
   /**
    * validate maximum value
    *
+   * @param {number} max_
+   * @returns {this}
    * @since 1.0.0
    */
-  max(max_: number): NumberValidatable;
+  max(max_: number): this;
   /**
    * define accepted numbers
    *
+   * @param {...ReadonlyArray<number>} numbers_
+   * @returns {this}
    * @since 1.0.0
    */
-  accept(...numbers_: ReadonlyArray<number>): NumberValidatable;
+  accept(...numbers_: ReadonlyArray<number>): this;
   /**
    * define rejected numbers
    *
+   * @param {...ReadonlyArray<number>} numbers_
+   * @returns {this}
    * @since 1.0.0
    */
-  reject(...numbers_: ReadonlyArray<number>): NumberValidatable;
-};
+  reject(...numbers_: ReadonlyArray<number>): this;
+}
 
 /**
  * Validator for numeric values
  *
- * @since 1.0.0
  * @export
- * @class NumberValidator
- * @extends {RangeValidator<number>}
- * @implements {NumberValidatorInterface}
+ * @class DefaultNumberValidator
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<number, ValidationParams>}
+ * @implements {NumberValidator<ValidationParams>}
+ * @since 1.0.0
  */
-export class NumberValidator
-  extends Validator<number>
-  implements NumberValidatable
+export class DefaultNumberValidator<ValidationParams extends ObjectLike = any>
+  extends DefaultValidator<number, ValidationParams>
+  implements NumberValidator<ValidationParams>
 {
-  public get positive(): NumberValidatable {
+  public get positive(): this {
     return this.setupCondition((value_) => this.checkPositive(value_));
   }
 
-  public get negative(): NumberValidatable {
+  public get negative(): this {
     return this.setupCondition((value_) => this.checkNegative(value_));
   }
 
-  public get finite(): NumberValidatable {
+  public get finite(): this {
     return this.setupCondition((value_) => this.checkFinite(value_));
   }
 
-  public get rejectNaN(): NumberValidatable {
+  public get rejectNaN(): this {
     return this.setupCondition((value_) => this.checkNaN(value_));
   }
 
-  public get rejectInfinity(): NumberValidatable {
+  public get rejectInfinity(): this {
     return this.setupCondition((value_) => this.checkInfinity(value_));
   }
 
-  public get rejectZero(): NumberValidatable {
+  public get rejectZero(): this {
     return this.setupCondition((value_) => this.checkZero(value_));
   }
 
-  public min(min_: number): NumberValidatable {
+  public min(min_: number): this {
     return this.setupCondition((value_) => this.checkMin(value_, min_));
   }
 
-  public max(max_: number): NumberValidatable {
+  public max(max_: number): this {
     return this.setupCondition((value_) => this.checkMax(value_, max_));
   }
 
-  public accept(...numbers_: ReadonlyArray<number>): NumberValidatable {
+  public accept(...numbers_: ReadonlyArray<number>): this {
     return this.setupCondition((value_) =>
       this.checkAccepted(value_, numbers_)
     );
   }
 
-  public reject(...numbers_: ReadonlyArray<number>): NumberValidatable {
+  public reject(...numbers_: ReadonlyArray<number>): this {
     return this.setupCondition((value_) =>
       this.checkRejected(value_, numbers_)
     );
   }
 
-  protected validateBaseType(value_: unknown): number {
-    if (typeof value_ !== 'number') {
-      this.throwValidationError('value is not a number');
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): number {
+    if (typeof value_ === 'number') {
+      return value_;
     }
 
-    return value_;
+    this.throwValidationError('value is not a number');
   }
 
   private checkFinite(value_: number): void {

@@ -1,6 +1,6 @@
+import { ValidationError } from '@/error.js';
+import { TypeInspector } from '@/inspector.js';
 import { describe, expect, test } from 'vitest';
-import { ValidationError } from '../../src/error.js';
-import { TypeInspector } from '../../src/inspector.js';
 
 const ti = new TypeInspector();
 

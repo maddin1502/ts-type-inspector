@@ -1,6 +1,6 @@
+import { TypeInspector } from '@/inspector.js';
+import { DefaultMethodValidator } from '@/validator/method.js';
 import { describe, expect, test } from 'vitest';
-import { TypeInspector } from '../../../src/inspector.js';
-import { MethodValidator } from '../../../src/validator/method.js';
 
 const ti = new TypeInspector();
 
@@ -34,7 +34,7 @@ class DummyMethodContainer implements DummyMethodContainerInterface {
   }
 }
 
-describe(MethodValidator.name, () => {
+describe(DefaultMethodValidator, () => {
   test('isValid - success', () => {
     expect.assertions(5);
     expect(ti.method.isValid(methodDummy)).toBe(true);

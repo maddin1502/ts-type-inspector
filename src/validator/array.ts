@@ -1,85 +1,106 @@
-import type { Validatable } from '../types.js';
-import { Validator } from './index.js';
+import type { ObjectLike, Validator } from '../types.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for array values
  *
- * @since 1.0.0
  * @export
+ * @interface ArrayValidator
  * @template Out
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {Validator<Out[], ValidationParams>}
+ * @since 1.0.0
  */
-export type ArrayValidatable<Out> = Validatable<Out[]> & {
+export interface ArrayValidator<Out, ValidationParams extends ObjectLike = any>
+  extends Validator<Out[], ValidationParams> {
   /**
    * validate exact array length
    *
+   * @param {number} length_
+   * @returns {this}
    * @since 1.0.0
    */
-  length(length_: number): ArrayValidatable<Out>;
+  length(length_: number): this;
   /**
    * validate minimum array length
    *
+   * @param {number} min_
+   * @returns {this}
    * @since 1.0.0
    */
-  min(min_: number): ArrayValidatable<Out>;
+  min(min_: number): this;
   /**
    * validate maximum array length
    *
+   * @param {number} max_
+   * @returns {this}
    * @since 1.0.0
    */
-  max(max_: number): ArrayValidatable<Out>;
+  max(max_: number): this;
   /**
    * define accepted values
    *
+   * @param {...ReadonlyArray<Out>} items_
+   * @returns {this}
    * @since 1.0.0
    */
-  accept(...items_: ReadonlyArray<Out>): ArrayValidatable<Out>;
+  accept(...items_: ReadonlyArray<Out>): this;
   /**
    * define rejected values
    *
+   * @param {...ReadonlyArray<Out>} items_
+   * @returns {this}
    * @since 1.0.0
    */
-  reject(...items_: ReadonlyArray<Out>): ArrayValidatable<Out>;
-};
+  reject(...items_: ReadonlyArray<Out>): this;
+}
 
 /**
  * Validator for array values
  *
- * @since 1.0.0
  * @export
- * @class ArrayValidator
- * @extends {Validator<Out>}
- * @implements {ArrayValidatable<Out>}
+ * @class DefaultArrayValidator
  * @template Out
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<Out[], ValidationParams>}
+ * @implements {ArrayValidator<Out, ItemValidationParams, ValidationParams>}
+ * @since 1.0.0
  */
-export class ArrayValidator<const Out>
-  extends Validator<Out[]>
-  implements ArrayValidatable<Out>
+export class DefaultArrayValidator<
+    const Out,
+    ValidationParams extends ObjectLike = any
+  >
+  extends DefaultValidator<Out[], ValidationParams>
+  implements ArrayValidator<Out, ValidationParams>
 {
-  constructor(private readonly _itemValidator: Validatable<Out>) {
+  constructor(private readonly _itemValidator: Validator<Out>) {
     super();
   }
 
-  public length(length_: number): ArrayValidatable<Out> {
+  public length(length_: number): this {
     return this.setupCondition((value_) => this.checkLength(value_, length_));
   }
 
-  public min(min_: number): ArrayValidatable<Out> {
+  public min(min_: number): this {
     return this.setupCondition((value_) => this.checkMin(value_, min_));
   }
 
-  public max(max_: number): ArrayValidatable<Out> {
+  public max(max_: number): this {
     return this.setupCondition((value_) => this.checkMax(value_, max_));
   }
 
-  public accept(...items_: ReadonlyArray<Out>): ArrayValidatable<Out> {
+  public accept(...items_: ReadonlyArray<Out>): this {
     return this.setupCondition((value_) => this.checkAccepted(value_, items_));
   }
 
-  public reject(...items_: ReadonlyArray<Out>): ArrayValidatable<Out> {
+  public reject(...items_: ReadonlyArray<Out>): this {
     return this.setupCondition((value_) => this.checkRejected(value_, items_));
   }
 
-  protected validateBaseType(value_: unknown): Out[] {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): Out[] {
     if (!Array.isArray(value_)) {
       this.throwValidationError('value is not an array');
     }

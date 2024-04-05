@@ -105,6 +105,3 @@ dist
 
 # Test reports (coverage, results, ...)
 tests/reports
-
-# ignore package-lock (always use latest packages defined in package-json)
-package-lock.json

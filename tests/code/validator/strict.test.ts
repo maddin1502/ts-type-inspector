@@ -1,10 +1,10 @@
+import { TypeInspector } from '@/inspector.js';
+import { DefaultStrictValidator } from '@/validator/strict.js';
 import { describe, expect, test } from 'vitest';
-import { TypeInspector } from '../../../src/inspector.js';
-import { StrictValidator } from '../../../src/validator/strict.js';
 
 const ti = new TypeInspector();
 
-describe(StrictValidator.name, () => {
+describe(DefaultStrictValidator, () => {
   test('isValid - success', () => {
     expect.assertions(7);
     expect(ti.strict('hello').isValid('hello')).toBe(true);

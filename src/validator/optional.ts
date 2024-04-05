@@ -1,34 +1,45 @@
-import type { Validatable } from '../types.js';
-import { Validator } from './index.js';
+import type { ObjectLike, Validator } from '../types.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for optional (maybe undefined) properties/values
  *
- * @since 1.0.0
  * @export
+ * @interface OptionalValidator
  * @template V
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {Validator<undefined | V, ValidationParams>}
+ * @since 1.0.0
  */
-export type OptionalValidatable<V> = Validatable<undefined | V>;
+export interface OptionalValidator<V, ValidationParams extends ObjectLike = any>
+  extends Validator<undefined | V, ValidationParams> {}
 
 /**
  * Validator for optional (maybe undefined) properties/values
  *
- * @since 1.0.0
  * @export
- * @class OptionalValidator
- * @extends {(Validator<undefined | V>)}
- * @implements {OptionalValidatable<V>}
+ * @class DefaultOptionalValidator
  * @template V
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<undefined | V, ValidationParams>}
+ * @implements {OptionalValidator<V, ValidationParams>}
+ * @since 1.0.0
  */
-export class OptionalValidator<V>
-  extends Validator<undefined | V>
-  implements OptionalValidatable<V>
+export class DefaultOptionalValidator<
+    V,
+    ValidationParams extends ObjectLike = any
+  >
+  extends DefaultValidator<undefined | V, ValidationParams>
+  implements OptionalValidator<V, ValidationParams>
 {
-  constructor(private readonly _validator: Validatable<V>) {
+  constructor(private readonly _validator: Validator<V>) {
     super();
   }
 
-  protected validateBaseType(value_: unknown): undefined | V {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): undefined | V {
     if (typeof value_ === 'undefined') {
       return value_;
     }

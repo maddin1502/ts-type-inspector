@@ -1,44 +1,62 @@
-import type { CustomValidation, Validatable } from '../types.js';
-import { Validator } from './index.js';
+import type { CustomValidation, ObjectLike, Validator } from '../types.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for custom value validation.
  *
- * @since 1.0.0
  * @export
+ * @interface CustomValidator
  * @template Out
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {Validator<Out, ValidationParams>}
+ * @since 1.0.0
  */
-export type CustomValidatable<Out> = Validatable<Out>;
+export interface CustomValidator<Out, ValidationParams extends ObjectLike = any>
+  extends Validator<Out, ValidationParams> {}
 
 /**
  * Validator for custom value validation.
  *
- * @since 1.0.0
  * @export
- * @class CustomValidator
- * @extends {Validator<Out>}
- * @implements {CustomValidatable<Out>}
+ * @class DefaultCustomValidator
  * @template Out
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<Out, ValidationParams>}
+ * @implements {CustomValidator<Out, ValidationParams>}
+ * @since 1.0.0
  */
-export class CustomValidator<Out>
-  extends Validator<Out>
-  implements CustomValidatable<Out>
+export class DefaultCustomValidator<
+    Out,
+    ValidationParams extends ObjectLike = any
+  >
+  extends DefaultValidator<Out, ValidationParams>
+  implements CustomValidator<Out, ValidationParams>
 {
   /**
-   * @param {CustomValidation<Out>} _validationCallback Return an error message if validation fails; else undefined
-   * @memberof CustomValidator
+   * Creates an instance of CustomValidator.
+   *
+   * @constructor
+   * @param {CustomValidation<unknown, ValidationParams>} _validationCallback  Return an error message if validation fails; else undefined
    */
-  constructor(private readonly _validationCallback: CustomValidation<unknown>) {
+  constructor(
+    private readonly _validationCallback: CustomValidation<
+      unknown,
+      ValidationParams
+    >
+  ) {
     super();
   }
 
-  protected validateBaseType(value_: unknown): Out {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): Out {
     const result = this._validationCallback(value_);
 
-    if (result !== undefined) {
-      this.throwValidationError(result);
+    if (result === undefined) {
+      return value_ as Out;
     }
 
-    return value_ as Out;
+    this.throwValidationError(result);
   }
 }

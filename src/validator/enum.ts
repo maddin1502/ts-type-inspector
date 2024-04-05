@@ -4,61 +4,70 @@ import type {
   EnumerableValue
 } from 'ts-lib-extended';
 import { enumerableObject } from 'ts-lib-extended';
-import type { Validatable } from '../types.js';
-import { Validator } from './index.js';
+import type { ObjectLike, Validator } from '../types.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for enum values
  *
- * @since 1.0.2
  * @export
- * @template E
+ * @interface EnumValidator
+ * @template {Enumerable} E
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {Validator<EnumerableValue<E>, ValidationParams>}
+ * @since 1.0.2
  */
-export type EnumValidatable<E extends Enumerable> = Validatable<
-  EnumerableValue<E>
-> & {
+export interface EnumValidator<
+  E extends Enumerable,
+  ValidationParams extends ObjectLike = any
+> extends Validator<EnumerableValue<E>, ValidationParams> {
   /**
    * additional base type validation for enum values
    *
    * @since 1.0.2
    */
-  values(
-    validator_: Validatable<EnumerableBase<EnumerableValue<E>>>
-  ): EnumValidatable<E>;
-};
+  values(validator_: Validator<EnumerableBase<EnumerableValue<E>>>): this;
+}
 
 /**
  * Validator for enum values
  *
- * @since 1.0.2
  * @export
- * @class EnumValidator
- * @extends {Validator<EnumerableValue<E>>}
- * @implements {EnumValidatable<E>}
- * @template E
+ * @class DefaultEnumValidator
+ * @template {Enumerable} E
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<EnumerableValue<E>, ValidationParams>}
+ * @implements {EnumValidator<E, ValidationParams>}
+ * @since 1.0.2
  */
-export class EnumValidator<E extends Enumerable>
-  extends Validator<EnumerableValue<E>>
-  implements EnumValidatable<E>
+export class DefaultEnumValidator<
+    E extends Enumerable,
+    ValidationParams extends ObjectLike = any
+  >
+  extends DefaultValidator<EnumerableValue<E>, ValidationParams>
+  implements EnumValidator<E, ValidationParams>
 {
   constructor(private readonly _enum: E) {
     super();
   }
 
   public values(
-    validator_: Validatable<EnumerableBase<EnumerableValue<E>>>
-  ): EnumValidatable<E> {
+    validator_: Validator<EnumerableBase<EnumerableValue<E>>>
+  ): this {
     return this.setupCondition((value_) =>
       this.checkValues(value_, validator_)
     );
   }
 
-  protected validateBaseType(value_: unknown): EnumerableValue<E> {
-    if (!this.isEnumValue(this._enum, value_)) {
-      this.throwValidationError('value does not exist in enum');
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): EnumerableValue<E> {
+    if (this.isEnumValue(this._enum, value_)) {
+      return value_;
     }
 
-    return value_;
+    this.throwValidationError('value does not exist in enum');
   }
 
   private isEnumValue(enum_: E, value_: unknown): value_ is EnumerableValue<E> {
@@ -75,7 +84,7 @@ export class EnumValidator<E extends Enumerable>
 
   private checkValues(
     value_: EnumerableValue<E>,
-    validator_: Validatable<EnumerableBase<EnumerableValue<E>>>
+    validator_: Validator<EnumerableBase<EnumerableValue<E>>>
   ): void {
     if (!validator_.isValid(value_)) {
       this.throwValidationError('value does not match enums base type');

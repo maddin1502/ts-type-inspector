@@ -1,50 +1,61 @@
-import type {
-  ObjectLike,
-  PropertyValidatables,
-  Validatable
-} from '../types.js';
-import { Validator } from './index.js';
+import type { ObjectLike, PropertyValidators, Validator } from '../types.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for object based values. Each property has to match its specified validator
  *
- * @since 1.0.0
  * @export
- * @template Out
+ * @interface ObjectValidator
+ * @template {ObjectLike} Out
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {Validator<Out, ValidationParams>}
+ * @since 1.0.0
  */
-export type ObjectValidatable<Out extends ObjectLike> = Validatable<Out> & {
+export interface ObjectValidator<
+  Out extends ObjectLike,
+  ValidationParams extends ObjectLike = any
+> extends Validator<Out, ValidationParams> {
   /**
    * Reject objects that contain more keys than have been validated
    * USE FOR POJOs ONLY!. Getter/Setter/Methods will lead to false negative results
    *
+   * @readonly
+   * @type {this}
    * @since 1.0.0
    */
-  get noOverload(): ObjectValidatable<Out>;
-};
+  get noOverload(): this;
+}
 
 /**
  * Validator for object based values. Each property has to match its specified validator
  *
- * @since 1.0.0
  * @export
- * @class ObjectValidator
- * @extends {Validator<Out>}
- * @implements {ObjectValidatable<Out>}
- * @template Out
+ * @class DefaultObjectValidator
+ * @template {ObjectLike} Out
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<Out, ValidationParams>}
+ * @implements {ObjectValidator<Out, ValidationParams>}
+ * @since 1.0.0
  */
-export class ObjectValidator<Out extends ObjectLike>
-  extends Validator<Out>
-  implements ObjectValidatable<Out>
+export class DefaultObjectValidator<
+    Out extends ObjectLike,
+    ValidationParams extends ObjectLike = any
+  >
+  extends DefaultValidator<Out, ValidationParams>
+  implements ObjectValidator<Out, ValidationParams>
 {
-  constructor(private readonly _propertyValidators: PropertyValidatables<Out>) {
+  constructor(private readonly _propertyValidators: PropertyValidators<Out>) {
     super();
   }
 
-  public get noOverload(): ObjectValidatable<Out> {
+  public get noOverload(): this {
     return this.setupCondition((value_) => this.checkOverload(value_));
   }
 
-  protected validateBaseType(value_: unknown): Out {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): Out {
     if (!this.isObjectLike(value_)) {
       this.throwValidationError('value is not an object');
     }

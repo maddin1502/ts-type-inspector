@@ -15,5 +15,8 @@
   "files.trimTrailingWhitespace": true,
   "diffEditor.ignoreTrimWhitespace": false,
   "typescript.tsdk": "node_modules\\typescript\\lib",
-	"typescript.preferences.importModuleSpecifierEnding": "js"
+  "typescript.preferences.importModuleSpecifierEnding": "js",
+  "jsdoc-generator.includeTypes": true,
+  "editor.tabSize": 2,
+  "editor.useTabStops": false
 }

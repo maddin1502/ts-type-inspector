@@ -1,43 +1,55 @@
 import type {
-  UnionValidatables,
-  UnionValidatablesItem,
-  Validatable
+  ObjectLike,
+  UnionValidators,
+  UnionValidatorsItem,
+  Validator
 } from '../types.js';
-import { Validator } from './index.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for union type values (like "string | number")
  *
- * @since 1.0.0
  * @export
- * @template V
+ * @interface UnionValidator
+ * @template {UnionValidators} V
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {Validator<UnionValidatorsItem<V>, ValidationParams>}
+ * @since 1.0.0
  */
-export type UnionValidatable<V extends UnionValidatables> = Validatable<
-  UnionValidatablesItem<V>
->;
+export interface UnionValidator<
+  V extends UnionValidators,
+  ValidationParams extends ObjectLike = any
+> extends Validator<UnionValidatorsItem<V>, ValidationParams> {}
 
 /**
  * Validator for union type values (like "string | number")
  *
- * @since 1.0.0
  * @export
- * @class UnionValidator
- * @extends {Validator<UnionValidatablesItem<V>>}
- * @implements {UnionValidatable<V>}
- * @template V
+ * @class DefaultUnionValidator
+ * @template {UnionValidators} V
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<UnionValidatorsItem<V>, ValidationParams>}
+ * @implements {UnionValidator<V, ValidationParams>}
+ * @since 1.0.0
  */
-export class UnionValidator<V extends UnionValidatables>
-  extends Validator<UnionValidatablesItem<V>>
-  implements UnionValidatable<V>
+export class DefaultUnionValidator<
+    V extends UnionValidators,
+    ValidationParams extends ObjectLike = any
+  >
+  extends DefaultValidator<UnionValidatorsItem<V>, ValidationParams>
+  implements UnionValidator<V, ValidationParams>
 {
-  private _validators: V;
+  private readonly _validators: V;
 
   constructor(...validators_: V) {
     super();
     this._validators = validators_;
   }
 
-  protected validateBaseType(value_: unknown): UnionValidatablesItem<V> {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): UnionValidatorsItem<V> {
     const errors: Error[] = [];
 
     for (let i = 0; i < this._validators.length; i++) {
@@ -59,6 +71,6 @@ export class UnionValidator<V extends UnionValidatables>
       );
     }
 
-    return value_ as UnionValidatablesItem<V>;
+    return value_ as UnionValidatorsItem<V>;
   }
 }

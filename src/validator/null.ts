@@ -1,29 +1,40 @@
-import type { Validatable } from '../types.js';
-import { Validator } from './index.js';
+import type { ObjectLike, Validator } from '../types.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for null values
  *
- * @since 1.0.0
  * @export
+ * @interface NullValidator
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {Validator<null, ValidationParams>}
+ * @since 1.0.0
  */
-export type NullValidatable = Validatable<null>;
+export interface NullValidator<ValidationParams extends ObjectLike = any>
+  extends Validator<null, ValidationParams> {}
 
 /**
  * Validator for null values
  *
- * @since 1.0.0
  * @export
- * @class NullValidator
- * @extends {Validator<null>}
- * @implements {NullValidatable}
+ * @class DefaultNullValidator
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<null, ValidationParams>}
+ * @implements {NullValidator<ValidationParams>}
+ * @since 1.0.0
  */
-export class NullValidator extends Validator<null> implements NullValidatable {
-  protected validateBaseType(value_: unknown): null {
-    if (value_ !== null) {
-      this.throwValidationError('value is not null');
+export class DefaultNullValidator<ValidationParams extends ObjectLike = any>
+  extends DefaultValidator<null, ValidationParams>
+  implements NullValidator<ValidationParams>
+{
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): null {
+    if (value_ === null) {
+      return value_;
     }
 
-    return value_;
+    this.throwValidationError('value is not null');
   }
 }

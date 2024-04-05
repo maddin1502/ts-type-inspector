@@ -1,121 +1,156 @@
 import { validate as emailValidate } from 'email-validator';
-import { isUri } from 'valid-url';
-import type { Validatable } from '../types.js';
-import { Validator } from './index.js';
+
+import { isUri, isWebUri } from 'valid-url';
+import type { ObjectLike, Validator } from '../types.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for string values.
  *
- * @since 1.0.0
  * @export
+ * @interface StringValidator
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {Validator<string, ValidationParams>}
+ * @since 1.0.0
  */
-export type StringValidatable = Validatable<string> & {
+export interface StringValidator<ValidationParams extends ObjectLike = any>
+  extends Validator<string, ValidationParams> {
   /**
    * define minimum string length
    *
+   * @param {number} min_
+   * @returns {this}
    * @since 1.0.0
    */
-  shortest(min_: number): StringValidatable;
+  shortest(min_: number): this;
   /**
    * define maximum string length
    *
+   * @param {number} max_
+   * @returns {this}
    * @since 1.0.0
    */
-  longest(max_: number): StringValidatable;
+  longest(max_: number): this;
   /**
    * define accepted values or patterns
    *
+   * @param {...ReadonlyArray<string | RegExp>} accepted_
+   * @returns {this}
    * @since 1.0.0
    */
-  accept(...accepted_: ReadonlyArray<string | RegExp>): StringValidatable;
+  accept(...accepted_: ReadonlyArray<string | RegExp>): this;
   /**
    * define rejected values or patterns
    *
+   * @param {...ReadonlyArray<string | RegExp>} rejected_
+   * @returns {this}
    * @since 1.0.0
    */
-  reject(...rejected_: ReadonlyArray<string | RegExp>): StringValidatable;
+  reject(...rejected_: ReadonlyArray<string | RegExp>): this;
   /**
    * specify exact string length
    *
+   * @param {number} length_
+   * @returns {this}
    * @since 1.0.0
    */
-  length(length_: number): StringValidatable;
+  length(length_: number): this;
   /**
    * reject empty string
    *
+   * @readonly
+   * @type {this}
    * @since 1.0.0
    */
-  get rejectEmpty(): StringValidatable;
+  get rejectEmpty(): this;
   /**
    * value has to be a base64 encoded string
    *
+   * @readonly
+   * @type {this}
    * @since 1.0.0
    */
-  get base64(): StringValidatable;
+  get base64(): this;
   /**
    * value has to be a json string (stringified instance)
    * HINT: This check uses try-catch on JSON.parse. Keep this in mind for performance reasons (multiple parsing)
    *
+   * @readonly
+   * @type {this}
    * @since 1.0.0
    */
-  get json(): StringValidatable;
+  get json(): this;
   /**
    * string has to be a valid ISO8601 date string
    *
+   * @readonly
+   * @type {this}
    * @since 1.0.0
    */
-  get date(): StringValidatable;
+  get date(): this;
   /**
    * string has to be convertable to a number
    *
+   * @readonly
+   * @type {this}
    * @since 1.0.0
    */
-  get numeric(): StringValidatable;
+  get numeric(): this;
   /**
    * string has to be an uuid (e.g. db91dc9f-9481-4843-a74b-4d027114102e)
    *
+   * @readonly
+   * @type {this}
    * @since 1.0.0
    */
-  get uuid(): StringValidatable;
+  get uuid(): this;
   /**
    * string has to be an email - uses [email-validator](https://www.npmjs.com/package/email-validator)
    *
-   * @since 1.0.0
+   * @readonly
+   * @type {this}
+   * @since X1.0.0
    */
-  get email(): StringValidatable;
+  get email(): this;
   /**
    * string has to be an uri - uses [url-validator](https://www.npmjs.com/package/url-validator)
    *
+   * @readonly
+   * @type {this}
    * @since 1.0.0
    */
-  get uri(): StringValidatable;
+  get uri(): this;
   /**
-   * string has to be an url
+   * string has to be an web-url (http, https) - uses [url-validator](https://www.npmjs.com/package/url-validator)
    *
+   * @readonly
+   * @type {this}
    * @since 1.0.0
-   * @requires "WebWorker" lib when used in frontend web application
    */
-  get url(): StringValidatable;
+  get url(): this;
   /**
    * string has to contain hexadecimal characters only
    *
+   * @readonly
+   * @type {this}
    * @since 1.0.0
    */
-  get hex(): StringValidatable;
-};
+  get hex(): this;
+}
 
 /**
  * Validator for string values.
  *
- * @since 1.0.0
  * @export
- * @class StringValidator
- * @extends {Validator<string>}
- * @implements {StringValidatable}
+ * @class DefaultStringValidator
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<string, ValidationParams>}
+ * @implements {StringValidator<ValidationParams>}
+ * @since 1.0.0
  */
-export class StringValidator
-  extends Validator<string>
-  implements StringValidatable
+export class DefaultStringValidator<ValidationParams extends ObjectLike = any>
+  extends DefaultValidator<string, ValidationParams>
+  implements StringValidator<ValidationParams>
 {
   public shortest(min_: number): this {
     return this.setupCondition((value_) => this.checkShortest(value_, min_));
@@ -181,12 +216,15 @@ export class StringValidator
     return this.setupCondition((value_) => this.checkHex(value_));
   }
 
-  protected validateBaseType(value_: unknown): string {
-    if (typeof value_ !== 'string') {
-      this.throwValidationError('value is not a string');
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): string {
+    if (typeof value_ === 'string') {
+      return value_;
     }
 
-    return value_;
+    this.throwValidationError('value is not a string');
   }
 
   protected matches(item_: string | RegExp, value_: string): boolean {
@@ -312,15 +350,7 @@ export class StringValidator
   }
 
   private checkUrl(value_: string): void {
-    if (!URL) {
-      this.throwValidationError(
-        'URL is not defined! Please use "Webworker" lib for frontend web applications'
-      );
-    }
-
-    try {
-      new URL(value_); // requires WebWorkers in browser
-    } catch {
+    if (isWebUri(value_) === undefined) {
       this.throwValidationError('string is not a url');
     }
   }

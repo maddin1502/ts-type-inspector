@@ -1,32 +1,76 @@
-# ts-type-inspector
+# ts-type-inspector <!-- omit in toc -->
 > The TypeInspector is a data validation tool that is heavily inspired by [Joi](https://www.npmjs.com/package/joi). Due to the type-safety, it can prevent a misconfigured data validation (in contrast to Joi).
 
 [![npm version](https://badge.fury.io/js/ts-type-inspector.svg)](https://badge.fury.io/js/ts-type-inspector)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![npm downloads](https://badgen.net/npm/dw/ts-type-inspector)](https://badge.fury.io/js/ts-type-inspector)
 
+- [Features](#features)
+- [Installation](#installation)
+- [Basics](#basics)
+- [Validation modes](#validation-modes)
+  - [isValid](#isvalid)
+  - [validate](#validate)
+- [Error evaluation](#error-evaluation)
+- [How to define custom validators](#how-to-define-custom-validators)
+  - [Create specialized (data type related) validators](#create-specialized-data-type-related-validators)
+  - [Validation based on external influences](#validation-based-on-external-influences)
+- [Predefined validators](#predefined-validators)
+  - [String](#string)
+  - [Number](#number)
+  - [Object](#object)
+  - [Partial](#partial)
+  - [Dictionary](#dictionary)
+  - [Array](#array)
+  - [Tuple](#tuple)
+  - [Date](#date)
+  - [Method](#method)
+  - [Union](#union)
+  - [Strict](#strict)
+  - [Optional](#optional)
+  - [Any](#any)
+  - [Custom](#custom)
+  - [Enum](#enum)
+  - [Exclude](#exclude)
+  - [Boolean](#boolean)
+  - [Undefined](#undefined)
+  - [Null](#null)
+  - [Nullish](#nullish)
+
 ## Features
-- type safe
+- type safe (no automatic type conversions/casting)
+- determine the value's data type based on the validators used (generic type arguments are mostly optional)
 - custom error messages
-- additional custom validation
-- predefined validators for most data types
+- flexibel & additional custom validation
+- predefined default-validators for most common data types
+- extendable valdators to take external dependencies into account
 
 ## Installation
 ```bash
 npm i ts-type-inspector
 ```
-or
-```bash
-yarn add ts-type-inspector
-```
 
-## Usage
+## Basics
+
+- the validation is terminated immediately when an invalidity occurs.
+- validation order:
+  1. Basic data type
+  2. Conditions
+- conditions can be chained to make the validation more precise
+- validators can be mixed to achieve more complex validation
 
 ```ts
 import ti from 'ts-type-inspector';
 
+// condition chaining
 ti.<VALIDATOR>.<CONDITION1>.<CONDITION2>()...;
 ti.<VALIDATOR>(<VALIDATION_PARAMS>).<CONDITION1>.<CONDITION2>()...;
+
+// mix validators, e.g.:
+ti.object({
+  prop1: ti.<VALIDATOR>.<CONDITION1>.<CONDITION2>()...,
+  prop2: ti.<VALIDATOR>(<VALIDATION_PARAMS>).<CONDITION1>.<CONDITION2>()...
+})
 ```
 
 Parameter | Description
@@ -34,7 +78,8 @@ Parameter | Description
 `<VALIDATOR>` | There are various validators that can be used for validation of diverse value-types (string, number, date, object, ...)
 `<VALIDATION_PARAMS>` | Some validators need configuration parameters to work correctly (array -> item validator, object -> property validators, ...)
 `<CONDITION>` | The TypeInspector uses method-chaining to define special validation conditions. These are additional checks that evaluate the incoming value more precisely
-### Validation modes
+
+## Validation modes
 
 All validators provide **two** validation modes:
 - `<VALIDATOR>`.isValid(`<UNKNOWN_VALUE>`)
@@ -42,7 +87,7 @@ All validators provide **two** validation modes:
 
 Both modes perform the same validation, but their result outputs are different.
 
-#### isValid()
+### isValid
 
 This mode uses the [type predicate](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates) feature of Typescript and therefore returns a boolean value as validation result. This assigns an exact type to the (successfully) validated value based on the validator used.
 
@@ -58,7 +103,7 @@ function processIncomingValueAsString(value_: unknown): number {
 }
 ```
 
-#### validate()
+### validate
 
 This mode throws a `ValidationError` when validation fails. On success it returns the **same** value (same object reference - in contrast to Joi) that was validated but with the correct type information.
 
@@ -75,16 +120,9 @@ function processIncomingValueAsString(value_: unknown): number {
 }
 ```
 
-### Validation order
+## Error evaluation
 
-1. Basic data type
-2. Conditions
-
-The validation is terminated immediately when an invalidity occurs.
-
-### Validation error
-
-The validation error is saved in the validator and can therefore be easily evaluated. Since the validation is terminated immediately when an invalidity occurs, the error only contains information about this specific invalidity.
+The validator saves the last validation error that occurred, making it easy to evaluate. Since the validation is terminated immediately when an invalidity occurs, the error only contains information about this specific invalidity.
 
 ```ts
 import ti from 'ts-type-inspector';
@@ -105,14 +143,111 @@ function processIncomingValueAsString(value_: unknown): number {
 Parameter | Description
 --- | ---
 `<VALIDATION_ERROR>` | Undefined if validation succeeds; Defined else; Contains reason for failed validation
-`-> propertyPath` | Trace/Path of property keys (array index, property name) to invalid value; only set if validation value is a complex data type (object, array) >> example: `propertyX.5.propertyY`
-`-> propertyTrace` | equivalent to `propertyPath` but stored as array >> `[propertyX, 5, propertyY]`
-`-> subErrors` | Each chained validator has its own validation error instance. Errors are caught, processed/expanded and then thrown again by parent validators. Each validator captures thrown child validation errors.
-`-> message` | Specific message describing the invalidity
+&rarr; `propertyPath` | Trace/Path of property keys (array index, property name) to invalid value; only set if validation value is a complex data type (object, array) >> example: `propertyX.5.propertyY`
+&rarr; `propertyTrace` | equivalent to `propertyPath` but stored as array >> `[propertyX, 5, propertyY]`
+&rarr; `subErrors` | Each chained validator has its own validation error instance. Errors are caught, processed/expanded and then thrown again by parent validators. Each validator captures thrown child validation errors.
+&rarr; `message` | Specific message describing the invalidity
 
-### Validators
+## How to define custom validators
 
-Most of the examples given here indicate generic type information of validators. This is optional, in most cases you can validate values without additional type information. The TypeInspector automatically calculates the resulting value type
+### Create specialized (data type related) validators
+
+All predefined default validators can be inherited to create custom validators for specific data types. Validation of complex data types can therefore be easily centralized for reuse.
+
+```ts
+import { DefaultObjectValidator, ti } from 'ts-type-inspector';
+
+export type CommonData = {
+  data: string | undefined;
+};
+
+export class CommonDataValidator extends DefaultObjectValidator<CommonData> {
+  constructor() {
+    super({
+      data: ti.optional(ti.string)
+    });
+  }
+}
+
+const cdv = new CommonDataValidator();
+cdv.isValide({ data: undefined }) // true
+cdv.isValide({ data: false }) // false
+```
+
+### Validation based on external influences
+
+Sometimes data validation depends on external influences that limit the actual data type or its range of values. These influencing factors can be defined for custom validators and passed during validation. This means that a new validator does not necessarily have to be developed for every use case.
+
+This simple example demonstrates 3 options to implement extended validation:
+
+```ts
+import { DefaultObjectValidator, ti } from 'ts-type-inspector';
+
+export type CommonData = {
+  data: string | undefined;
+};
+
+export type CommonDataValidationParameter = {
+  valueRequired?: boolean;
+};
+
+export class CommonDataValidator extends DefaultObjectValidator<
+  CommonData,
+  CommonDataValidationParameter
+> {
+  constructor() {
+    super({
+      data: ti.optional(ti.string)
+    });
+
+    // 1. option - use the custom condition
+    this.custom((value_, params_) => {
+      if (params_?.valueRequired && value_.data === undefined) {
+        return 'data is required';
+      }
+    });
+  }
+
+  // 2. option - create a new condition
+  public get failWhenRequired() {
+    this.setupCondition((value_, params_) => {
+      if (params_?.valueRequired && value_.data === undefined) {
+        this.throwValidationError('data is required');
+      }
+    });
+    return this;
+  }
+
+  // 3. option - extend base type validation
+  protected validateBaseType(
+    value_: unknown,
+    params_?: CommonDataValidationParameter
+  ): CommonData {
+    const base = super.validateBaseType(value_, params_);
+
+    if (params_?.valueRequired && base.data === undefined) {
+      this.throwValidationError('data is required');
+    }
+
+    return base;
+  }
+}
+
+const cdv = new CommonDataValidator();
+const value: CommonData = { data: undefined };
+
+// when using 1. or 3. option
+cdv.isValid(value); // true
+cdv.isValid(value, { valueRequired: true }); // false
+
+// when using 2. option
+cdv.isValid(value, { valueRequired: true }); // true
+cdv.failWhenRequired.isValid(value, { valueRequired: true }); // false
+```
+
+## Predefined validators
+
+Most of the examples given here indicate generic type information of validators. This is optional, in most cases you can validate values without additional type information. The TypeInspector automatically calculates the resulting value type.
 
 ```ts
 import ti from 'ts-type-inspector';
@@ -131,7 +266,7 @@ const <VALUE> = ti.object({
 */
 ```
 
-#### String
+### String
 
 > since 1.0.0
 
@@ -155,7 +290,7 @@ Validator for string values.
 | url | string has to match url pattern |
 | hex | accept just hexadecimal strings |
 
-#### Number
+### Number
 
 > since 1.0.0
 
@@ -174,45 +309,16 @@ Validator for number values.
 | accept | accept specific numbers only |
 | reject | reject specific numbers |
 
-#### Boolean
-
-> since 1.0.0
-
-Validator for boolean values.
-
-| Condition | Description |
-|---|---|
-| true | only true is valid |
-| false | only false is valid |
-
-#### Undefined
-
-> since 1.0.0
-
-This validator rejects all values that are defined (!== undefined).
-
-#### Null
-
-> since 1.0.0
-
-This validator rejects all values that are not null.
-
-#### Nullish
-
-> since 1.0.0
-
-This validator rejects all values that are not null or undefined.
-
-#### Object
+### Object
 
 > since 1.0.0
 
 Validator for object based values.
-- `null` is rejected
+- `null` is rejected by default
 
 | Condition | Description |
 |---|---|
-| noOverload | reject objects that contain more keys than have been validated **USE FOR POJOs ONLY!**. Getter/Setter or private properties will lead to false negative results |
+| noOverload | reject objects that contain more keys than have been validated. **USE FOR POJOs ONLY!**. Getters/setters or private properties can produce false negatives. |
 
 ```ts
 import ti from 'ts-type-inspector';
@@ -228,7 +334,7 @@ ti.object<DataInterface>({
 });
 ```
 
-#### Partial
+### Partial
 
 > since 2.0.0
 
@@ -248,7 +354,7 @@ ti.partial<DataInterface>({
 });
 ```
 
-#### Dictionary
+### Dictionary
 
 > since 1.0.0
 
@@ -278,7 +384,7 @@ ti.dictionary<DictionaryDataInterface>(
 );
 ```
 
-#### Array
+### Array
 
 > since 1.0.0
 
@@ -310,7 +416,29 @@ ti.array<DataArrayType>(
 );
 ```
 
-#### Date
+### Tuple
+
+> since 3.0.0
+
+Validator for tuple based values (e.g. `[string, number]`).
+
+| Condition | Description |
+|---|---|
+| noOverload | reject tuples that contain more entries than have been validated |
+
+```ts
+import ti from 'ts-type-inspector';
+
+type DataTuple = [string, number, 'mode1' | 'mode2']
+
+ti.tuple<DataTuple>(
+  ti.string,
+  ti.number,
+  ti.strict('mode1', 'mode2')
+);
+```
+
+### Date
 
 > since 1.0.0
 
@@ -326,7 +454,7 @@ Validator for date objects.
 
 \* `string` (ISO8601), `number` (timestamp) and `date` can be used.
 
-#### Method
+### Method
 
 > since 1.0.0
 
@@ -342,7 +470,7 @@ Unfortunately (for technical reasons), this validator can only validate the numb
 | accept | accept methods with specific params count only |
 | reject | reject methods with specific params count |
 
-#### Union
+### Union
 
 > since 1.0.0
 
@@ -361,7 +489,7 @@ ti.union<UnionDataType>(
 );
 ```
 
-#### Strict
+### Strict
 
 > since 1.0.0
 
@@ -377,7 +505,7 @@ const <VALUE> = ti.strict<StrictType>('hello', 'world');
 
 > In contrast to `union` the strict validator validates the exact value and not just the value type. The resulting `<VALUE>` will be of type `'hello' | 'world'` (and not just `string`)
 
-#### Optional
+### Optional
 
 > since 1.0.0
 
@@ -415,7 +543,7 @@ ti.object<MoreDataInterface>(
 );
 ```
 
-#### Any
+### Any
 
 > since 1.0.0
 
@@ -426,7 +554,7 @@ This validator should only be used when a value is indeterminate or when you wan
 | notNullish | reject null or undefined |
 | notFalsy | reject null, undefined, 0, '', false, NaN, ... |
 
-#### Custom
+### Custom
 
 > since 1.0.0
 
@@ -444,7 +572,7 @@ ti.custom(value_ => {
 
 > Return an error message if validation fails. Don't throw your own error!
 
-#### Enum
+### Enum
 
 > since 1.0.2
 
@@ -471,7 +599,7 @@ ti.enum(StringEnum).values(ti.string.reject(StringEnum.bar));
 |---|---|
 | values | add validator for additional base type validation |
 
-#### Exclude
+### Exclude
 
 > since 1.1.0
 
@@ -499,3 +627,32 @@ function filter2(input_: Input): string {
   ).validate(input_);
 }
 ```
+
+### Boolean
+
+> since 1.0.0
+
+Validator for boolean values.
+
+| Condition | Description |
+|---|---|
+| true | only true is valid |
+| false | only false is valid |
+
+### Undefined
+
+> since 1.0.0
+
+This validator rejects all values that are defined (!== undefined).
+
+### Null
+
+> since 1.0.0
+
+This validator rejects all values that are not null.
+
+### Nullish
+
+> since 1.0.0
+
+This validator rejects all values that are not null or undefined.

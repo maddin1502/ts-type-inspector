@@ -7,54 +7,87 @@ export type {
   DateLike,
   MethodLike,
   ObjectLike,
-  PartialPropertyValidatables,
-  PropertyValidatables,
-  SelectPropertyValidatables,
-  UnionValidatables,
-  UnionValidatablesItem,
-  Validatable,
+  PartialPropertyValidators,
+  PropertyValidators,
+  SelectPropertyValidators,
+  TupleItemValidators,
+  UnionValidators,
+  UnionValidatorsItem,
   ValidationCondition,
-  ValidationErrorHandler
+  ValidationErrorHandler,
+  Validator
 } from './types.js';
-export { AnyValidator } from './validator/any.js';
-export type { AnyValidatable } from './validator/any.js';
-export { ArrayValidator } from './validator/array.js';
-export type { ArrayValidatable } from './validator/array.js';
-export { BooleanValidator } from './validator/boolean.js';
-export type { BooleanValidatable } from './validator/boolean.js';
-export { CustomValidator } from './validator/custom.js';
-export type { CustomValidatable } from './validator/custom.js';
-export { DateValidator } from './validator/date.js';
-export type { DateValidatable } from './validator/date.js';
-export { DictionaryValidator } from './validator/dictionary.js';
-export type { DictionaryValidatable } from './validator/dictionary.js';
-export { EnumValidator } from './validator/enum.js';
-export type { EnumValidatable } from './validator/enum.js';
-export { ExcludeValidator } from './validator/exclude.js';
-export type { ExcludeValidatable } from './validator/exclude.js';
-export { Validator } from './validator/index.js';
-export { MethodValidator } from './validator/method.js';
-export type { MethodValidatable } from './validator/method.js';
-export { NullValidator } from './validator/null.js';
-export type { NullValidatable } from './validator/null.js';
-export { NullishValidator } from './validator/nullish.js';
-export type { NullishValidatable } from './validator/nullish.js';
-export { NumberValidator } from './validator/number.js';
-export type { NumberValidatable } from './validator/number.js';
-export { ObjectValidator } from './validator/object.js';
-export type { ObjectValidatable } from './validator/object.js';
-export { PartialValidator } from './validator/partial.js';
-export type { PartialValidatable } from './validator/partial.js';
-export { StrictValidator } from './validator/strict.js';
-export type { StrictValidatable } from './validator/strict.js';
-export { StringValidator } from './validator/string.js';
-export type { StringValidatable } from './validator/string.js';
-export { UndefinedValidator } from './validator/undefined.js';
-export type { UndefinedValidatable } from './validator/undefined.js';
-export { UnionValidator } from './validator/union.js';
-export type { UnionValidatable } from './validator/union.js';
+export { DefaultAnyValidator, type AnyValidator } from './validator/any.js';
+export {
+  DefaultArrayValidator,
+  type ArrayValidator
+} from './validator/array.js';
+export {
+  DefaultBooleanValidator,
+  type BooleanValidator
+} from './validator/boolean.js';
+export {
+  DefaultCustomValidator,
+  type CustomValidator
+} from './validator/custom.js';
+export { DefaultDateValidator, type DateValidator } from './validator/date.js';
+export {
+  DefaultDictionaryValidator,
+  type DictionaryValidator
+} from './validator/dictionary.js';
+export { DefaultEnumValidator, type EnumValidator } from './validator/enum.js';
+export {
+  DefaultExcludeValidator,
+  type ExcludeValidator
+} from './validator/exclude.js';
+export { DefaultValidator } from './validator/index.js';
+export {
+  DefaultMethodValidator,
+  type MethodValidator
+} from './validator/method.js';
+export { DefaultNullValidator, type NullValidator } from './validator/null.js';
+export {
+  DefaultNullishValidator,
+  type NullishValidator
+} from './validator/nullish.js';
+export {
+  DefaultNumberValidator,
+  type NumberValidator
+} from './validator/number.js';
+export {
+  DefaultObjectValidator,
+  type ObjectValidator
+} from './validator/object.js';
+export {
+  DefaultOptionalValidator,
+  type OptionalValidator
+} from './validator/optional.js';
+export {
+  DefaultPartialValidator,
+  type PartialValidator
+} from './validator/partial.js';
+export {
+  DefaultStrictValidator,
+  type StrictValidator
+} from './validator/strict.js';
+export {
+  DefaultStringValidator,
+  type StringValidator
+} from './validator/string.js';
+export {
+  DefaultTupleValidator,
+  type TupleValidator
+} from './validator/tuple.js';
+export {
+  DefaulUndefinedValidator,
+  type UndefinedValidator
+} from './validator/undefined.js';
+export {
+  DefaultUnionValidator,
+  type UnionValidator
+} from './validator/union.js';
 
-const ti = new TypeInspector();
+export const ti = new TypeInspector();
 
-export { TypeInspector, ti };
+export { TypeInspector };
 export default ti;

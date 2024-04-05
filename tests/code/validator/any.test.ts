@@ -1,10 +1,10 @@
+import { TypeInspector } from '@/inspector.js';
+import { DefaultAnyValidator } from '@/validator/any.js';
 import { describe, expect, test } from 'vitest';
-import { TypeInspector } from '../../../src/inspector.js';
-import { AnyValidator } from '../../../src/validator/any.js';
 
 const ti = new TypeInspector();
 
-describe(AnyValidator.name, () => {
+describe(DefaultAnyValidator, () => {
   test('isValid - success', () => {
     expect.assertions(10);
     expect(ti.any.isValid(undefined)).toBe(true);

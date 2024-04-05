@@ -1,9 +1,9 @@
+import { TypeInspector } from '@/inspector.js';
 import { describe, expect, test } from 'vitest';
-import { TypeInspector } from '../../src/inspector.js';
 
 const ti = new TypeInspector();
 
-describe(TypeInspector.name, () => {
+describe(TypeInspector, () => {
   test('boolean', () => {
     expect.assertions(1);
     expect(ti.boolean === ti.boolean).toBe(false);

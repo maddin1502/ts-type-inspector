@@ -1,48 +1,66 @@
-import type { Validatable } from '../types.js';
-import { Validator } from './index.js';
-
-export type BooleanValidatable = Validatable<boolean> & {
-  /**
-   * accept just true
-   *
-   * @since 1.0.0
-   */
-  get true(): BooleanValidatable;
-  /**
-   * accept just false
-   *
-   * @since 1.0.0
-   */
-  get false(): BooleanValidatable;
-};
+import type { ObjectLike, Validator } from '../types.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for boolean values
  *
- * @since 1.0.0
  * @export
- * @class BooleanValidator
- * @extends {Validator<boolean>}
- * @implements {BooleanValidatable}
+ * @interface BooleanValidator
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {Validator<boolean, ValidationParams>}
+ * @since 1.0.0
  */
-export class BooleanValidator
-  extends Validator<boolean>
-  implements BooleanValidatable
+export interface BooleanValidator<ValidationParams extends ObjectLike = any>
+  extends Validator<boolean, ValidationParams> {
+  /**
+   * accept just true
+   *
+   * @readonly
+   * @type {this}
+   * @since 1.0.0
+   */
+  get true(): this;
+  /**
+   * accept just false
+   *
+   * @readonly
+   * @type {this}
+   * @since 1.0.0
+   */
+  get false(): this;
+}
+
+/**
+ * Validator for boolean values
+ *
+ * @export
+ * @class DefaultBooleanValidator
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<boolean, ValidationParams>}
+ * @implements {BooleanValidator<ValidationParams>}
+ * @since 1.0.0
+ */
+export class DefaultBooleanValidator<ValidationParams extends ObjectLike = any>
+  extends DefaultValidator<boolean, ValidationParams>
+  implements BooleanValidator<ValidationParams>
 {
-  public get true(): BooleanValidatable {
+  public get true(): this {
     return this.setupCondition((value_) => this.checkTrue(value_));
   }
 
-  public get false(): BooleanValidatable {
+  public get false(): this {
     return this.setupCondition((value_) => this.checkFalse(value_));
   }
 
-  protected validateBaseType(value_: unknown): boolean {
-    if (typeof value_ !== 'boolean') {
-      this.throwValidationError('value is not a boolean');
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): boolean {
+    if (typeof value_ === 'boolean') {
+      return value_;
     }
 
-    return value_;
+    this.throwValidationError('value is not a boolean');
   }
 
   private checkTrue(value_: boolean): void {

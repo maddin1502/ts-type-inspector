@@ -1,10 +1,10 @@
+import { TypeInspector } from '@/inspector.js';
+import { DefaultNumberValidator } from '@/validator/number.js';
 import { describe, expect, test } from 'vitest';
-import { TypeInspector } from '../../../src/inspector.js';
-import { NumberValidator } from '../../../src/validator/number.js';
 
 const ti = new TypeInspector();
 
-describe(NumberValidator.name, () => {
+describe(DefaultNumberValidator, () => {
   test('isValid - success', () => {
     expect.assertions(6);
     expect(ti.number.isValid(42)).toBe(true);

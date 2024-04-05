@@ -1,7 +1,7 @@
 {
   "name": "ts-type-inspector",
-  "version": "2.1.1",
-  "description": "Type safe tool for value validation",
+  "version": "3.0.0",
+  "description": "Tool for type safe value validation",
   "files": [
     "dist"
   ],
@@ -10,17 +10,18 @@
   "type": "module",
   "scripts": {
     "build": "tsc -p ./tsconfig.prod.json",
-    "build-dev": "tsc -p ./tsconfig.dev.json",
+    "build:dev": "tsc -p ./tsconfig.dev.json",
     "lint": "eslint src",
-    "lint-fix": "npm run lint -- --fix",
-    "test": "vitest run --coverage",
-    "test-ui": "vitest --ui",
-    "test-watch": "vitest watch",
-    "reset-modules": "npx --quiet -y rimraf node_modules/ package-lock.json",
-    "reset-creation": "npx --quiet -y rimraf dist/ tests/reports/",
-    "reset": "npm run reset-creation && npm run reset-modules",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "test:watch": "vitest watch",
+    "reset:modules": "npx --quiet -y rimraf node_modules/ package-lock.json",
+    "reset:creation": "npx --quiet -y rimraf dist/ tests/reports/",
+    "reset": "npm run reset:creation && npm run reset:modules",
     "validate": "npm run reset && npm i && npm run build && npm test",
-    "create": "npm run reset-creation && npm run build && npm test",
+    "create": "npm run reset:creation && npm run build && npm test",
     "produce": "npm run validate && npm i --only=prod"
   },
   "repository": {
@@ -47,18 +48,19 @@
     "access": "public"
   },
   "devDependencies": {
-    "@types/valid-url": "^1.0.4",
-    "@typescript-eslint/eslint-plugin": "^5.60.0",
-    "@typescript-eslint/parser": "^5.60.0",
-    "@vitest/coverage-v8": "^0.32.2",
-    "@vitest/ui": "^0.32.2",
-    "eslint": "^8.21.0",
-    "typescript": "^5.0.0",
-    "vitest": "^0.32.0"
+    "@types/node": "^20.12.4",
+    "@types/valid-url": "^1.0.7",
+    "@typescript-eslint/eslint-plugin": "^7.5.0",
+    "@typescript-eslint/parser": "^7.5.0",
+    "@vitest/coverage-v8": "^1.4.0",
+    "@vitest/ui": "^1.4.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.4",
+    "vitest": "^1.4.0"
   },
   "dependencies": {
     "email-validator": "^2.0.4",
-    "ts-lib-extended": "^2.0.5",
+    "ts-lib-extended": "^2.1.0",
     "valid-url": "^1.0.9"
   }
 }

@@ -1,10 +1,10 @@
+import { TypeInspector } from '@/inspector.js';
+import { DefaultArrayValidator } from '@/validator/array.js';
 import { describe, expect, test } from 'vitest';
-import { TypeInspector } from '../../../src/inspector.js';
-import { ArrayValidator } from '../../../src/validator/array.js';
 
 const ti = new TypeInspector();
 
-describe(ArrayValidator.name, () => {
+describe(DefaultArrayValidator, () => {
   test('isValid - success', () => {
     expect.assertions(3);
     expect(ti.array(ti.number).isValid([1, 2, 42])).toBe(true);

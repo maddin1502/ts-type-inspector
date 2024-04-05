@@ -1,40 +1,53 @@
 import type {
   ObjectLike,
-  PartialPropertyValidatables,
-  Validatable
+  PartialPropertyValidators,
+  Validator
 } from '../types.js';
-import { Validator } from './index.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for object based values. This is an **UNSAFE** validator that only validates some properties and ignores others
  *
- * @since 2.0.0
  * @export
- * @template Out
+ * @interface PartialValidator
+ * @template {ObjectLike} Out
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {Validator<Out, ValidationParams>}
+ * @since 2.0.0
  */
-export type PartialValidatable<Out extends ObjectLike> = Validatable<Out>;
+export interface PartialValidator<
+  Out extends ObjectLike,
+  ValidationParams extends ObjectLike = any
+> extends Validator<Out, ValidationParams> {}
 
 /**
  * Validator for object based values. This is an **UNSAFE** validator that only validates some properties and ignores others
  *
- * @since 2.0.0
  * @export
- * @class PartialValidator
- * @extends {Validator<Out>}
- * @implements {PartialValidatable<Out>}
- * @template Out
+ * @class DefaultPartialValidator
+ * @template {ObjectLike} Out
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<Out, ValidationParams>}
+ * @implements {PartialValidator<Out, ValidationParams>}
+ * @since 2.0.0
  */
-export class PartialValidator<Out extends ObjectLike>
-  extends Validator<Out>
-  implements PartialValidatable<Out>
+export class DefaultPartialValidator<
+    Out extends ObjectLike,
+    ValidationParams extends ObjectLike = any
+  >
+  extends DefaultValidator<Out, ValidationParams>
+  implements PartialValidator<Out, ValidationParams>
 {
   constructor(
-    private readonly _propertyValidators: PartialPropertyValidatables<Out>
+    private readonly _propertyValidators: PartialPropertyValidators<Out>
   ) {
     super();
   }
 
-  protected validateBaseType(value_: unknown): Out {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): Out {
     if (!this.isObjectLike(value_)) {
       this.throwValidationError('value is not an object');
     }

@@ -1,10 +1,10 @@
+import { TypeInspector } from '@/inspector.js';
+import { DefaultCustomValidator } from '@/validator/custom.js';
 import { describe, expect, test } from 'vitest';
-import { TypeInspector } from '../../../src/inspector.js';
-import { CustomValidator } from '../../../src/validator/custom.js';
 
 const ti = new TypeInspector();
 
-describe(CustomValidator.name, () => {
+describe(DefaultCustomValidator, () => {
   test('isValid', () => {
     expect.assertions(2);
     expect(

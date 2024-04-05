@@ -5,12 +5,10 @@
     "plugin:@typescript-eslint/recommended-requiring-type-checking"
   ],
   "parserOptions": {
-    "project": ["tsconfig.json", "tests/tsconfig.json"],
+    "project": ["tsconfig.json"],
     "sourceType": "module"
   },
-  "plugins": [
-    "@typescript-eslint"
-  ],
+  "plugins": ["@typescript-eslint"],
   "rules": {
     "@typescript-eslint/array-type": "off",
     "@typescript-eslint/consistent-type-assertions": "warn",
@@ -34,7 +32,17 @@
     "no-empty": "warn",
     "no-param-reassign": "warn",
     "quotes": ["warn", "single"],
-    "semi": "off" // https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/docs/rules/semi.md
+    "semi": "off", // https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/docs/rules/semi.md
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        // "caughtErrorsIgnorePattern": "^_",
+        // "destructuredArrayIgnorePattern": "^_",
+        // "varsIgnorePattern": "^_",
+      }
+    ]
   },
   "ignorePatterns": ["dist", "tests/reports"]
 }

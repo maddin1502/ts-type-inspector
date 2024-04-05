@@ -4,161 +4,165 @@ import type {
   CustomValidation,
   MethodLike,
   ObjectLike,
-  PartialPropertyValidatables,
-  PropertyValidatables,
-  UnionValidatables,
-  Validatable
+  PartialPropertyValidators,
+  PropertyValidators,
+  TupleItemValidators,
+  UnionValidators,
+  Validator
 } from './types.js';
-import { AnyValidator } from './validator/any.js';
-import { ArrayValidator } from './validator/array.js';
-import { BooleanValidator } from './validator/boolean.js';
-import { CustomValidator } from './validator/custom.js';
-import { DateValidator } from './validator/date.js';
-import { DictionaryValidator } from './validator/dictionary.js';
-import { EnumValidator } from './validator/enum.js';
-import { ExcludeValidator } from './validator/exclude.js';
-import { Validator } from './validator/index.js';
-import { MethodValidator } from './validator/method.js';
-import { NullValidator } from './validator/null.js';
-import { NullishValidator } from './validator/nullish.js';
-import { NumberValidator } from './validator/number.js';
-import { ObjectValidator } from './validator/object.js';
-import { OptionalValidator } from './validator/optional.js';
-import { PartialValidator } from './validator/partial.js';
-import { StrictValidator } from './validator/strict.js';
-import { StringValidator } from './validator/string.js';
-import { UndefinedValidator } from './validator/undefined.js';
-import { UnionValidator } from './validator/union.js';
+import { DefaultAnyValidator } from './validator/any.js';
+import { DefaultArrayValidator } from './validator/array.js';
+import { DefaultBooleanValidator } from './validator/boolean.js';
+import { DefaultCustomValidator } from './validator/custom.js';
+import { DefaultDateValidator } from './validator/date.js';
+import { DefaultDictionaryValidator } from './validator/dictionary.js';
+import { DefaultEnumValidator } from './validator/enum.js';
+import { DefaultExcludeValidator } from './validator/exclude.js';
+import { DefaultValidator } from './validator/index.js';
+import { DefaultMethodValidator } from './validator/method.js';
+import { DefaultNullValidator } from './validator/null.js';
+import { DefaultNullishValidator } from './validator/nullish.js';
+import { DefaultNumberValidator } from './validator/number.js';
+import { DefaultObjectValidator } from './validator/object.js';
+import { DefaultOptionalValidator } from './validator/optional.js';
+import { DefaultPartialValidator } from './validator/partial.js';
+import { DefaultStrictValidator } from './validator/strict.js';
+import { DefaultStringValidator } from './validator/string.js';
+import { DefaultTupleValidator } from './validator/tuple.js';
+import { DefaulUndefinedValidator } from './validator/undefined.js';
+import { DefaultUnionValidator } from './validator/union.js';
 
 /**
  * Collection of gadgets for type inspection
  *
  * @export
  * @class TypeInspector
+ * @since 1.0.0
  */
 export class TypeInspector {
   /**
    * Validate string values.
    *
-   * @since 1.0.0
+   * @public
    * @readonly
-   * @type {StringValidator}
-   * @memberof TypeInspector
+   * @type {DefaultStringValidator}
+   * @since 1.0.0
    */
-  public get string(): StringValidator {
-    return new StringValidator();
+  public get string(): DefaultStringValidator {
+    return new DefaultStringValidator();
   }
 
   /**
    * Validate numeric values.
    *
-   * @since 1.0.0
+   * @public
    * @readonly
-   * @type {NumberValidator}
-   * @memberof TypeInspector
+   * @type {DefaultNumberValidator}
+   * @since 1.0.0
    */
-  public get number(): NumberValidator {
-    return new NumberValidator();
+  public get number(): DefaultNumberValidator {
+    return new DefaultNumberValidator();
   }
 
   /**
    * Validate boolean values.
    *
-   * @since 1.0.0
+   * @public
    * @readonly
-   * @type {BooleanValidator}
-   * @memberof TypeInspector
+   * @type {DefaultBooleanValidator}
+   * @since 1.0.0
    */
-  public get boolean(): BooleanValidator {
-    return new BooleanValidator();
+  public get boolean(): DefaultBooleanValidator {
+    return new DefaultBooleanValidator();
   }
 
   /**
    * Validate method-like values.
    * Unfortunately (for technical reasons), this validator can only validate the number of parameters.
    *
-   * @since 1.0.0
+   * @public
    * @readonly
-   * @type {MethodValidator<MethodLike>}
-   * @memberof TypeInspector
+   * @type {DefaultMethodValidator<MethodLike>}
+   * @since 1.0.0
    */
-  public get method(): MethodValidator<MethodLike> {
-    return new MethodValidator<MethodLike>();
+  public get method(): DefaultMethodValidator<MethodLike> {
+    return new DefaultMethodValidator<MethodLike>();
   }
 
   /**
    * Validate data values.
    *
-   * @since 1.0.0
+   * @public
    * @readonly
-   * @type {DateValidator}
-   * @memberof TypeInspector
+   * @type {DefaultDateValidator}
+   * @since 1.0.0
    */
-  public get date(): DateValidator {
-    return new DateValidator();
+  public get date(): DefaultDateValidator {
+    return new DefaultDateValidator();
   }
 
   /**
    * Validate undefined values... The value has to be undefined to match this validator
    *
-   * @since 1.0.0
+   * @public
    * @readonly
-   * @type {UndefinedValidator}
-   * @memberof TypeInspector
+   * @type {DefaulUndefinedValidator}
+   * @since 1.0.0
    */
-  public get undefined(): UndefinedValidator {
-    return new UndefinedValidator();
+  public get undefined(): DefaulUndefinedValidator {
+    return new DefaulUndefinedValidator();
   }
 
   /**
    * Validate null values... The value has to be null to match this validator
    *
-   * @since 1.0.0
+   * @public
    * @readonly
-   * @type {NullValidator}
-   * @memberof TypeInspector
+   * @type {DefaultNullValidator}
+   * @since 1.0.0
    */
-  public get null(): NullValidator {
-    return new NullValidator();
+  public get null(): DefaultNullValidator {
+    return new DefaultNullValidator();
   }
 
   /**
    * Validate nullish values
    *
+   * @public
    * @readonly
-   * @type {NullishValidator}
-   * @memberof TypeInspector
+   * @type {DefaultNullishValidator}
+   * @since 1.0.0
    */
-  public get nullish(): NullishValidator {
-    return new NullishValidator();
+  public get nullish(): DefaultNullishValidator {
+    return new DefaultNullishValidator();
   }
 
   /**
    * Validate values through strict equality (===). Keep in mind that objects are compared by reference
    *
-   * @since 1.0.0
-   * @template V
+   * @public
+   * @template {AnyLike[]} V
    * @param {...V} values_
-   * @return {*}  {StrictValidator<V>}
-   * @memberof TypeInspector
+   * @returns {DefaultStrictValidator<V>}
+   * @since 1.0.0
    */
-  public strict<V extends AnyLike[]>(...values_: V): StrictValidator<V> {
-    return new StrictValidator<V>(...values_);
+  public strict<V extends AnyLike[]>(...values_: V): DefaultStrictValidator<V> {
+    return new DefaultStrictValidator<V>(...values_);
   }
 
   /**
    * Validate array values
    *
-   * @since 1.0.0
+   * @public
    * @template Item
-   * @param {Validatable<Item>} itemValidator_
-   * @return {*}  {ArrayValidator<Item>}
-   * @memberof TypeInspector
+   * @param {Validator<Item>} itemValidator_
+   * @returns {DefaultArrayValidator<Item>}
+   * @since 1.0.0
    */
   public array<const Item>(
-    itemValidator_: Validatable<Item>
-  ): ArrayValidator<Item> {
-    return new ArrayValidator<Item>(itemValidator_);
+    itemValidator_: Validator<Item>
+  ): DefaultArrayValidator<Item> {
+    return new DefaultArrayValidator<Item>(itemValidator_);
   }
 
   /**
@@ -166,112 +170,115 @@ export class TypeInspector {
    * At least one validator have to match for a positive result
    *
    * @public
-   * @template V
+   * @template {UnionValidators} V
    * @param {...V} validators_ Validators for each part of the union type
-   * @returns {UnionValidator<V>}
+   * @returns {DefaultUnionValidator<V>}
+   * @since 1.0.0
    */
-  public union<V extends UnionValidatables>(
+  public union<V extends UnionValidators>(
     ...validators_: V
-  ): UnionValidator<V> {
-    return new UnionValidator<V>(...validators_);
+  ): DefaultUnionValidator<V> {
+    return new DefaultUnionValidator<V>(...validators_);
   }
 
   /**
    * Validate object based values. Each property has to match its specified validator
    *
+   * @public
+   * @template {ObjectLike} Out
+   * @param {PropertyValidators<Out>} propertyValidators_ Validators for each object property
+   * @returns {DefaultObjectValidator<Out>}
    * @since 1.0.0
-   * @template Out
-   * @param {PropertyValidatables<Out>} propertyValidators_ Validators for each object property
-   * @return {*}  {ObjectValidator<Out>}
-   * @memberof TypeInspector
    */
   public object<Out extends ObjectLike>(
-    propertyValidators_: PropertyValidatables<Out>
-  ): ObjectValidator<Out> {
-    return new ObjectValidator<Out>(propertyValidators_);
+    propertyValidators_: PropertyValidators<Out>
+  ): DefaultObjectValidator<Out> {
+    return new DefaultObjectValidator<Out>(propertyValidators_);
   }
 
   /**
    * Validator for object based values. This is an **UNSAFE** validator that only validates some properties and ignores others
    *
+   * @public
+   * @template {ObjectLike} Out
+   * @param {PartialPropertyValidators<Out>} propertyValidators_
+   * @returns {DefaultPartialValidator<Out>}
    * @since 2.0.0
-   * @template Out
-   * @param {PartialPropertyValidatables<Out>} propertyValidators_
-   * @return {*}  {PartialValidator<Out>}
-   * @memberof TypeInspector
    */
   public partial<Out extends ObjectLike>(
-    propertyValidators_: PartialPropertyValidatables<Out>
-  ): PartialValidator<Out> {
-    return new PartialValidator<Out>(propertyValidators_);
+    propertyValidators_: PartialPropertyValidators<Out>
+  ): DefaultPartialValidator<Out> {
+    return new DefaultPartialValidator<Out>(propertyValidators_);
   }
 
   /**
    * Validate dictionary values.
    *
+   * @public
+   * @template {Dictionary} V
+   * @param {Validator<DictionaryValue<V>>} itemValidator_ Validator for dictionary values
+   * @returns {DefaultDictionaryValidator<V>}
    * @since 1.0.0
-   * @template V
-   * @param {Validatable<DictionaryValue<V>>} itemValidator_ Validator for dictionary values
-   * @return {*}  {DictionaryValidator<V>}
-   * @memberof TypeInspector
    */
   public dictionary<V extends Dictionary>(
-    itemValidator_: Validatable<DictionaryValue<V>>
-  ): DictionaryValidator<V> {
-    return new DictionaryValidator<V>(itemValidator_);
+    itemValidator_: Validator<DictionaryValue<V>>
+  ): DefaultDictionaryValidator<V> {
+    return new DefaultDictionaryValidator<V>(itemValidator_);
   }
 
   /**
    * This validator should only be used when a value is indeterminate or when you want to bypass deep validation of an object
    *
-   * @since 1.0.0
+   * @public
    * @readonly
-   * @type {AnyValidator}
-   * @memberof TypeInspector
+   * @type {DefaultAnyValidator}
+   * @since 1.0.0
    */
-  public get any(): AnyValidator {
-    return new AnyValidator();
+  public get any(): DefaultAnyValidator {
+    return new DefaultAnyValidator();
   }
 
   /**
    * Validate for optional properties/values
    *
-   * @since 1.0.0
    * @public
    * @template V
-   * @param {Validatable<V>} validator_ Validator for the non-optional part
-   * @returns {OptionalValidator<V>}
+   * @param {Validator<V>} validator_
+   * @returns {DefaultOptionalValidator<V>}
+   * @since 1.0.0
    */
-  public optional<V>(validator_: Validatable<V>): OptionalValidator<V> {
-    return new OptionalValidator(validator_);
+  public optional<V>(validator_: Validator<V>): DefaultOptionalValidator<V> {
+    return new DefaultOptionalValidator(validator_);
   }
 
   /**
    * Validate with custom validation
    *
-   * @since 1.0.0
+   * @public
    * @template V
    * @param {CustomValidation<unknown>} validationCallback_ Return an error message if validation fails; else undefined
-   * @return {*}  {CustomValidator<V>}
-   * @memberof TypeInspector
+   * @returns {DefaultCustomValidator<V>}
+   * @since 1.0.0
    */
   public custom<V>(
     validationCallback_: CustomValidation<unknown>
-  ): CustomValidator<V> {
-    return new CustomValidator(validationCallback_);
+  ): DefaultCustomValidator<V> {
+    return new DefaultCustomValidator(validationCallback_);
   }
 
   /**
    * Validate enum values
    *
-   * @since 1.0.2
-   * @template E
+   * @public
+   * @template {Enumerable<unknown>} E
    * @param {E} enum_ the enum instance itself, NOT a value from enum
-   * @return {*}  {EnumValidator<E>}
-   * @memberof TypeInspector
+   * @returns {DefaultEnumValidator<E>}
+   * @since 1.0.2
    */
-  enum<E extends Enumerable<unknown>>(enum_: E): EnumValidator<E> {
-    return new EnumValidator(enum_);
+  public enum<E extends Enumerable<unknown>>(
+    enum_: E
+  ): DefaultEnumValidator<E> {
+    return new DefaultEnumValidator(enum_);
   }
 
   /**
@@ -279,16 +286,31 @@ export class TypeInspector {
    * The generics "Out" and "In" have to be set. "In" describes the incoming union type and "Out" the desired output type.
    * The passed validator checks whether the undesired types (= In - Out) exist in the value.
    *
-   * @since 1.1.0
-   * @template Out
+   * @public
+   * @template {In} Out
    * @template In
-   * @param {Validator<Exclude<In, Out>>} validator_
-   * @return {*}  {ExcludeValidator<Out, In>}
-   * @memberof TypeInspector
+   * @param {DefaultValidator<Exclude<In, Out>>} validator_
+   * @returns {DefaultExcludeValidator<Out, In>}
+   * @since 1.1.0
    */
   public exclude<Out extends In, In>(
-    validator_: Validator<Exclude<In, Out>>
-  ): ExcludeValidator<Out, In> {
-    return new ExcludeValidator(validator_);
+    validator_: DefaultValidator<Exclude<In, Out>>
+  ): DefaultExcludeValidator<Out, In> {
+    return new DefaultExcludeValidator(validator_);
+  }
+
+  /**
+   * Validate tuple values
+   *
+   * @public
+   * @template {unknown[]} Out
+   * @param {...TupleItemValidators<Out>} itemValidators_ ordered set of validators for each tuple item
+   * @returns {DefaultTupleValidator<Out>}
+   * @since 3.0.0
+   */
+  public tuple<Out extends unknown[]>(
+    ...itemValidators_: TupleItemValidators<Out>
+  ): DefaultTupleValidator<Out> {
+    return new DefaultTupleValidator<Out>(...itemValidators_);
   }
 }

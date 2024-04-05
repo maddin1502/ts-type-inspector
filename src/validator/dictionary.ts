@@ -3,52 +3,65 @@ import type {
   DictionaryKey,
   DictionaryValue
 } from 'ts-lib-extended';
-import type { Validatable } from '../types.js';
-import { Validator } from './index.js';
+import type { ObjectLike, Validator } from '../types.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for dictionary objects
  *
- * @since 1.0.0
  * @export
- * @template Out
+ * @interface DictionaryValidator
+ * @template {Dictionary} Out
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {Validator<Out, ValidationParams>}
+ * @since 1.0.0
  */
-export type DictionaryValidatable<Out extends Dictionary> = Validatable<Out> & {
+export interface DictionaryValidator<
+  Out extends Dictionary,
+  ValidationParams extends ObjectLike = any
+> extends Validator<Out, ValidationParams> {
   /**
    * additional dictionary key validation
    *
+   * @param {Validator<DictionaryKey<Out>>} validator_
+   * @returns {this}
    * @since 1.0.0
    */
-  keys(validator_: Validatable<DictionaryKey<Out>>): DictionaryValidatable<Out>;
-};
+  keys(validator_: Validator<DictionaryKey<Out>>): this;
+}
 
 /**
  * Validator for dictionary objects
  *
- * @since 1.0.0
  * @export
- * @class DictionaryValidator
- * @extends {Validator<Out>}
- * @implements {DictionaryValidatable<Out>}
- * @template Out
+ * @class DefaultDictionaryValidator
+ * @template {Dictionary} Out
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<Out, ValidationParams>}
+ * @implements {DictionaryValidator<Out, ValidationParams, ValidationParams>}
+ * @since 1.0.0
  */
-export class DictionaryValidator<Out extends Dictionary>
-  extends Validator<Out>
-  implements DictionaryValidatable<Out>
+export class DefaultDictionaryValidator<
+    Out extends Dictionary,
+    ValidationParams extends ObjectLike = any
+  >
+  extends DefaultValidator<Out, ValidationParams>
+  implements DictionaryValidator<Out, ValidationParams>
 {
   constructor(
-    private readonly _itemValidator: Validatable<DictionaryValue<Out>>
+    private readonly _itemValidator: Validator<DictionaryValue<Out>>
   ) {
     super();
   }
 
-  public keys(
-    validator_: Validatable<DictionaryKey<Out>>
-  ): DictionaryValidatable<Out> {
+  public keys(validator_: Validator<DictionaryKey<Out>>): this {
     return this.setupCondition((value_) => this.checkKeys(value_, validator_));
   }
 
-  protected validateBaseType(value_: unknown): Out {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): Out {
     if (!this.isDictionary(value_)) {
       this.throwValidationError('value is not a dictionary');
     }
@@ -65,13 +78,12 @@ export class DictionaryValidator<Out extends Dictionary>
   }
 
   private isDictionary(value_: unknown): value_ is Dictionary<any> {
-    // TODO: is there any validatable differnce between dictionary and standard object?
     return typeof value_ === 'object' && value_ !== null;
   }
 
   private checkKeys(
     value_: Dictionary<any>,
-    keyValidator_: Validatable<DictionaryKey<Out>>
+    keyValidator_: Validator<DictionaryKey<Out>>
   ): void {
     for (const dictionaryKey in value_) {
       try {

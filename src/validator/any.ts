@@ -1,46 +1,63 @@
-import type { Validatable } from '../types.js';
-import { Validator } from './index.js';
+import type { ObjectLike, Validator } from '../types.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * This validator should only be used when a value is indeterminate or when you want to bypass deep validation of an object
  *
- * @since 1.0.0
  * @export
+ * @interface AnyValidator
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {Validator<any, ValidationParams>}
+ * @since 1.0.0
  */
-export type AnyValidatable = Validatable<any> & {
+export interface AnyValidator<ValidationParams extends ObjectLike = any>
+  extends Validator<any, ValidationParams> {
   /**
    * reject nullish values (undefined, null)
    *
+   * @readonly
+   * @type {this}
    * @since 1.0.0
    */
-  get notNullish(): AnyValidatable;
+  get notNullish(): this;
   /**
    * reject falsy values (undefined, null, 0, false, '', NaN, 0n, ...)
    *
+   * @readonly
+   * @type {this}
    * @since 1.0.0
    */
-  get notFalsy(): AnyValidatable;
-};
+  get notFalsy(): this;
+}
+
+const x: AnyValidator = null as any as typeof x;
 
 /**
  * This validator should only be used when a value is indeterminate or when you want to bypass deep validation of an object
  *
- * @since 1.0.0
  * @export
- * @class AnyValidator
- * @extends {Validator<any>}
- * @implements {AnyValidatable}
+ * @class DefaultAnyValidator
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @extends {DefaultValidator<any, ValidationParams>}
+ * @implements {AnyValidator<ValidationParams>}
+ * @since 1.0.0
  */
-export class AnyValidator extends Validator<any> implements AnyValidatable {
-  public get notNullish(): AnyValidatable {
+export class DefaultAnyValidator<ValidationParams extends ObjectLike = any>
+  extends DefaultValidator<any, ValidationParams>
+  implements AnyValidator<ValidationParams>
+{
+  public get notNullish(): this {
     return this.setupCondition((value_) => this.checkNullish(value_));
   }
 
-  public get notFalsy(): AnyValidatable {
+  public get notFalsy(): this {
     return this.setupCondition((value_) => this.checkFalsy(value_));
   }
 
-  protected validateBaseType(value_: unknown): any {
+  protected validateBaseType(
+    value_: unknown,
+    _params_?: ValidationParams
+  ): any {
     return value_;
   }
 
