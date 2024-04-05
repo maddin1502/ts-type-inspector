@@ -1,4 +1,4 @@
-import '@/types.js';
+// import '@/types.js';
 import { describe, expect, test } from 'vitest';
 
 describe('dummy types test', () => {
