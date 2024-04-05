@@ -29,10 +29,14 @@ jobs:
         run: npm install
       - name: Test
         run: npm test
+      - name: Prepare a unique name for artifacts
+        run: |
+          name=$(echo -n "${{ matrix.branch }}" | sed -e 's/[ \t:\/\\"<>|*?]/-/g' -e 's/--*/-/g')
+          echo "ARTIFACT_NAME=$name" >> $GITHUB_ENV
       - name: Upload Coverage
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-${{ matrix.branch }}
+          name: coverage-${{ env.ARTIFACT_NAME }}
           path: tests/reports/coverage
 
   report-coverage:
