@@ -236,11 +236,11 @@ export class CommonDataValidator extends DefaultObjectValidator<
 const cdv = new CommonDataValidator();
 const value: CommonData = { data: undefined };
 
-// using 1. or 3. option
+// when using 1. or 3. option
 cdv.isValid(value); // true
 cdv.isValid(value, { valueRequired: true }); // false
 
-// using 2. option
+// when using 2. option
 cdv.isValid(value, { valueRequired: true }); // true
 cdv.failWhenRequired.isValid(value, { valueRequired: true }); // false
 ```

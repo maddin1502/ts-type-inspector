@@ -1,4 +1,4 @@
-import type { DateLike, Validator } from '../types.js';
+import type { DateLike, ObjectLike, Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -6,11 +6,11 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface DateValidator
- * @template [ValidationParams=any] extended validation parameters
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
  * @extends {Validator<Date, ValidationParams>}
  * @since 1.0.0
  */
-export interface DateValidator<ValidationParams = any>
+export interface DateValidator<ValidationParams extends ObjectLike = any>
   extends Validator<Date, ValidationParams> {
   /**
    * define earliest accepted date
@@ -51,12 +51,12 @@ export interface DateValidator<ValidationParams = any>
  *
  * @export
  * @class DefaultDateValidator
- * @template [ValidationParams=any] extended validation parameters
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
  * @extends {DefaultValidator<Date, ValidationParams>}
  * @implements {DateValidator<ValidationParams>}
  * @since 1.0.0
  */
-export class DefaultDateValidator<ValidationParams = any>
+export class DefaultDateValidator<ValidationParams extends ObjectLike = any>
   extends DefaultValidator<Date, ValidationParams>
   implements DateValidator<ValidationParams>
 {

@@ -3,7 +3,7 @@ import type {
   DictionaryKey,
   DictionaryValue
 } from 'ts-lib-extended';
-import type { Validator } from '../types.js';
+import type { ObjectLike, Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -12,13 +12,13 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface DictionaryValidator
  * @template {Dictionary} Out
- * @template [ValidationParams=any] extended validation parameters
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
  * @extends {Validator<Out, ValidationParams>}
  * @since 1.0.0
  */
 export interface DictionaryValidator<
   Out extends Dictionary,
-  ValidationParams = any
+  ValidationParams extends ObjectLike = any
 > extends Validator<Out, ValidationParams> {
   /**
    * additional dictionary key validation
@@ -36,14 +36,14 @@ export interface DictionaryValidator<
  * @export
  * @class DefaultDictionaryValidator
  * @template {Dictionary} Out
- * @template [ValidationParams=any] extended validation parameters
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
  * @extends {DefaultValidator<Out, ValidationParams>}
  * @implements {DictionaryValidator<Out, ValidationParams, ValidationParams>}
  * @since 1.0.0
  */
 export class DefaultDictionaryValidator<
     Out extends Dictionary,
-    ValidationParams = any
+    ValidationParams extends ObjectLike = any
   >
   extends DefaultValidator<Out, ValidationParams>
   implements DictionaryValidator<Out, ValidationParams>

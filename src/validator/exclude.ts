@@ -1,4 +1,4 @@
-import type { Validator } from '../types.js';
+import type { ObjectLike, Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -10,12 +10,15 @@ import { DefaultValidator } from './index.js';
  * @interface ExcludeValidator
  * @template {In} Out
  * @template In
- * @template [ValidationParams=any] extended validation parameters
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
  * @extends {Validator<Out, ValidationParams>}
  * @since 1.1.0
  */
-export interface ExcludeValidator<Out extends In, In, ValidationParams = any>
-  extends Validator<Out, ValidationParams> {}
+export interface ExcludeValidator<
+  Out extends In,
+  In,
+  ValidationParams extends ObjectLike = any
+> extends Validator<Out, ValidationParams> {}
 
 /**
  * This validator is able to validate if a type doesn't exist in a KNOWN union type.
@@ -26,12 +29,16 @@ export interface ExcludeValidator<Out extends In, In, ValidationParams = any>
  * @class DefaultExcludeValidator
  * @template {In} Out
  * @template In
- * @template [ValidationParams=any] extended validation parameters
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
  * @extends {DefaultValidator<Out, ValidationParams>}
  * @implements {ExcludeValidator<Out, In, ValidationParams>}
  * @since 1.1.0
  */
-export class DefaultExcludeValidator<Out extends In, In, ValidationParams = any>
+export class DefaultExcludeValidator<
+    Out extends In,
+    In,
+    ValidationParams extends ObjectLike = any
+  >
   extends DefaultValidator<Out, ValidationParams>
   implements ExcludeValidator<Out, In, ValidationParams>
 {

@@ -12,7 +12,7 @@ export type AnyLike =
   | undefined
   | symbol
   | null;
-export type CustomValidation<V, ValidationParams = any> = (
+export type CustomValidation<V, ValidationParams extends ObjectLike = any> = (
   value_: V,
   params_?: ValidationParams
 ) => string | undefined;
@@ -20,7 +20,7 @@ export type ValidationErrorHandler<ValidationParams> = (
   error_: ValidationError,
   params_?: ValidationParams
 ) => string | void;
-export interface Validator<Out, ValidationParams = any> {
+export interface Validator<Out, ValidationParams extends ObjectLike = any> {
   /**
    * retrieve error from last validation; undefined if validation succeeded
    *
@@ -64,10 +64,10 @@ export interface Validator<Out, ValidationParams = any> {
    */
   isValid(value_: unknown, params_?: ValidationParams): value_ is Out;
 }
-export type PropertyValidators<V extends ObjectLike, ValidationParams = any> = {
+export type PropertyValidators<V extends ObjectLike, ValidationParams extends ObjectLike = any> = {
   readonly [key in keyof V]-?: Validator<V[key], ValidationParams>;
 };
-export type PartialPropertyValidators<V, ValidationParams = any> = {
+export type PartialPropertyValidators<V, ValidationParams extends ObjectLike = any> = {
   readonly [key in keyof V]?: Validator<V[key], ValidationParams>;
 };
 export type SelectPropertyValidators<
@@ -77,11 +77,11 @@ export type SelectPropertyValidators<
 export type UnionValidators<V = any> = MinArray<Validator<V>, 2>;
 export type UnionValidatorsItem<U extends UnionValidators> =
   ArrayItem<U> extends Validator<infer V> ? V : never;
-export type ValidationCondition<V, ValidationParams = any> = (
+export type ValidationCondition<V, ValidationParams extends ObjectLike = any> = (
   value_: V,
   params_?: ValidationParams
 ) => void | never;
 export type DateLike = string | number | Date;
-export type TupleItemValidators<A extends unknown[], ValidationParams = any> = {
+export type TupleItemValidators<A extends unknown[], ValidationParams extends ObjectLike = any> = {
   [index in keyof A]: Validator<A[index], ValidationParams>;
 };

@@ -1,4 +1,4 @@
-import type { MethodLike, Validator } from '../types.js';
+import type { MethodLike, ObjectLike, Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -8,12 +8,14 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface MethodValidator
  * @template {MethodLike} Out
- * @template [ValidationParams=any] extended validation parameters
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
  * @extends {Validator<Out, ValidationParams>}
  * @since 1.0.0
  */
-export interface MethodValidator<Out extends MethodLike, ValidationParams = any>
-  extends Validator<Out, ValidationParams> {
+export interface MethodValidator<
+  Out extends MethodLike,
+  ValidationParams extends ObjectLike = any
+> extends Validator<Out, ValidationParams> {
   /**
    * validate exact params count
    *
@@ -47,14 +49,14 @@ export interface MethodValidator<Out extends MethodLike, ValidationParams = any>
  * @export
  * @class DefaultMethodValidator
  * @template {MethodLike} Out
- * @template [ValidationParams=any] extended validation parameters
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
  * @extends {DefaultValidator<Out, ValidationParams>}
  * @implements {MethodValidator<Out, ValidationParams>}
  * @since 1.0.0
  */
 export class DefaultMethodValidator<
     Out extends MethodLike,
-    ValidationParams = any
+    ValidationParams extends ObjectLike = any
   >
   extends DefaultValidator<Out, ValidationParams>
   implements MethodValidator<Out, ValidationParams>

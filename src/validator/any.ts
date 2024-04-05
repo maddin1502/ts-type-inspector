@@ -1,4 +1,4 @@
-import type { Validator } from '../types.js';
+import type { ObjectLike, Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -6,11 +6,11 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface AnyValidator
- * @template [ValidationParams=any] extended validation parameters
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
  * @extends {Validator<any, ValidationParams>}
  * @since 1.0.0
  */
-export interface AnyValidator<ValidationParams = any>
+export interface AnyValidator<ValidationParams extends ObjectLike = any>
   extends Validator<any, ValidationParams> {
   /**
    * reject nullish values (undefined, null)
@@ -30,17 +30,19 @@ export interface AnyValidator<ValidationParams = any>
   get notFalsy(): this;
 }
 
+const x: AnyValidator = null as any as typeof x;
+
 /**
  * This validator should only be used when a value is indeterminate or when you want to bypass deep validation of an object
  *
  * @export
  * @class DefaultAnyValidator
- * @template [ValidationParams=any] extended validation parameters
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
  * @extends {DefaultValidator<any, ValidationParams>}
  * @implements {AnyValidator<ValidationParams>}
  * @since 1.0.0
  */
-export class DefaultAnyValidator<ValidationParams = any>
+export class DefaultAnyValidator<ValidationParams extends ObjectLike = any>
   extends DefaultValidator<any, ValidationParams>
   implements AnyValidator<ValidationParams>
 {

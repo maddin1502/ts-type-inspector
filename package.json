@@ -10,10 +10,11 @@
   "type": "module",
   "scripts": {
     "build": "tsc -p ./tsconfig.prod.json",
-    "build-dev": "tsc -p ./tsconfig.dev.json",
+    "build:dev": "tsc -p ./tsconfig.dev.json",
     "lint": "eslint src",
     "lint:fix": "npm run lint -- --fix",
-    "test": "vitest run --coverage",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
     "test:watch": "vitest watch",
     "reset:modules": "npx --quiet -y rimraf node_modules/ package-lock.json",

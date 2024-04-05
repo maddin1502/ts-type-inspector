@@ -1,4 +1,4 @@
-import type { CustomValidation, Validator } from '../types.js';
+import type { CustomValidation, ObjectLike, Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -7,11 +7,11 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface CustomValidator
  * @template Out
- * @template [ValidationParams=any] extended validation parameters
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
  * @extends {Validator<Out, ValidationParams>}
  * @since 1.0.0
  */
-export interface CustomValidator<Out, ValidationParams = any>
+export interface CustomValidator<Out, ValidationParams extends ObjectLike = any>
   extends Validator<Out, ValidationParams> {}
 
 /**
@@ -20,12 +20,15 @@ export interface CustomValidator<Out, ValidationParams = any>
  * @export
  * @class DefaultCustomValidator
  * @template Out
- * @template [ValidationParams=any] extended validation parameters
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
  * @extends {DefaultValidator<Out, ValidationParams>}
  * @implements {CustomValidator<Out, ValidationParams>}
  * @since 1.0.0
  */
-export class DefaultCustomValidator<Out, ValidationParams = any>
+export class DefaultCustomValidator<
+    Out,
+    ValidationParams extends ObjectLike = any
+  >
   extends DefaultValidator<Out, ValidationParams>
   implements CustomValidator<Out, ValidationParams>
 {

@@ -1,4 +1,4 @@
-import type { Validator } from '../types.js';
+import type { ObjectLike, Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -6,11 +6,11 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface BooleanValidator
- * @template [ValidationParams=any] extended validation parameters
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
  * @extends {Validator<boolean, ValidationParams>}
  * @since 1.0.0
  */
-export interface BooleanValidator<ValidationParams = any>
+export interface BooleanValidator<ValidationParams extends ObjectLike = any>
   extends Validator<boolean, ValidationParams> {
   /**
    * accept just true
@@ -35,12 +35,12 @@ export interface BooleanValidator<ValidationParams = any>
  *
  * @export
  * @class DefaultBooleanValidator
- * @template [ValidationParams=any] extended validation parameters
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
  * @extends {DefaultValidator<boolean, ValidationParams>}
  * @implements {BooleanValidator<ValidationParams>}
  * @since 1.0.0
  */
-export class DefaultBooleanValidator<ValidationParams = any>
+export class DefaultBooleanValidator<ValidationParams extends ObjectLike = any>
   extends DefaultValidator<boolean, ValidationParams>
   implements BooleanValidator<ValidationParams>
 {

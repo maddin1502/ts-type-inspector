@@ -1,4 +1,4 @@
-import type { Validator } from '../types.js';
+import type { ObjectLike, Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -6,11 +6,11 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface NullishValidator
- * @template [ValidationParams=any] extended validation parameters
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
  * @extends {Validator<null | undefined, ValidationParams>}
  * @since 1.0.0
  */
-export interface NullishValidator<ValidationParams = any>
+export interface NullishValidator<ValidationParams extends ObjectLike = any>
   extends Validator<null | undefined, ValidationParams> {}
 
 /**
@@ -18,12 +18,12 @@ export interface NullishValidator<ValidationParams = any>
  *
  * @export
  * @class DefaultNullishValidator
- * @template [ValidationParams=any] extended validation parameters
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
  * @extends {DefaultValidator<null | undefined, ValidationParams>}
  * @implements {NullishValidator<ValidationParams>}
  * @since 1.0.0
  */
-export class DefaultNullishValidator<ValidationParams = any>
+export class DefaultNullishValidator<ValidationParams extends ObjectLike = any>
   extends DefaultValidator<null | undefined, ValidationParams>
   implements NullishValidator<ValidationParams>
 {

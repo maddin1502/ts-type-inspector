@@ -7,12 +7,14 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface ObjectValidator
  * @template {ObjectLike} Out
- * @template [ValidationParams=any] extended validation parameters
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
  * @extends {Validator<Out, ValidationParams>}
  * @since 1.0.0
  */
-export interface ObjectValidator<Out extends ObjectLike, ValidationParams = any>
-  extends Validator<Out, ValidationParams> {
+export interface ObjectValidator<
+  Out extends ObjectLike,
+  ValidationParams extends ObjectLike = any
+> extends Validator<Out, ValidationParams> {
   /**
    * Reject objects that contain more keys than have been validated
    * USE FOR POJOs ONLY!. Getter/Setter/Methods will lead to false negative results
@@ -30,14 +32,14 @@ export interface ObjectValidator<Out extends ObjectLike, ValidationParams = any>
  * @export
  * @class DefaultObjectValidator
  * @template {ObjectLike} Out
- * @template [ValidationParams=any] extended validation parameters
+ * @template {ObjectLike} [ValidationParams=any] extended validation parameters
  * @extends {DefaultValidator<Out, ValidationParams>}
  * @implements {ObjectValidator<Out, ValidationParams>}
  * @since 1.0.0
  */
 export class DefaultObjectValidator<
     Out extends ObjectLike,
-    ValidationParams = any
+    ValidationParams extends ObjectLike = any
   >
   extends DefaultValidator<Out, ValidationParams>
   implements ObjectValidator<Out, ValidationParams>
