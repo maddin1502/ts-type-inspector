@@ -18,12 +18,6 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - name: Produce (install, build, test)
         run: npm run produce
-      - name: Archive test reports
-        uses: actions/upload-artifact@v3.1.0
-        with:
-          name: test-reports
-          path: tests/reports/
-          if-no-files-found: error
       - name: Publish package
         run: npm publish
         env:
