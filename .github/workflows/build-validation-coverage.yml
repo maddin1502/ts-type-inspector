@@ -43,6 +43,8 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Generate upload artifact name
         run: |
           name=$(echo -n "${{ github.head_ref }}" | sed -e 's/[ \t:\/\\"<>|*?]/-/g' -e 's/--*/-/g')
