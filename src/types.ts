@@ -12,7 +12,7 @@ export type AnyLike =
   | undefined
   | symbol
   | null;
-export type CustomValidation<V, ValidationParams extends ObjectLike = any> = (
+export type CustomValidation<V, ValidationParams = unknown> = (
   value_: V,
   params_?: ValidationParams
 ) => string | undefined;
@@ -20,7 +20,7 @@ export type ValidationErrorHandler<ValidationParams> = (
   error_: ValidationError,
   params_?: ValidationParams
 ) => string | void;
-export interface Validator<Out, ValidationParams extends ObjectLike = any> {
+export interface Validator<Out, ValidationParams = unknown> {
   /**
    * retrieve error from last validation; undefined if validation succeeded
    *
@@ -64,10 +64,27 @@ export interface Validator<Out, ValidationParams extends ObjectLike = any> {
    */
   isValid(value_: unknown, params_?: ValidationParams): value_ is Out;
 }
-export type PropertyValidators<V extends ObjectLike, ValidationParams extends ObjectLike = any> = {
-  readonly [key in keyof V]-?: Validator<V[key], ValidationParams>;
+export type PropertyValidators<
+  V extends ObjectLike,
+  ValidationParams = unknown
+> = {
+  readonly [key in keyof V]-?:
+    | Validator<V[key]>
+    | ((
+        params_: ValidationParams | undefined,
+        use_: <Val extends Validator<V[key]>>(
+          validator_: Val
+        ) => {
+          with: (
+            propValidationParams_?: ValidationParamsFromValidator<Val>
+          ) => Val;
+        }
+      ) => Validator<V[key]>);
 };
-export type PartialPropertyValidators<V, ValidationParams extends ObjectLike = any> = {
+export type ValidationParamsFromValidator<V extends Validator<any>> =
+  V extends Validator<any, infer P> ? P : never;
+
+export type PartialPropertyValidators<V, ValidationParams = unknown> = {
   readonly [key in keyof V]?: Validator<V[key], ValidationParams>;
 };
 export type SelectPropertyValidators<
@@ -77,11 +94,14 @@ export type SelectPropertyValidators<
 export type UnionValidators<V = any> = MinArray<Validator<V>, 2>;
 export type UnionValidatorsItem<U extends UnionValidators> =
   ArrayItem<U> extends Validator<infer V> ? V : never;
-export type ValidationCondition<V, ValidationParams extends ObjectLike = any> = (
+export type ValidationCondition<V, ValidationParams = unknown> = (
   value_: V,
   params_?: ValidationParams
 ) => void | never;
 export type DateLike = string | number | Date;
-export type TupleItemValidators<A extends unknown[], ValidationParams extends ObjectLike = any> = {
+export type TupleItemValidators<
+  A extends unknown[],
+  ValidationParams = unknown
+> = {
   [index in keyof A]: Validator<A[index], ValidationParams>;
 };

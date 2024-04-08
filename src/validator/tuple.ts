@@ -1,4 +1,4 @@
-import type { ObjectLike, TupleItemValidators, Validator } from '@/types.js';
+import type { TupleItemValidators, Validator } from '@/types.js';
 
 import { DefaultValidator } from './index.js';
 
@@ -8,13 +8,13 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface TupleValidator
  * @template {unknown[]} Out
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {Validator<Out, ValidationParams>}
  * @since 3.0.0
  */
 export interface TupleValidator<
   Out extends unknown[],
-  ValidationParams extends ObjectLike = any
+  ValidationParams = unknown
 > extends Validator<Out, ValidationParams> {
   /**
    * Reject tuples that contain more items than have been validated
@@ -32,14 +32,14 @@ export interface TupleValidator<
  * @export
  * @class DefaultTupleValidator
  * @template {unknown[]} Out
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {DefaultValidator<Out, ValidationParams>}
  * @implements {TupleValidator<Out, ValidationParams>}
  * @since 3.0.0
  */
 export class DefaultTupleValidator<
     Out extends unknown[],
-    ValidationParams extends ObjectLike = any
+    ValidationParams = unknown
   >
   extends DefaultValidator<Out, ValidationParams>
   implements TupleValidator<Out, ValidationParams>

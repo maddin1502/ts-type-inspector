@@ -1,4 +1,5 @@
 import { ValidationError } from '@/error.js';
+import { DefaultObjectValidator, DefaultStringValidator } from '@/index.js';
 import { TypeInspector } from '@/inspector.js';
 import { describe, expect, test } from 'vitest';
 
@@ -549,5 +550,49 @@ describe('complex', () => {
         .object<UnknownReason>({ prop: ti.number })
         .validate(new UnknownReason())
     ).toThrow('unknown error');
+  });
+
+  test('ObjectValidator: nested extended validation params', () => {
+    expect.assertions(5);
+    type CommonData = { data: string };
+    type DataStringValidationParams = { notEmpty?: boolean };
+    type CommonDataValidationParams = {
+      dataParams?: DataStringValidationParams;
+    };
+    class DataStringValidator extends DefaultStringValidator<DataStringValidationParams> {
+      constructor() {
+        super();
+        this.custom((value_, params_) => {
+          if (params_?.notEmpty && value_ === '') {
+            return 'empty is not allowed';
+          }
+        });
+      }
+    }
+
+    class CommonDataValidator extends DefaultObjectValidator<
+      CommonData,
+      CommonDataValidationParams
+    > {
+      constructor() {
+        super({
+          data: (params_, use_) =>
+            use_(new DataStringValidator()).with(params_?.dataParams)
+        });
+      }
+    }
+
+    const cv = new CommonDataValidator();
+    expect(cv.isValid({ data: '' }, {})).toBe(true);
+    expect(cv.isValid({ data: '' }, { dataParams: {} })).toBe(true);
+    expect(cv.isValid({ data: '' }, { dataParams: { notEmpty: false } })).toBe(
+      true
+    );
+    expect(cv.isValid({ data: '' }, { dataParams: { notEmpty: true } })).toBe(
+      false
+    );
+    expect(
+      cv.isValid({ data: 'test' }, { dataParams: { notEmpty: true } })
+    ).toBe(true);
   });
 });

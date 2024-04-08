@@ -1,4 +1,4 @@
-import type { ObjectLike, Validator } from '../types.js';
+import type { Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -6,11 +6,11 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface NumberValidator
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {Validator<number, ValidationParams>}
  * @since 1.0.0
  */
-export interface NumberValidator<ValidationParams extends ObjectLike = any>
+export interface NumberValidator<ValidationParams = unknown>
   extends Validator<number, ValidationParams> {
   /**
    * accept positive values only (zero is not positive)
@@ -99,12 +99,12 @@ export interface NumberValidator<ValidationParams extends ObjectLike = any>
  *
  * @export
  * @class DefaultNumberValidator
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {DefaultValidator<number, ValidationParams>}
  * @implements {NumberValidator<ValidationParams>}
  * @since 1.0.0
  */
-export class DefaultNumberValidator<ValidationParams extends ObjectLike = any>
+export class DefaultNumberValidator<ValidationParams = unknown>
   extends DefaultValidator<number, ValidationParams>
   implements NumberValidator<ValidationParams>
 {

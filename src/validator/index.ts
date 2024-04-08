@@ -1,7 +1,6 @@
 import { VALIDATION_ERROR_MARKER, ValidationError } from '../error.js';
 import type {
   CustomValidation,
-  ObjectLike,
   ValidationCondition,
   ValidationErrorHandler,
   Validator
@@ -15,14 +14,12 @@ import type {
  * @abstract
  * @class DefaultValidator
  * @template Out
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @implements {Validator<Out, ValidationParams>}
  * @since 1.0.0
  */
-export abstract class DefaultValidator<
-  Out,
-  ValidationParams extends ObjectLike = any
-> implements Validator<Out, ValidationParams>
+export abstract class DefaultValidator<Out, ValidationParams = unknown>
+  implements Validator<Out, ValidationParams>
 {
   private _validationError: ValidationError | undefined;
   private readonly _customValidations: CustomValidation<

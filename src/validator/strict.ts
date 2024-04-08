@@ -1,5 +1,5 @@
 import type { ArrayItem } from 'ts-lib-extended';
-import type { AnyLike, ObjectLike, Validator } from '../types.js';
+import type { AnyLike, Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -9,13 +9,13 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface StrictValidator
  * @template {AnyLike[]} V
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {Validator<ArrayItem<V>, ValidationParams>}
  * @since 1.0.0
  */
 export interface StrictValidator<
   V extends AnyLike[],
-  ValidationParams extends ObjectLike = any
+  ValidationParams = unknown
 > extends Validator<ArrayItem<V>, ValidationParams> {}
 
 /**
@@ -25,14 +25,14 @@ export interface StrictValidator<
  * @export
  * @class DefaultStrictValidator
  * @template {AnyLike[]} V
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {DefaultValidator<ArrayItem<V>, ValidationParams>}
  * @implements {StrictValidator<V, ValidationParams>}
  * @since 1.0.0
  */
 export class DefaultStrictValidator<
     V extends AnyLike[],
-    ValidationParams extends ObjectLike = any
+    ValidationParams = unknown
   >
   extends DefaultValidator<ArrayItem<V>, ValidationParams>
   implements StrictValidator<V, ValidationParams>

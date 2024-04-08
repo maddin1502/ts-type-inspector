@@ -4,7 +4,7 @@ import type {
   EnumerableValue
 } from 'ts-lib-extended';
 import { enumerableObject } from 'ts-lib-extended';
-import type { ObjectLike, Validator } from '../types.js';
+import type { Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -13,14 +13,12 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface EnumValidator
  * @template {Enumerable} E
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {Validator<EnumerableValue<E>, ValidationParams>}
  * @since 1.0.2
  */
-export interface EnumValidator<
-  E extends Enumerable,
-  ValidationParams extends ObjectLike = any
-> extends Validator<EnumerableValue<E>, ValidationParams> {
+export interface EnumValidator<E extends Enumerable, ValidationParams = unknown>
+  extends Validator<EnumerableValue<E>, ValidationParams> {
   /**
    * additional base type validation for enum values
    *
@@ -35,14 +33,14 @@ export interface EnumValidator<
  * @export
  * @class DefaultEnumValidator
  * @template {Enumerable} E
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {DefaultValidator<EnumerableValue<E>, ValidationParams>}
  * @implements {EnumValidator<E, ValidationParams>}
  * @since 1.0.2
  */
 export class DefaultEnumValidator<
     E extends Enumerable,
-    ValidationParams extends ObjectLike = any
+    ValidationParams = unknown
   >
   extends DefaultValidator<EnumerableValue<E>, ValidationParams>
   implements EnumValidator<E, ValidationParams>

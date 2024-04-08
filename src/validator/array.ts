@@ -1,4 +1,4 @@
-import type { ObjectLike, Validator } from '../types.js';
+import type { Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -7,11 +7,11 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface ArrayValidator
  * @template Out
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {Validator<Out[], ValidationParams>}
  * @since 1.0.0
  */
-export interface ArrayValidator<Out, ValidationParams extends ObjectLike = any>
+export interface ArrayValidator<Out, ValidationParams = unknown>
   extends Validator<Out[], ValidationParams> {
   /**
    * validate exact array length
@@ -61,15 +61,12 @@ export interface ArrayValidator<Out, ValidationParams extends ObjectLike = any>
  * @export
  * @class DefaultArrayValidator
  * @template Out
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {DefaultValidator<Out[], ValidationParams>}
  * @implements {ArrayValidator<Out, ItemValidationParams, ValidationParams>}
  * @since 1.0.0
  */
-export class DefaultArrayValidator<
-    const Out,
-    ValidationParams extends ObjectLike = any
-  >
+export class DefaultArrayValidator<const Out, ValidationParams = unknown>
   extends DefaultValidator<Out[], ValidationParams>
   implements ArrayValidator<Out, ValidationParams>
 {
