@@ -4,7 +4,7 @@ import type {
   EnumerableValue
 } from 'ts-lib-extended';
 import { enumerableObject } from 'ts-lib-extended';
-import type { Validator } from '../types.js';
+import type { Validator } from '@/types.js';
 import { DefaultValidator } from './index.js';
 
 /**

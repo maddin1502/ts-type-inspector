@@ -1,7 +1,7 @@
 import { validate as emailValidate } from 'email-validator';
 
 import { isUri, isWebUri } from 'valid-url';
-import type { Validator } from '../types.js';
+import type { Validator } from '@/types.js';
 import { DefaultValidator } from './index.js';
 
 /**

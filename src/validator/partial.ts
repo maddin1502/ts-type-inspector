@@ -2,7 +2,7 @@ import type {
   ObjectLike,
   PartialPropertyValidators,
   Validator
-} from '../types.js';
+} from '@/types.js';
 import { DefaultValidator } from './index.js';
 
 /**

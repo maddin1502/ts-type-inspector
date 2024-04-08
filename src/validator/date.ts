@@ -1,4 +1,4 @@
-import type { DateLike, Validator } from '../types.js';
+import type { DateLike, Validator } from '@/types.js';
 import { DefaultValidator } from './index.js';
 
 /**

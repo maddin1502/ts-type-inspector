@@ -4,7 +4,7 @@ import type {
   ValidationCondition,
   ValidationErrorHandler,
   Validator
-} from '../types.js';
+} from '@/types.js';
 
 /**
  * Base class of ALL validators, which contains the main validation logic that is not type-related.

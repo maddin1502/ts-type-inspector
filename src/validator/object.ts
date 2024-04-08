@@ -1,4 +1,4 @@
-import type { ObjectLike, PropertyValidators, Validator } from '../types.js';
+import type { ObjectLike, PropertyValidators, Validator } from '@/types.js';
 import { DefaultValidator } from './index.js';
 
 /**

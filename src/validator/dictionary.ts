@@ -3,7 +3,7 @@ import type {
   DictionaryKey,
   DictionaryValue
 } from 'ts-lib-extended';
-import type { Validator } from '../types.js';
+import type { Validator } from '@/types.js';
 import { DefaultValidator } from './index.js';
 
 /**

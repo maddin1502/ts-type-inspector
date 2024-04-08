@@ -1,4 +1,4 @@
-import type { CustomValidation, Validator } from '../types.js';
+import type { CustomValidation, Validator } from '@/types.js';
 import { DefaultValidator } from './index.js';
 
 /**
