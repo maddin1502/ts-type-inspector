@@ -1,5 +1,4 @@
-import type { ObjectLike, TupleItemValidators, Validator } from '@/types.js';
-
+import type { ObjectLike, TupleItemValidators, Validator } from '../types.js';
 import { DefaultValidator } from './index.js';
 
 /**
