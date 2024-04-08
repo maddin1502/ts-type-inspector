@@ -1,4 +1,4 @@
-import type { Validator } from '@/types.js';
+import type { ChildValidator, Validator } from '@/types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -70,7 +70,9 @@ export class DefaultArrayValidator<const Out, ValidationParams = unknown>
   extends DefaultValidator<Out[], ValidationParams>
   implements ArrayValidator<Out, ValidationParams>
 {
-  constructor(private readonly _itemValidator: Validator<Out>) {
+  constructor(
+    private readonly _itemValidator: ChildValidator<Out, ValidationParams>
+  ) {
     super();
   }
 
@@ -96,7 +98,7 @@ export class DefaultArrayValidator<const Out, ValidationParams = unknown>
 
   protected validateBaseType(
     value_: unknown,
-    _params_?: ValidationParams
+    params_?: ValidationParams
   ): Out[] {
     if (!Array.isArray(value_)) {
       this.throwValidationError('value is not an array');
@@ -104,7 +106,7 @@ export class DefaultArrayValidator<const Out, ValidationParams = unknown>
 
     for (let i = 0; i < value_.length; i++) {
       try {
-        this._itemValidator.validate(value_[i]);
+        this.validateChild(value_[i], this._itemValidator, params_);
       } catch (reason_) {
         this.rethrowError(reason_, i);
       }

@@ -1,5 +1,6 @@
-import { VALIDATION_ERROR_MARKER, ValidationError } from '../error.js';
+import { VALIDATION_ERROR_MARKER, ValidationError } from '@/error.js';
 import type {
+  ChildValidator,
   CustomValidation,
   ValidationCondition,
   ValidationErrorHandler,
@@ -159,6 +160,25 @@ export abstract class DefaultValidator<Out, ValidationParams = unknown>
   ): this {
     this._conditions.push(condition_);
     return this;
+  }
+
+  protected validateChild(
+    value_: unknown,
+    childValidator_: ChildValidator<any, ValidationParams>,
+    params_?: ValidationParams
+  ) {
+    if (typeof childValidator_ === 'function') {
+      let childValidationParams: unknown;
+
+      const childValidator = childValidator_((cval_, cparams_) => {
+        childValidationParams = cparams_;
+        return cval_;
+      }, params_);
+
+      childValidator.validate(value_, childValidationParams);
+    } else {
+      childValidator_.validate(value_);
+    }
   }
 
   private isValidationError(reason_: unknown): reason_ is ValidationError {

@@ -70,13 +70,15 @@ export type ChildValidationParams<CV extends Validator<any>> =
 export type ChildValidator<Out, ValidationParams> =
   | Validator<Out>
   | ((
-      use_: <CV extends Validator<Out>>(
-        validator_: CV
-      ) => {
-        with: (childValidationParams_?: ChildValidationParams<CV>) => CV;
-      },
+      validateWith_: <
+        CV extends Validator<Out>,
+        P extends ChildValidationParams<CV>
+      >(
+        validator_: CV,
+        params_?: P
+      ) => CV,
       params_?: ValidationParams
-    ) => Validator<Out>);
+    ) => ReturnType<typeof validateWith_>);
 
 export type PropertyValidators<
   V extends ObjectLike,

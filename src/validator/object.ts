@@ -65,26 +65,11 @@ export class DefaultObjectValidator<
     // keep optional parameters in mind! The value must be validated even if it is undefined
     for (const validatorKey in this._propertyValidators) {
       try {
-        const propertyValidator = this._propertyValidators[validatorKey];
-        const valueByKey = value_[validatorKey];
-
-        if (typeof propertyValidator === 'function') {
-          let propValidationParams: unknown;
-
-          const usePropertyValidator = propertyValidator(
-            (useValidator_) => ({
-              with: (propValidationParams_) => {
-                propValidationParams = propValidationParams_;
-                return useValidator_;
-              }
-            }),
-            params_
-          );
-
-          usePropertyValidator.validate(valueByKey, propValidationParams);
-        } else {
-          propertyValidator.validate(valueByKey);
-        }
+        this.validateChild(
+          value_[validatorKey],
+          this._propertyValidators[validatorKey],
+          params_
+        );
       } catch (reason_) {
         this.rethrowError(reason_, validatorKey);
       }
