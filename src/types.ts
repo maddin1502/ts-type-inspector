@@ -65,27 +65,24 @@ export interface Validator<Out, ValidationParams = unknown> {
   isValid(value_: unknown, params_?: ValidationParams): value_ is Out;
 }
 
-export type ChildValidationParams<V extends Validator<any>> =
-  V extends Validator<any, infer P> ? P : never;
-export type ChildValidator<Val extends Validator<any>, ValidationParams> =
-  | Val
+export type ChildValidationParams<CV extends Validator<any>> =
+  CV extends Validator<any, infer P> ? P : never;
+export type ChildValidator<Out, ValidationParams> =
+  | Validator<Out>
   | ((
-      use_: <CVal extends Val>(
-        validator_: CVal
+      use_: <CV extends Validator<Out>>(
+        validator_: CV
       ) => {
-        with: (childValidationParams_?: ChildValidationParams<CVal>) => CVal;
+        with: (childValidationParams_?: ChildValidationParams<CV>) => CV;
       },
       params_?: ValidationParams
-    ) => Val);
+    ) => Validator<Out>);
 
 export type PropertyValidators<
   V extends ObjectLike,
   ValidationParams = unknown
 > = {
-  readonly [key in keyof V]-?: ChildValidator<
-    Validator<V[key]>,
-    ValidationParams
-  >;
+  readonly [key in keyof V]-?: ChildValidator<V[key], ValidationParams>;
 };
 
 export type PartialPropertyValidators<V, ValidationParams = unknown> = {
