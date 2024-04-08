@@ -576,7 +576,7 @@ describe('complex', () => {
     > {
       constructor() {
         super({
-          data: (params_, use_) =>
+          data: (use_, params_) =>
             use_(new DataStringValidator()).with(params_?.dataParams)
         });
       }

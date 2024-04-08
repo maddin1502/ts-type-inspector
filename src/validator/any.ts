@@ -30,8 +30,6 @@ export interface AnyValidator<ValidationParams = unknown>
   get notFalsy(): this;
 }
 
-const x: AnyValidator = null as any as typeof x;
-
 /**
  * This validator should only be used when a value is indeterminate or when you want to bypass deep validation of an object
  *

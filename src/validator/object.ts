@@ -72,13 +72,13 @@ export class DefaultObjectValidator<
           let propValidationParams: unknown;
 
           const usePropertyValidator = propertyValidator(
-            params_,
             (useValidator_) => ({
               with: (propValidationParams_) => {
                 propValidationParams = propValidationParams_;
                 return useValidator_;
               }
-            })
+            }),
+            params_
           );
 
           usePropertyValidator.validate(valueByKey, propValidationParams);

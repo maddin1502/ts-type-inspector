@@ -9,8 +9,8 @@
   "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc -p ./tsconfig.prod.json",
-    "build:dev": "tsc -p ./tsconfig.dev.json",
+    "build": "tsc -p ./tsconfig.prod.json && tsc-alias",
+    "build:dev": "tsc -p ./tsconfig.dev.json && tsc-alias",
     "lint": "eslint src",
     "lint:fix": "npm run lint -- --fix",
     "test": "vitest run",
@@ -55,6 +55,7 @@
     "@vitest/coverage-v8": "^1.4.0",
     "@vitest/ui": "^1.4.0",
     "eslint": "^8.57.0",
+    "tsc-alias": "^1.8.8",
     "typescript": "^5.4.4",
     "vitest": "^1.4.0"
   },
