@@ -1,5 +1,4 @@
 import type { TupleItemValidators, Validator } from '@/types.js';
-
 import { DefaultValidator } from './index.js';
 
 /**
