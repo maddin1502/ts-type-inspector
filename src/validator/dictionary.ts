@@ -3,7 +3,7 @@ import type {
   DictionaryKey,
   DictionaryValue
 } from 'ts-lib-extended';
-import type { Validator } from '@/types.js';
+import type { ChildValidator, Validator } from '@/types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -49,7 +49,7 @@ export class DefaultDictionaryValidator<
   implements DictionaryValidator<Out, ValidationParams>
 {
   constructor(
-    private readonly _itemValidator: Validator<DictionaryValue<Out>>
+    private readonly _itemValidator: ChildValidator<DictionaryValue<Out>, ValidationParams>
   ) {
     super();
   }
@@ -60,7 +60,7 @@ export class DefaultDictionaryValidator<
 
   protected validateBaseType(
     value_: unknown,
-    _params_?: ValidationParams
+    params_?: ValidationParams
   ): Out {
     if (!this.isDictionary(value_)) {
       this.throwValidationError('value is not a dictionary');
@@ -68,7 +68,7 @@ export class DefaultDictionaryValidator<
 
     for (const dictionaryKey in value_) {
       try {
-        this._itemValidator.validate(value_[dictionaryKey]);
+        this.validateChild(value_[dictionaryKey], this._itemValidator, params_);
       } catch (reason_) {
         this.rethrowError(reason_, dictionaryKey);
       }

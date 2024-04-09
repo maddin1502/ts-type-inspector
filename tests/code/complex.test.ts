@@ -1,11 +1,12 @@
 import { ValidationError } from '@/error.js';
-import { DefaultArrayValidator, DefaultObjectValidator } from '@/index.js';
+import { DefaultArrayValidator, DefaultDictionaryValidator, DefaultObjectValidator } from '@/index.js';
 import { TypeInspector } from '@/inspector.js';
 import { describe, expect, test } from 'vitest';
 import {
   TestStringValidationParams,
   TestStringValidator
 } from '../testTypes.js';
+import { Dictionary } from 'ts-lib-extended';
 
 const ti = new TypeInspector();
 
@@ -612,6 +613,33 @@ describe('complex', () => {
     expect(tav.isValid([''], { stringParams: { notEmpty: false } })).toBe(true);
     expect(tav.isValid([''], { stringParams: { notEmpty: true } })).toBe(false);
     expect(tav.isValid(['test'], { stringParams: { notEmpty: true } })).toBe(
+      true
+    );
+  });
+
+  test('DictionaryValidator: nested extended validation params', () => {
+    expect.assertions(5);
+    type TestDictionaryValidationParams = {
+      stringParams?: TestStringValidationParams;
+    };
+
+    class TestDictionaryValidator extends DefaultDictionaryValidator<
+      Dictionary<string, string>,
+      TestDictionaryValidationParams
+    > {
+      constructor() {
+        super((validateWith_, params_) =>
+          validateWith_(new TestStringValidator(), params_?.stringParams)
+        );
+      }
+    }
+
+    const tav = new TestDictionaryValidator();
+    expect(tav.isValid({value: ''}, {})).toBe(true);
+    expect(tav.isValid({value: ''}, { stringParams: {} })).toBe(true);
+    expect(tav.isValid({value: ''}, { stringParams: { notEmpty: false } })).toBe(true);
+    expect(tav.isValid({value: ''}, { stringParams: { notEmpty: true } })).toBe(false);
+    expect(tav.isValid({value: 'test'}, { stringParams: { notEmpty: true } })).toBe(
       true
     );
   });
