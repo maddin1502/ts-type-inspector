@@ -39,22 +39,26 @@ export class DefaultPartialValidator<
   implements PartialValidator<Out, ValidationParams>
 {
   constructor(
-    private readonly _propertyValidators: PartialPropertyValidators<Out>
+    private readonly _propertyValidators: PartialPropertyValidators<
+      Out,
+      ValidationParams
+    >
   ) {
     super();
   }
 
-  protected validateBaseType(
-    value_: unknown,
-    _params_?: ValidationParams
-  ): Out {
+  protected validateBaseType(value_: unknown, params_?: ValidationParams): Out {
     if (!this.isObjectLike(value_)) {
       this.throwValidationError('value is not an object');
     }
 
     for (const validatorKey in this._propertyValidators) {
       try {
-        this._propertyValidators[validatorKey]?.validate(value_[validatorKey]);
+        const propertyValidator = this._propertyValidators[validatorKey];
+
+        if (propertyValidator) {
+          this.validateChild(value_[validatorKey], propertyValidator, params_);
+        }
       } catch (reason_) {
         this.rethrowError(reason_, validatorKey);
       }

@@ -87,9 +87,10 @@ export type PropertyValidators<
   readonly [key in keyof V]-?: ChildValidator<V[key], ValidationParams>;
 };
 
-export type PartialPropertyValidators<V, ValidationParams = unknown> = {
-  readonly [key in keyof V]?: Validator<V[key], ValidationParams>;
-};
+export type PartialPropertyValidators<
+  V extends ObjectLike,
+  ValidationParams = unknown
+> = Partial<PropertyValidators<V, ValidationParams>>;
 export type SelectPropertyValidators<
   V extends ObjectLike,
   K extends keyof V

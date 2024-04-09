@@ -1,5 +1,5 @@
 import { ValidationError } from '@/error.js';
-import { DefaultArrayValidator, DefaultDictionaryValidator, DefaultObjectValidator } from '@/index.js';
+import { DefaultArrayValidator, DefaultDictionaryValidator, DefaultObjectValidator, DefaultPartialValidator } from '@/index.js';
 import { TypeInspector } from '@/inspector.js';
 import { describe, expect, test } from 'vitest';
 import {
@@ -634,13 +634,46 @@ describe('complex', () => {
       }
     }
 
-    const tav = new TestDictionaryValidator();
-    expect(tav.isValid({value: ''}, {})).toBe(true);
-    expect(tav.isValid({value: ''}, { stringParams: {} })).toBe(true);
-    expect(tav.isValid({value: ''}, { stringParams: { notEmpty: false } })).toBe(true);
-    expect(tav.isValid({value: ''}, { stringParams: { notEmpty: true } })).toBe(false);
-    expect(tav.isValid({value: 'test'}, { stringParams: { notEmpty: true } })).toBe(
+    const tdv = new TestDictionaryValidator();
+    expect(tdv.isValid({value: ''}, {})).toBe(true);
+    expect(tdv.isValid({value: ''}, { stringParams: {} })).toBe(true);
+    expect(tdv.isValid({value: ''}, { stringParams: { notEmpty: false } })).toBe(true);
+    expect(tdv.isValid({value: ''}, { stringParams: { notEmpty: true } })).toBe(false);
+    expect(tdv.isValid({value: 'test'}, { stringParams: { notEmpty: true } })).toBe(
       true
     );
+  });
+
+  test('PartialValidator: nested extended validation params', () => {
+    expect.assertions(5);
+    type CommonData = { data: string };
+    type CommonDataValidationParams = {
+      dataParams?: TestStringValidationParams;
+    };
+
+    class TestPartualValidator extends DefaultPartialValidator<
+      CommonData,
+      CommonDataValidationParams
+    > {
+      constructor() {
+        super({
+          data: (validateWith_, params_) =>
+            validateWith_(new TestStringValidator(), params_?.dataParams)
+        });
+      }
+    }
+
+    const tpv = new TestPartualValidator();
+    expect(tpv.isValid({ data: '' }, {})).toBe(true);
+    expect(tpv.isValid({ data: '' }, { dataParams: {} })).toBe(true);
+    expect(tpv.isValid({ data: '' }, { dataParams: { notEmpty: false } })).toBe(
+      true
+    );
+    expect(tpv.isValid({ data: '' }, { dataParams: { notEmpty: true } })).toBe(
+      false
+    );
+    expect(
+      tpv.isValid({ data: 'test' }, { dataParams: { notEmpty: true } })
+    ).toBe(true);
   });
 });
