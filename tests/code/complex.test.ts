@@ -1,5 +1,11 @@
 import { ValidationError } from '@/error.js';
-import { DefaultArrayValidator, DefaultDictionaryValidator, DefaultObjectValidator, DefaultPartialValidator } from '@/index.js';
+import {
+  DefaultArrayValidator,
+  DefaultDictionaryValidator,
+  DefaultObjectValidator,
+  DefaultPartialValidator,
+  DefaultTupleValidator
+} from '@/index.js';
 import { TypeInspector } from '@/inspector.js';
 import { describe, expect, test } from 'vitest';
 import {
@@ -635,13 +641,17 @@ describe('complex', () => {
     }
 
     const tdv = new TestDictionaryValidator();
-    expect(tdv.isValid({value: ''}, {})).toBe(true);
-    expect(tdv.isValid({value: ''}, { stringParams: {} })).toBe(true);
-    expect(tdv.isValid({value: ''}, { stringParams: { notEmpty: false } })).toBe(true);
-    expect(tdv.isValid({value: ''}, { stringParams: { notEmpty: true } })).toBe(false);
-    expect(tdv.isValid({value: 'test'}, { stringParams: { notEmpty: true } })).toBe(
-      true
-    );
+    expect(tdv.isValid({ value: '' }, {})).toBe(true);
+    expect(tdv.isValid({ value: '' }, { stringParams: {} })).toBe(true);
+    expect(
+      tdv.isValid({ value: '' }, { stringParams: { notEmpty: false } })
+    ).toBe(true);
+    expect(
+      tdv.isValid({ value: '' }, { stringParams: { notEmpty: true } })
+    ).toBe(false);
+    expect(
+      tdv.isValid({ value: 'test' }, { stringParams: { notEmpty: true } })
+    ).toBe(true);
   });
 
   test('PartialValidator: nested extended validation params', () => {
@@ -675,5 +685,32 @@ describe('complex', () => {
     expect(
       tpv.isValid({ data: 'test' }, { dataParams: { notEmpty: true } })
     ).toBe(true);
+  });
+
+  test('TupleValidator: nested extended validation params', () => {
+    expect.assertions(5);
+    type TestTupleValidationParams = {
+      stringParams?: TestStringValidationParams;
+    };
+
+    class TestTupleValidator extends DefaultTupleValidator<
+      [string],
+      TestTupleValidationParams
+    > {
+      constructor() {
+        super((validateWith_, params_) =>
+          validateWith_(new TestStringValidator(), params_?.stringParams)
+        );
+      }
+    }
+
+    const tav = new TestTupleValidator();
+    expect(tav.isValid([''], {})).toBe(true);
+    expect(tav.isValid([''], { stringParams: {} })).toBe(true);
+    expect(tav.isValid([''], { stringParams: { notEmpty: false } })).toBe(true);
+    expect(tav.isValid([''], { stringParams: { notEmpty: true } })).toBe(false);
+    expect(tav.isValid(['test'], { stringParams: { notEmpty: true } })).toBe(
+      true
+    );
   });
 });

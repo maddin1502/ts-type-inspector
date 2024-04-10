@@ -107,5 +107,5 @@ export type TupleItemValidators<
   A extends unknown[],
   ValidationParams = unknown
 > = {
-  [index in keyof A]: Validator<A[index], ValidationParams>;
+  [index in keyof A]: ChildValidator<A[index], ValidationParams>;
 };
