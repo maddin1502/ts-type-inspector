@@ -1,7 +1,7 @@
 import { validate as emailValidate } from 'email-validator';
 
 import { isUri, isWebUri } from 'valid-url';
-import type { ObjectLike, Validator } from '../types.js';
+import type { Validator } from '@/types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -9,11 +9,11 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface StringValidator
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {Validator<string, ValidationParams>}
  * @since 1.0.0
  */
-export interface StringValidator<ValidationParams extends ObjectLike = any>
+export interface StringValidator<ValidationParams = unknown>
   extends Validator<string, ValidationParams> {
   /**
    * define minimum string length
@@ -143,12 +143,12 @@ export interface StringValidator<ValidationParams extends ObjectLike = any>
  *
  * @export
  * @class DefaultStringValidator
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {DefaultValidator<string, ValidationParams>}
  * @implements {StringValidator<ValidationParams>}
  * @since 1.0.0
  */
-export class DefaultStringValidator<ValidationParams extends ObjectLike = any>
+export class DefaultStringValidator<ValidationParams = unknown>
   extends DefaultValidator<string, ValidationParams>
   implements StringValidator<ValidationParams>
 {

@@ -1,4 +1,4 @@
-import type { ObjectLike, Validator } from '../types.js';
+import type { Validator } from '@/types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -6,11 +6,11 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface UndefinedValidator
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {Validator<undefined, ValidationParams>}
  * @since 1.0.0
  */
-export interface UndefinedValidator<ValidationParams extends ObjectLike = any>
+export interface UndefinedValidator<ValidationParams = unknown>
   extends Validator<undefined, ValidationParams> {}
 
 /**
@@ -18,12 +18,12 @@ export interface UndefinedValidator<ValidationParams extends ObjectLike = any>
  *
  * @export
  * @class DefaulUndefinedValidator
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {DefaultValidator<undefined, ValidationParams>}
  * @implements {UndefinedValidator<ValidationParams>}
  * @since 1.0.0
  */
-export class DefaulUndefinedValidator<ValidationParams extends ObjectLike = any>
+export class DefaulUndefinedValidator<ValidationParams = unknown>
   extends DefaultValidator<undefined, ValidationParams>
   implements UndefinedValidator<ValidationParams>
 {

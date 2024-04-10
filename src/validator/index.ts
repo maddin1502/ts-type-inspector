@@ -1,11 +1,11 @@
-import { VALIDATION_ERROR_MARKER, ValidationError } from '../error.js';
+import { VALIDATION_ERROR_MARKER, ValidationError } from '@/error.js';
 import type {
+  NestedValidator,
   CustomValidation,
-  ObjectLike,
   ValidationCondition,
   ValidationErrorHandler,
   Validator
-} from '../types.js';
+} from '@/types.js';
 
 /**
  * Base class of ALL validators, which contains the main validation logic that is not type-related.
@@ -15,14 +15,12 @@ import type {
  * @abstract
  * @class DefaultValidator
  * @template Out
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @implements {Validator<Out, ValidationParams>}
  * @since 1.0.0
  */
-export abstract class DefaultValidator<
-  Out,
-  ValidationParams extends ObjectLike = any
-> implements Validator<Out, ValidationParams>
+export abstract class DefaultValidator<Out, ValidationParams = unknown>
+  implements Validator<Out, ValidationParams>
 {
   private _validationError: ValidationError | undefined;
   private readonly _customValidations: CustomValidation<
@@ -162,6 +160,25 @@ export abstract class DefaultValidator<
   ): this {
     this._conditions.push(condition_);
     return this;
+  }
+
+  protected validateNested(
+    value_: unknown,
+    nestedValidator_: NestedValidator<any, ValidationParams>,
+    params_?: ValidationParams
+  ) {
+    if (typeof nestedValidator_ === 'function') {
+      let nestedValidationParams: unknown;
+
+      const nestedValidator = nestedValidator_((cval_, cparams_) => {
+        nestedValidationParams = cparams_;
+        return cval_;
+      }, params_);
+
+      nestedValidator.validate(value_, nestedValidationParams);
+    } else {
+      nestedValidator_.validate(value_);
+    }
   }
 
   private isValidationError(reason_: unknown): reason_ is ValidationError {

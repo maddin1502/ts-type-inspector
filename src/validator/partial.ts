@@ -2,7 +2,7 @@ import type {
   ObjectLike,
   PartialPropertyValidators,
   Validator
-} from '../types.js';
+} from '@/types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -11,13 +11,13 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface PartialValidator
  * @template {ObjectLike} Out
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {Validator<Out, ValidationParams>}
  * @since 2.0.0
  */
 export interface PartialValidator<
   Out extends ObjectLike,
-  ValidationParams extends ObjectLike = any
+  ValidationParams = unknown
 > extends Validator<Out, ValidationParams> {}
 
 /**
@@ -26,35 +26,39 @@ export interface PartialValidator<
  * @export
  * @class DefaultPartialValidator
  * @template {ObjectLike} Out
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {DefaultValidator<Out, ValidationParams>}
  * @implements {PartialValidator<Out, ValidationParams>}
  * @since 2.0.0
  */
 export class DefaultPartialValidator<
     Out extends ObjectLike,
-    ValidationParams extends ObjectLike = any
+    ValidationParams = unknown
   >
   extends DefaultValidator<Out, ValidationParams>
   implements PartialValidator<Out, ValidationParams>
 {
   constructor(
-    private readonly _propertyValidators: PartialPropertyValidators<Out>
+    private readonly _propertyValidators: PartialPropertyValidators<
+      Out,
+      ValidationParams
+    >
   ) {
     super();
   }
 
-  protected validateBaseType(
-    value_: unknown,
-    _params_?: ValidationParams
-  ): Out {
+  protected validateBaseType(value_: unknown, params_?: ValidationParams): Out {
     if (!this.isObjectLike(value_)) {
       this.throwValidationError('value is not an object');
     }
 
     for (const validatorKey in this._propertyValidators) {
       try {
-        this._propertyValidators[validatorKey]?.validate(value_[validatorKey]);
+        const propertyValidator = this._propertyValidators[validatorKey];
+
+        if (propertyValidator) {
+          this.validateNested(value_[validatorKey], propertyValidator, params_);
+        }
       } catch (reason_) {
         this.rethrowError(reason_, validatorKey);
       }

@@ -1,4 +1,4 @@
-import { DefaultValidator } from '@/index.js';
+import { DefaultStringValidator, DefaultValidator } from '@/index.js';
 
 export type TestExtendedValidationParameters = {
   failOn: 'validate' | 'condition' | 'custom';
@@ -35,5 +35,18 @@ export class ExtendedValidationParametersValidator extends DefaultValidator<
     }
 
     return value_;
+  }
+}
+
+export type TestStringValidationParams = { notEmpty?: boolean };
+
+export class TestStringValidator extends DefaultStringValidator<TestStringValidationParams> {
+  constructor() {
+    super();
+    this.custom((value_, params_) => {
+      if (params_?.notEmpty && value_ === '') {
+        return 'empty is not allowed';
+      }
+    });
   }
 }

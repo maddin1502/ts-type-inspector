@@ -15,6 +15,7 @@
 - [How to define custom validators](#how-to-define-custom-validators)
   - [Create specialized (data type related) validators](#create-specialized-data-type-related-validators)
   - [Validation based on external influences](#validation-based-on-external-influences)
+  - [External influences and nested validators](#external-influences-and-nested-validators)
 - [Predefined validators](#predefined-validators)
   - [String](#string)
   - [Number](#number)
@@ -243,6 +244,54 @@ cdv.isValid(value, { valueRequired: true }); // false
 // when using 2. option
 cdv.isValid(value, { valueRequired: true }); // true
 cdv.failWhenRequired.isValid(value, { valueRequired: true }); // false
+```
+
+### External influences and nested validators
+
+Relevant to: Object, Partial, Dictionary, Array, Tuple
+
+It is possible to pass the external influence parameters to nested validators. For this it is necessary to use a wrapper, which is provided by the main validator.
+
+```ts
+import { DefaultObjectValidator, DefaultStringValidator } from 'ts-type-inspector';
+
+export type CommonData = {
+  data: string | undefined;
+};
+export type SpecialStringValidationParams = {
+  notEmpty?: boolean;
+};
+
+type CommonDataValidationParams = {
+  dataParams?: SpecialStringValidationParams;
+};
+
+export class SpecialStringValidator extends DefaultStringValidator<SpecialStringValidationParams> {
+  constructor() {
+    super();
+    this.custom((value_, params_) => {
+      if (params_?.notEmpty && value_ === '') {
+        return 'empty is not allowed';
+      }
+    });
+  }
+}
+
+export class CommonDataValidator extends DefaultObjectValidator<
+  CommonData,
+  CommonDataValidationParams
+> {
+  constructor() {
+    super({
+      data: (validateWith, validationParams) =>
+        validateWith(new SpecialStringValidator(), validationParams?.dataParams)
+    });
+  }
+}
+
+const cdv = new CommonDataValidator();
+cdv.isValid({ data: '' }); // true
+cdv.isValid({ data: '' }, { dataParams: { notEmpty: true } }); // false
 ```
 
 ## Predefined validators

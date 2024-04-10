@@ -1,6 +1,18 @@
 import { ValidationError } from '@/error.js';
+import {
+  DefaultArrayValidator,
+  DefaultDictionaryValidator,
+  DefaultObjectValidator,
+  DefaultPartialValidator,
+  DefaultTupleValidator
+} from '@/index.js';
 import { TypeInspector } from '@/inspector.js';
 import { describe, expect, test } from 'vitest';
+import {
+  TestStringValidationParams,
+  TestStringValidator
+} from '../testTypes.js';
+import { Dictionary } from 'ts-lib-extended';
 
 const ti = new TypeInspector();
 
@@ -549,5 +561,156 @@ describe('complex', () => {
         .object<UnknownReason>({ prop: ti.number })
         .validate(new UnknownReason())
     ).toThrow('unknown error');
+  });
+
+  test('ObjectValidator: nested extended validation params', () => {
+    expect.assertions(5);
+    type CommonData = { data: string };
+    type CommonDataValidationParams = {
+      dataParams?: TestStringValidationParams;
+    };
+
+    class TestObjectValidator extends DefaultObjectValidator<
+      CommonData,
+      CommonDataValidationParams
+    > {
+      constructor() {
+        super({
+          data: (validateWith_, params_) =>
+            validateWith_(new TestStringValidator(), params_?.dataParams)
+        });
+      }
+    }
+
+    const tov = new TestObjectValidator();
+    expect(tov.isValid({ data: '' }, {})).toBe(true);
+    expect(tov.isValid({ data: '' }, { dataParams: {} })).toBe(true);
+    expect(tov.isValid({ data: '' }, { dataParams: { notEmpty: false } })).toBe(
+      true
+    );
+    expect(tov.isValid({ data: '' }, { dataParams: { notEmpty: true } })).toBe(
+      false
+    );
+    expect(
+      tov.isValid({ data: 'test' }, { dataParams: { notEmpty: true } })
+    ).toBe(true);
+  });
+
+  test('ArrayValidator: nested extended validation params', () => {
+    expect.assertions(5);
+    type TestArrayValidationParams = {
+      stringParams?: TestStringValidationParams;
+    };
+
+    class TestArrayValidator extends DefaultArrayValidator<
+      string,
+      TestArrayValidationParams
+    > {
+      constructor() {
+        super((validateWith_, params_) =>
+          validateWith_(new TestStringValidator(), params_?.stringParams)
+        );
+      }
+    }
+
+    const tav = new TestArrayValidator();
+    expect(tav.isValid([''], {})).toBe(true);
+    expect(tav.isValid([''], { stringParams: {} })).toBe(true);
+    expect(tav.isValid([''], { stringParams: { notEmpty: false } })).toBe(true);
+    expect(tav.isValid([''], { stringParams: { notEmpty: true } })).toBe(false);
+    expect(tav.isValid(['test'], { stringParams: { notEmpty: true } })).toBe(
+      true
+    );
+  });
+
+  test('DictionaryValidator: nested extended validation params', () => {
+    expect.assertions(5);
+    type TestDictionaryValidationParams = {
+      stringParams?: TestStringValidationParams;
+    };
+
+    class TestDictionaryValidator extends DefaultDictionaryValidator<
+      Dictionary<string, string>,
+      TestDictionaryValidationParams
+    > {
+      constructor() {
+        super((validateWith_, params_) =>
+          validateWith_(new TestStringValidator(), params_?.stringParams)
+        );
+      }
+    }
+
+    const tdv = new TestDictionaryValidator();
+    expect(tdv.isValid({ value: '' }, {})).toBe(true);
+    expect(tdv.isValid({ value: '' }, { stringParams: {} })).toBe(true);
+    expect(
+      tdv.isValid({ value: '' }, { stringParams: { notEmpty: false } })
+    ).toBe(true);
+    expect(
+      tdv.isValid({ value: '' }, { stringParams: { notEmpty: true } })
+    ).toBe(false);
+    expect(
+      tdv.isValid({ value: 'test' }, { stringParams: { notEmpty: true } })
+    ).toBe(true);
+  });
+
+  test('PartialValidator: nested extended validation params', () => {
+    expect.assertions(5);
+    type CommonData = { data: string };
+    type CommonDataValidationParams = {
+      dataParams?: TestStringValidationParams;
+    };
+
+    class TestPartualValidator extends DefaultPartialValidator<
+      CommonData,
+      CommonDataValidationParams
+    > {
+      constructor() {
+        super({
+          data: (validateWith_, params_) =>
+            validateWith_(new TestStringValidator(), params_?.dataParams)
+        });
+      }
+    }
+
+    const tpv = new TestPartualValidator();
+    expect(tpv.isValid({ data: '' }, {})).toBe(true);
+    expect(tpv.isValid({ data: '' }, { dataParams: {} })).toBe(true);
+    expect(tpv.isValid({ data: '' }, { dataParams: { notEmpty: false } })).toBe(
+      true
+    );
+    expect(tpv.isValid({ data: '' }, { dataParams: { notEmpty: true } })).toBe(
+      false
+    );
+    expect(
+      tpv.isValid({ data: 'test' }, { dataParams: { notEmpty: true } })
+    ).toBe(true);
+  });
+
+  test('TupleValidator: nested extended validation params', () => {
+    expect.assertions(5);
+    type TestTupleValidationParams = {
+      stringParams?: TestStringValidationParams;
+    };
+
+    class TestTupleValidator extends DefaultTupleValidator<
+      [string],
+      TestTupleValidationParams
+    > {
+      constructor() {
+        super((validateWith_, params_) =>
+          validateWith_(new TestStringValidator(), params_?.stringParams)
+        );
+      }
+    }
+
+    const tav = new TestTupleValidator();
+    expect(tav.isValid([''], {})).toBe(true);
+    expect(tav.isValid([''], { stringParams: {} })).toBe(true);
+    expect(tav.isValid([''], { stringParams: { notEmpty: false } })).toBe(true);
+    expect(tav.isValid([''], { stringParams: { notEmpty: true } })).toBe(false);
+    expect(tav.isValid(['test'], { stringParams: { notEmpty: true } })).toBe(
+      true
+    );
   });
 });

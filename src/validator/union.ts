@@ -1,9 +1,8 @@
 import type {
-  ObjectLike,
   UnionValidators,
   UnionValidatorsItem,
   Validator
-} from '../types.js';
+} from '@/types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -12,13 +11,13 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface UnionValidator
  * @template {UnionValidators} V
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {Validator<UnionValidatorsItem<V>, ValidationParams>}
  * @since 1.0.0
  */
 export interface UnionValidator<
   V extends UnionValidators,
-  ValidationParams extends ObjectLike = any
+  ValidationParams = unknown
 > extends Validator<UnionValidatorsItem<V>, ValidationParams> {}
 
 /**
@@ -27,14 +26,14 @@ export interface UnionValidator<
  * @export
  * @class DefaultUnionValidator
  * @template {UnionValidators} V
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {DefaultValidator<UnionValidatorsItem<V>, ValidationParams>}
  * @implements {UnionValidator<V, ValidationParams>}
  * @since 1.0.0
  */
 export class DefaultUnionValidator<
     V extends UnionValidators,
-    ValidationParams extends ObjectLike = any
+    ValidationParams = unknown
   >
   extends DefaultValidator<UnionValidatorsItem<V>, ValidationParams>
   implements UnionValidator<V, ValidationParams>

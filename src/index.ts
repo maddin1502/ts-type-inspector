@@ -1,22 +1,7 @@
 import { TypeInspector } from './inspector.js';
 
 export { ValidationError } from './error.js';
-export type {
-  AnyLike,
-  CustomValidation,
-  DateLike,
-  MethodLike,
-  ObjectLike,
-  PartialPropertyValidators,
-  PropertyValidators,
-  SelectPropertyValidators,
-  TupleItemValidators,
-  UnionValidators,
-  UnionValidatorsItem,
-  ValidationCondition,
-  ValidationErrorHandler,
-  Validator
-} from './types.js';
+export type * from './types.js';
 export { DefaultAnyValidator, type AnyValidator } from './validator/any.js';
 export {
   DefaultArrayValidator,

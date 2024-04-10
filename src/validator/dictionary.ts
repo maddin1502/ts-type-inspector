@@ -3,7 +3,7 @@ import type {
   DictionaryKey,
   DictionaryValue
 } from 'ts-lib-extended';
-import type { ObjectLike, Validator } from '../types.js';
+import type { NestedValidator, Validator } from '@/types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -12,13 +12,13 @@ import { DefaultValidator } from './index.js';
  * @export
  * @interface DictionaryValidator
  * @template {Dictionary} Out
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {Validator<Out, ValidationParams>}
  * @since 1.0.0
  */
 export interface DictionaryValidator<
   Out extends Dictionary,
-  ValidationParams extends ObjectLike = any
+  ValidationParams = unknown
 > extends Validator<Out, ValidationParams> {
   /**
    * additional dictionary key validation
@@ -36,20 +36,20 @@ export interface DictionaryValidator<
  * @export
  * @class DefaultDictionaryValidator
  * @template {Dictionary} Out
- * @template {ObjectLike} [ValidationParams=any] extended validation parameters
+ * @template [ValidationParams=unknown] extended validation parameters
  * @extends {DefaultValidator<Out, ValidationParams>}
  * @implements {DictionaryValidator<Out, ValidationParams, ValidationParams>}
  * @since 1.0.0
  */
 export class DefaultDictionaryValidator<
     Out extends Dictionary,
-    ValidationParams extends ObjectLike = any
+    ValidationParams = unknown
   >
   extends DefaultValidator<Out, ValidationParams>
   implements DictionaryValidator<Out, ValidationParams>
 {
   constructor(
-    private readonly _itemValidator: Validator<DictionaryValue<Out>>
+    private readonly _itemValidator: NestedValidator<DictionaryValue<Out>, ValidationParams>
   ) {
     super();
   }
@@ -60,7 +60,7 @@ export class DefaultDictionaryValidator<
 
   protected validateBaseType(
     value_: unknown,
-    _params_?: ValidationParams
+    params_?: ValidationParams
   ): Out {
     if (!this.isDictionary(value_)) {
       this.throwValidationError('value is not a dictionary');
@@ -68,7 +68,7 @@ export class DefaultDictionaryValidator<
 
     for (const dictionaryKey in value_) {
       try {
-        this._itemValidator.validate(value_[dictionaryKey]);
+        this.validateNested(value_[dictionaryKey], this._itemValidator, params_);
       } catch (reason_) {
         this.rethrowError(reason_, dictionaryKey);
       }
