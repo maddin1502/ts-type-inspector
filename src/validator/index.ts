@@ -1,6 +1,6 @@
 import { VALIDATION_ERROR_MARKER, ValidationError } from '@/error.js';
 import type {
-  ChildValidator,
+  NestedValidator,
   CustomValidation,
   ValidationCondition,
   ValidationErrorHandler,
@@ -162,22 +162,22 @@ export abstract class DefaultValidator<Out, ValidationParams = unknown>
     return this;
   }
 
-  protected validateChild(
+  protected validateNested(
     value_: unknown,
-    childValidator_: ChildValidator<any, ValidationParams>,
+    nestedValidator_: NestedValidator<any, ValidationParams>,
     params_?: ValidationParams
   ) {
-    if (typeof childValidator_ === 'function') {
-      let childValidationParams: unknown;
+    if (typeof nestedValidator_ === 'function') {
+      let nestedValidationParams: unknown;
 
-      const childValidator = childValidator_((cval_, cparams_) => {
-        childValidationParams = cparams_;
+      const nestedValidator = nestedValidator_((cval_, cparams_) => {
+        nestedValidationParams = cparams_;
         return cval_;
       }, params_);
 
-      childValidator.validate(value_, childValidationParams);
+      nestedValidator.validate(value_, nestedValidationParams);
     } else {
-      childValidator_.validate(value_);
+      nestedValidator_.validate(value_);
     }
   }
 

@@ -65,7 +65,7 @@ export class DefaultObjectValidator<
     // keep optional parameters in mind! The value must be validated even if it is undefined
     for (const validatorKey in this._propertyValidators) {
       try {
-        this.validateChild(
+        this.validateNested(
           value_[validatorKey],
           this._propertyValidators[validatorKey],
           params_

@@ -3,7 +3,7 @@ import type {
   DictionaryKey,
   DictionaryValue
 } from 'ts-lib-extended';
-import type { ChildValidator, Validator } from '@/types.js';
+import type { NestedValidator, Validator } from '@/types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -49,7 +49,7 @@ export class DefaultDictionaryValidator<
   implements DictionaryValidator<Out, ValidationParams>
 {
   constructor(
-    private readonly _itemValidator: ChildValidator<DictionaryValue<Out>, ValidationParams>
+    private readonly _itemValidator: NestedValidator<DictionaryValue<Out>, ValidationParams>
   ) {
     super();
   }
@@ -68,7 +68,7 @@ export class DefaultDictionaryValidator<
 
     for (const dictionaryKey in value_) {
       try {
-        this.validateChild(value_[dictionaryKey], this._itemValidator, params_);
+        this.validateNested(value_[dictionaryKey], this._itemValidator, params_);
       } catch (reason_) {
         this.rethrowError(reason_, dictionaryKey);
       }

@@ -1,4 +1,4 @@
-import type { ChildValidator, Validator } from '@/types.js';
+import type { NestedValidator, Validator } from '@/types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -71,7 +71,7 @@ export class DefaultArrayValidator<const Out, ValidationParams = unknown>
   implements ArrayValidator<Out, ValidationParams>
 {
   constructor(
-    private readonly _itemValidator: ChildValidator<Out, ValidationParams>
+    private readonly _itemValidator: NestedValidator<Out, ValidationParams>
   ) {
     super();
   }
@@ -106,7 +106,7 @@ export class DefaultArrayValidator<const Out, ValidationParams = unknown>
 
     for (let i = 0; i < value_.length; i++) {
       try {
-        this.validateChild(value_[i], this._itemValidator, params_);
+        this.validateNested(value_[i], this._itemValidator, params_);
       } catch (reason_) {
         this.rethrowError(reason_, i);
       }

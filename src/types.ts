@@ -65,14 +65,14 @@ export interface Validator<Out, ValidationParams = unknown> {
   isValid(value_: unknown, params_?: ValidationParams): value_ is Out;
 }
 
-export type ChildValidationParams<CV extends Validator<any>> =
+export type NestedValidationParams<CV extends Validator<any>> =
   CV extends Validator<any, infer P> ? P : never;
-export type ChildValidator<Out, ValidationParams> =
+export type NestedValidator<Out, ValidationParams> =
   | Validator<Out>
   | ((
       validateWith_: <
         CV extends Validator<Out>,
-        P extends ChildValidationParams<CV>
+        P extends NestedValidationParams<CV>
       >(
         validator_: CV,
         params_?: P
@@ -84,7 +84,7 @@ export type PropertyValidators<
   V extends ObjectLike,
   ValidationParams = unknown
 > = {
-  readonly [key in keyof V]-?: ChildValidator<V[key], ValidationParams>;
+  readonly [key in keyof V]-?: NestedValidator<V[key], ValidationParams>;
 };
 
 export type PartialPropertyValidators<
@@ -107,5 +107,5 @@ export type TupleItemValidators<
   A extends unknown[],
   ValidationParams = unknown
 > = {
-  [index in keyof A]: ChildValidator<A[index], ValidationParams>;
+  [index in keyof A]: NestedValidator<A[index], ValidationParams>;
 };

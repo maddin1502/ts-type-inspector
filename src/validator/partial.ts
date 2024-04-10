@@ -57,7 +57,7 @@ export class DefaultPartialValidator<
         const propertyValidator = this._propertyValidators[validatorKey];
 
         if (propertyValidator) {
-          this.validateChild(value_[validatorKey], propertyValidator, params_);
+          this.validateNested(value_[validatorKey], propertyValidator, params_);
         }
       } catch (reason_) {
         this.rethrowError(reason_, validatorKey);
