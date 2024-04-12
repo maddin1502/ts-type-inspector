@@ -15,5 +15,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-      - name: Validate (install, build, test)
-        run: npm run produce
+      - name: Intall dependencies
+        run: npm i
+      - name: Validate (build, test)
+        run: npm run build:validate

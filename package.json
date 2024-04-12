@@ -1,6 +1,6 @@
 {
   "name": "ts-type-inspector",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Tool for type safe value validation",
   "files": [
     "dist"
@@ -11,6 +11,7 @@
   "scripts": {
     "build": "tsc -p ./tsconfig.prod.json && tsc-alias",
     "build:dev": "tsc -p ./tsconfig.dev.json && tsc-alias",
+    "build:validate": "npm run build && npm test",
     "lint": "eslint src",
     "lint:fix": "npm run lint -- --fix",
     "test": "vitest run",
@@ -19,10 +20,7 @@
     "test:watch": "vitest watch",
     "reset:modules": "npx --quiet -y rimraf node_modules/ package-lock.json",
     "reset:creation": "npx --quiet -y rimraf dist/ tests/reports/",
-    "reset": "npm run reset:creation && npm run reset:modules",
-    "validate": "npm run reset && npm i && npm run build && npm test",
-    "create": "npm run reset:creation && npm run build && npm test",
-    "produce": "npm run validate && npm i --only=prod"
+    "reset": "npm run reset:creation && npm run reset:modules"
   },
   "repository": {
     "type": "git",
