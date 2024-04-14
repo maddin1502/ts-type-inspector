@@ -7,12 +7,12 @@ import {
   DefaultTupleValidator
 } from '@/index.js';
 import { TypeInspector } from '@/inspector.js';
+import type { Dictionary } from 'ts-lib-extended';
 import { describe, expect, test } from 'vitest';
 import {
-  TestStringValidationParams,
-  TestStringValidator
+  TestStringValidator,
+  type TestStringValidationParams
 } from '../testTypes.js';
-import { Dictionary } from 'ts-lib-extended';
 
 const ti = new TypeInspector();
 

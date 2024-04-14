@@ -1,10 +1,10 @@
-import type {
-  Enumerable,
-  EnumerableBase,
-  EnumerableValue
-} from 'ts-lib-extended';
-import { enumerableObject } from 'ts-lib-extended';
 import type { Validator } from '@/types.js';
+import {
+  enumerableObject,
+  type Enumerable,
+  type EnumerableBase,
+  type EnumerableValue
+} from 'ts-lib-extended';
 import { DefaultValidator } from './index.js';
 
 /**

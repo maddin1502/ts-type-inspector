@@ -1,7 +1,7 @@
-export const VALIDATION_ERROR_MARKER = '__isValidationError';
+const VALIDATION_ERROR_MARKER = Symbol('VALIDATION_ERROR_MARKER');
 
 export class ValidationError extends Error {
-  public readonly [VALIDATION_ERROR_MARKER] = true;
+  protected readonly [VALIDATION_ERROR_MARKER] = true;
   public readonly propertyPath: string | undefined;
   public readonly originalErrorMessage: string;
 
@@ -27,4 +27,23 @@ export class ValidationError extends Error {
 
     this.originalErrorMessage = errorMessage_;
   }
+}
+
+/**
+ * determine whether a value is a ValidationError
+ *
+ * @export
+ * @param {unknown} reason_
+ * @returns {reason_ is ValidationError}
+ * @since 3.2.0
+ */
+export function isValidationError(
+  reason_: unknown
+): reason_ is ValidationError {
+  return (
+    typeof reason_ === 'object' &&
+    reason_ !== null &&
+    VALIDATION_ERROR_MARKER in reason_ &&
+    reason_[VALIDATION_ERROR_MARKER] === true
+  );
 }

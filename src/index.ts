@@ -1,6 +1,6 @@
 import { TypeInspector } from './inspector.js';
 
-export { ValidationError } from './error.js';
+export { ValidationError, isValidationError } from './error.js';
 export type * from './types.js';
 export { DefaultAnyValidator, type AnyValidator } from './validator/any.js';
 export {

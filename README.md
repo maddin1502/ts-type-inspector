@@ -141,6 +141,25 @@ function processIncomingValueAsString(value_: unknown): number {
 }
 ```
 
+Or you can use `isValidationError` with try-catch.
+
+```ts
+import ti, { isValidationError } from 'ts-type-inspector';
+
+function processIncomingValueAsString(value_: unknown): number {
+  try {
+    const stringValue = ti.string.validate(value_);
+    return stringValue.length;
+  } catch (reason_) {
+    if (isValidationError(reason_)) {
+      console.log(reason_); // <VALIDATION_ERROR>
+    }
+
+    return NaN;
+  }
+}
+```
+
 Parameter | Description
 --- | ---
 `<VALIDATION_ERROR>` | Undefined if validation succeeds; Defined else; Contains reason for failed validation
