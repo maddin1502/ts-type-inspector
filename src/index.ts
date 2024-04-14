@@ -1,5 +1,6 @@
 import { TypeInspector } from './inspector.js';
 
+export type { AnyLike, MethodLike, ObjectLike } from 'ts-lib-extended';
 export { ValidationError, isValidationError } from './error.js';
 export type * from './types.js';
 export { DefaultAnyValidator, type AnyValidator } from './validator/any.js';

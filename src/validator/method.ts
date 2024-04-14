@@ -1,4 +1,5 @@
-import type { MethodLike, Validator } from '@/types.js';
+import type { Validator } from '@/types.js';
+import type { MethodLike } from 'ts-lib-extended';
 import { DefaultValidator } from './index.js';
 
 /**
