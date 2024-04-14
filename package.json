@@ -1,6 +1,6 @@
 {
   "name": "ts-type-inspector",
-  "version": "3.1.1",
+  "version": "3.2.0",
   "description": "Tool for type safe value validation",
   "files": [
     "dist"
@@ -59,7 +59,7 @@
   },
   "dependencies": {
     "email-validator": "^2.0.4",
-    "ts-lib-extended": "^2.1.0",
+    "ts-lib-extended": "^3.0.0",
     "valid-url": "^1.0.9"
   }
 }

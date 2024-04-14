@@ -1,7 +1,7 @@
-import { VALIDATION_ERROR_MARKER, ValidationError } from '@/error.js';
+import { ValidationError, isValidationError } from '@/error.js';
 import type {
-  NestedValidator,
   CustomValidation,
+  NestedValidator,
   ValidationCondition,
   ValidationErrorHandler,
   Validator
@@ -92,7 +92,7 @@ export abstract class DefaultValidator<Out, ValidationParams = unknown>
     reason_: unknown,
     propertyTraces_?: PropertyKey[]
   ): { error: Error; originalMessage?: string } {
-    if (this.isValidationError(reason_)) {
+    if (isValidationError(reason_)) {
       if (reason_.propertyTrace && propertyTraces_) {
         propertyTraces_.push(...reason_.propertyTrace);
       }
@@ -179,14 +179,6 @@ export abstract class DefaultValidator<Out, ValidationParams = unknown>
     } else {
       nestedValidator_.validate(value_);
     }
-  }
-
-  private isValidationError(reason_: unknown): reason_ is ValidationError {
-    return (
-      typeof reason_ === 'object' &&
-      reason_ !== null &&
-      VALIDATION_ERROR_MARKER in reason_
-    );
   }
 
   private hasMessage(value_: unknown): value_ is { message: any } {
