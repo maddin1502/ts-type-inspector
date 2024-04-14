@@ -1,5 +1,5 @@
-import type { ArrayItem } from 'ts-lib-extended';
-import type { AnyLike, Validator } from '@/types.js';
+import type { Validator } from '@/types.js';
+import type { AnyLike, ArrayItem } from 'ts-lib-extended';
 import { DefaultValidator } from './index.js';
 
 /**

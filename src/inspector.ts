@@ -1,9 +1,13 @@
-import type { Dictionary, DictionaryValue, Enumerable } from 'ts-lib-extended';
 import type {
   AnyLike,
-  CustomValidation,
+  Dictionary,
+  DictionaryValue,
+  Enumerable,
   MethodLike,
-  ObjectLike,
+  ObjectLike
+} from 'ts-lib-extended';
+import type {
+  CustomValidation,
   PartialPropertyValidators,
   PropertyValidators,
   TupleItemValidators,
@@ -294,7 +298,7 @@ export class TypeInspector {
    * @since 1.1.0
    */
   public exclude<Out extends In, In>(
-    validator_: DefaultValidator<Exclude<In, Out>>  // use DefaultValidator class and NOT Validator type to prevent the use of conditions
+    validator_: DefaultValidator<Exclude<In, Out>> // use DefaultValidator class and NOT Validator type to prevent the use of conditions
   ): DefaultExcludeValidator<Out, In> {
     return new DefaultExcludeValidator(validator_);
   }

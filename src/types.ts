@@ -1,17 +1,6 @@
-import type { ArrayItem, MinArray } from 'ts-lib-extended';
+import type { ArrayItem, MinArray, ObjectLike } from 'ts-lib-extended';
 import type { ValidationError } from './error.js';
 
-export type MethodLike = (...args_: any[]) => any;
-export type ObjectLike = Record<PropertyKey, any>;
-export type AnyLike =
-  | number
-  | string
-  | boolean
-  | ObjectLike
-  | MethodLike
-  | undefined
-  | symbol
-  | null;
 export type CustomValidation<V, ValidationParams = unknown> = (
   value_: V,
   params_?: ValidationParams

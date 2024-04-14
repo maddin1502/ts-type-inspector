@@ -1,8 +1,5 @@
-import type {
-  ObjectLike,
-  PartialPropertyValidators,
-  Validator
-} from '@/types.js';
+import type { PartialPropertyValidators, Validator } from '@/types.js';
+import type { ObjectLike } from 'ts-lib-extended';
 import { DefaultValidator } from './index.js';
 
 /**
