@@ -12,6 +12,7 @@
     "declaration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "verbatimModuleSyntax": true,
     "paths": {
       "@/*": ["./src/*"]
     }

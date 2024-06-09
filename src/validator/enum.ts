@@ -68,7 +68,7 @@ export class DefaultEnumValidator<
     this.throwValidationError('value does not exist in enum');
   }
 
-  private isEnumValue(enum_: E, value_: unknown): value_ is EnumerableValue<E> {
+  protected isEnumValue(enum_: E, value_: unknown): value_ is EnumerableValue<E> {
     const values = enumerableObject.values(enum_);
 
     for (let i = 0; i < values.length; i++) {
