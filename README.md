@@ -663,6 +663,22 @@ ti.enum(NumberEnum);
 ti.enum(StringEnum).values(ti.string.reject(StringEnum.bar));
 ```
 
+Since 3.3.0 enum validation is compatible with flags by passing the "allowFlags" parameter.
+
+```ts
+import ti from 'ts-type-inspector';
+
+enum FlagsEnum {
+  flag1 = 1,
+  flag2 = 2,
+  flag3 = 4,
+  flag4 = 8
+}
+
+ti.enum(FlagsEnum, true);
+// .isValid(FlagsEnum.flag2 | FlagsEnum.flag4) ==> true
+```
+
 | Condition | Description |
 |---|---|
 | values | add validator for additional base type validation |

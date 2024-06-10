@@ -14,17 +14,27 @@ enum StringEnum {
   c = 'c'
 }
 
+enum FlagsEnum {
+  flag1 = 1,
+  flag2 = 2,
+  flag3 = 4,
+  flag4 = 8
+}
+
 const ti = new TypeInspector();
 
 describe(DefaultEnumValidator, () => {
   test('isValid - success', () => {
-    expect.assertions(6);
+    expect.assertions(9);
     expect(ti.enum(NumberEnum).isValid(0)).toBe(true);
     expect(ti.enum(NumberEnum).isValid(1)).toBe(true);
     expect(ti.enum(NumberEnum).isValid(2)).toBe(true);
     expect(ti.enum(StringEnum).isValid('a')).toBe(true);
     expect(ti.enum(StringEnum).isValid('b')).toBe(true);
     expect(ti.enum(StringEnum).isValid('c')).toBe(true);
+    expect(ti.enum(FlagsEnum, true).isValid(FlagsEnum.flag2)).toBe(true);
+    expect(ti.enum(FlagsEnum, true).isValid(FlagsEnum.flag4)).toBe(true);
+    expect(ti.enum(FlagsEnum, true).isValid(FlagsEnum.flag4 | FlagsEnum.flag2)).toBe(true);
   });
 
   test('isValid - correct conditions', () => {
@@ -46,13 +56,15 @@ describe(DefaultEnumValidator, () => {
   });
 
   test('isValid - failure', () => {
-    expect.assertions(6);
+    expect.assertions(8);
     expect(ti.enum(NumberEnum).isValid('a')).toBe(false);
     expect(ti.enum(NumberEnum).isValid('b')).toBe(false);
     expect(ti.enum(NumberEnum).isValid('c')).toBe(false);
     expect(ti.enum(StringEnum).isValid(0)).toBe(false);
     expect(ti.enum(StringEnum).isValid(1)).toBe(false);
     expect(ti.enum(StringEnum).isValid(2)).toBe(false);
+    expect(ti.enum(FlagsEnum).isValid(FlagsEnum.flag4 | FlagsEnum.flag2)).toBe(false);
+    expect(ti.enum(FlagsEnum).isValid(16)).toBe(false);
   });
 
   test('isValid - incorrect conditions', () => {

@@ -45,8 +45,32 @@ export class DefaultEnumValidator<
   extends DefaultValidator<EnumerableValue<E>, ValidationParams>
   implements EnumValidator<E, ValidationParams>
 {
-  constructor(private readonly _enum: E) {
+  private readonly _allFlags: number = 0;
+
+  /**
+   * Creates an instance of DefaultEnumValidator.
+   *
+   * @constructor
+   * @param {E} _enum
+   * @param {boolean} [_allowFlags=false] (since 3.3.0) allow flagged values
+   */
+  constructor(
+    private readonly _enum: E,
+    private readonly _allowFlags: boolean = false
+  ) {
     super();
+
+    if (_allowFlags) {
+      const values = enumerableObject.values(_enum);
+
+      for (let i = 0; i < values.length; i++) {
+        const enumValue = values[i];
+
+        if (typeof enumValue === 'number') {
+          this._allFlags |= enumValue;
+        }
+      }
+    }
   }
 
   public values(
@@ -68,13 +92,24 @@ export class DefaultEnumValidator<
     this.throwValidationError('value does not exist in enum');
   }
 
-  protected isEnumValue(enum_: E, value_: unknown): value_ is EnumerableValue<E> {
+  protected isEnumValue(
+    enum_: E,
+    value_: unknown
+  ): value_ is EnumerableValue<E> {
     const values = enumerableObject.values(enum_);
 
     for (let i = 0; i < values.length; i++) {
       if (values[i] === value_) {
         return true;
       }
+    }
+
+    if (
+      this._allowFlags &&
+      typeof value_ === 'number' &&
+      (this._allFlags & value_) === value_
+    ) {
+      return true;
     }
 
     return false;

@@ -276,13 +276,15 @@ export class TypeInspector {
    * @public
    * @template {Enumerable<unknown>} E
    * @param {E} enum_ the enum instance itself, NOT a value from enum
+   * @param {boolean} [allowFlags=false] (since 3.3.0) allow flagged values
    * @returns {DefaultEnumValidator<E>}
    * @since 1.0.2
    */
   public enum<E extends Enumerable<unknown>>(
-    enum_: E
+    enum_: E,
+    allowFlags: boolean = false
   ): DefaultEnumValidator<E> {
-    return new DefaultEnumValidator(enum_);
+    return new DefaultEnumValidator(enum_, allowFlags);
   }
 
   /**
