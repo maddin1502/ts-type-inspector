@@ -23,6 +23,7 @@ export interface Validator<Out, ValidationParams = unknown> {
    * @param {CustomValidation<Out, ValidationParams>} validation_
    * @param {?ValidationParams} [params_]
    * @returns {this}
+   * @since 1.0.0
    */
   custom(
     validation_: CustomValidation<Out, ValidationParams>,
@@ -34,6 +35,7 @@ export interface Validator<Out, ValidationParams = unknown> {
    *
    * @param {ValidationErrorHandler<ValidationParams>} handler_
    * @returns {this}
+   * @since 2.0.0
    */
   onError(handler_: ValidationErrorHandler<ValidationParams>): this;
   /**
@@ -41,7 +43,8 @@ export interface Validator<Out, ValidationParams = unknown> {
    *
    * @param {unknown} value_
    * @param {?ValidationParams} [params_]
-   * @returns {Out}
+   * @returns {Out} validated value with type assertion (same object reference)
+   * @since 1.0.0
    */
   validate(value_: unknown, params_?: ValidationParams): Out;
   /**
@@ -50,8 +53,32 @@ export interface Validator<Out, ValidationParams = unknown> {
    * @param {unknown} value_
    * @param {?ValidationParams} [params_]
    * @returns {value_ is Out} true if valid; false if invalid; this is a type predicate - asserted type will be associated to value if true
+   * @since 1.0.0
    */
   isValid(value_: unknown, params_?: ValidationParams): value_ is Out;
+  /**
+   * validate value;
+   *
+   * @param {unknown} value_
+   * @param {Out} fallback_
+   * @param {?ValidationParams} [params_]
+   * @returns {Out} validated value with type assertion (same object reference) OR fallback value when invalid
+   * @since 3.4.0
+   */
+  validOrFallback(
+    value_: unknown,
+    fallback_: Out,
+    params_?: ValidationParams
+  ): Out;
+  /**
+   * validate value;
+   *
+   * @param {unknown} value_
+   * @param {?ValidationParams} [params_]
+   * @returns {Out} validated value with type assertion (same object reference) OR undefined when invalid
+   * @since 3.4.0
+   */
+  validOrDefault(value_: unknown, params_?: ValidationParams): Out | undefined;
 }
 
 export type NestedValidationParams<CV extends Validator<any>> =

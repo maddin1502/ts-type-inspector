@@ -83,6 +83,21 @@ export abstract class DefaultValidator<Out, ValidationParams = unknown>
     }
   }
 
+  public validOrFallback(
+    value_: unknown,
+    fallback_: Out,
+    params_?: ValidationParams
+  ): Out {
+    return this.validOrDefault(value_, params_) ?? fallback_;
+  }
+
+  public validOrDefault(
+    value_: unknown,
+    params_?: ValidationParams
+  ): Out | undefined {
+    return this.isValid(value_, params_) ? value_ : undefined;
+  }
+
   protected abstract validateBaseType(
     value_: unknown,
     params_?: ValidationParams
