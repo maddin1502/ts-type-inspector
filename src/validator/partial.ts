@@ -1,19 +1,19 @@
 import type { PartialPropertyValidators, Validator } from '@/types.js';
-import type { ObjectLike } from 'ts-lib-extended';
-import { DefaultValidator } from './index.js';
+import type { InstanceLike } from 'ts-lib-extended';
+import { PropertiesValidator, type PVOUT, type PVPar } from './property.js';
 
 /**
  * Validator for object based values. This is an **UNSAFE** validator that only validates some properties and ignores others
  *
  * @export
  * @interface PartialValidator
- * @template {ObjectLike} Out
+ * @template {InstanceLike} Out
  * @template [ValidationParams=unknown] extended validation parameters
  * @extends {Validator<Out, ValidationParams>}
  * @since 2.0.0
  */
 export interface PartialValidator<
-  Out extends ObjectLike,
+  Out extends InstanceLike,
   ValidationParams = unknown
 > extends Validator<Out, ValidationParams> {}
 
@@ -22,29 +22,17 @@ export interface PartialValidator<
  *
  * @export
  * @class DefaultPartialValidator
- * @template {ObjectLike} Out
+ * @template {InstanceLike} Out
  * @template [ValidationParams=unknown] extended validation parameters
  * @extends {DefaultValidator<Out, ValidationParams>}
  * @implements {PartialValidator<Out, ValidationParams>}
  * @since 2.0.0
  */
-export class DefaultPartialValidator<
-    Out extends ObjectLike,
-    ValidationParams = unknown
-  >
-  extends DefaultValidator<Out, ValidationParams>
-  implements PartialValidator<Out, ValidationParams>
+export class DefaultPartialValidator<PV extends PartialPropertyValidators<any>>
+  extends PropertiesValidator<PV>
+  implements PartialValidator<PVOUT<PV>, PVPar<PV>>
 {
-  constructor(
-    private readonly _propertyValidators: PartialPropertyValidators<
-      Out,
-      ValidationParams
-    >
-  ) {
-    super();
-  }
-
-  protected validateBaseType(value_: unknown, params_?: ValidationParams): Out {
+  protected validateBaseType(value_: unknown, params_?: PVPar<PV>): PVOUT<PV> {
     if (!this.isObjectLike(value_)) {
       this.throwValidationError('value is not an object');
     }
@@ -64,7 +52,7 @@ export class DefaultPartialValidator<
     return value_;
   }
 
-  private isObjectLike(value_: unknown): value_ is ObjectLike {
+  private isObjectLike(value_: unknown): value_ is PVOUT<PV> {
     return typeof value_ === 'object' && value_ !== null;
   }
 }
