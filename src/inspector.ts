@@ -8,6 +8,7 @@ import type {
 } from 'ts-lib-extended';
 import type {
   CustomValidation,
+  NestedValidateWith,
   PartialPropertyValidators,
   PropertyValidators,
   TupleItemValidators,
@@ -24,6 +25,7 @@ import { DefaultEnumValidator } from './validator/enum.js';
 import { DefaultExcludeValidator } from './validator/exclude.js';
 import { DefaultValidator } from './validator/index.js';
 import { DefaultMethodValidator } from './validator/method.js';
+import { NestedValidator } from './validator/nested.js';
 import { DefaultNullValidator } from './validator/null.js';
 import { DefaultNullishValidator } from './validator/nullish.js';
 import { DefaultNumberValidator } from './validator/number.js';
@@ -318,5 +320,11 @@ export class TypeInspector {
     ...itemValidators_: TupleItemValidators<Out>
   ): DefaultTupleValidator<Out> {
     return new DefaultTupleValidator<Out>(...itemValidators_);
+  }
+
+  public nested<Out, ValidationParams>(
+    callback_: NestedValidateWith<Out, ValidationParams>
+  ): NestedValidator<Out, ValidationParams> {
+    return new NestedValidator<Out, ValidationParams>(callback_);
   }
 }

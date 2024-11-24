@@ -576,8 +576,9 @@ describe('complex', () => {
     > {
       constructor() {
         super({
-          data: (validateWith_, params_) =>
+          data: ti.nested((validateWith_, params_) =>
             validateWith_(new TestStringValidator(), params_?.dataParams)
+          )
         });
       }
     }
@@ -607,8 +608,10 @@ describe('complex', () => {
       TestArrayValidationParams
     > {
       constructor() {
-        super((validateWith_, params_) =>
-          validateWith_(new TestStringValidator(), params_?.stringParams)
+        super(
+          ti.nested((validateWith_, params_) =>
+            validateWith_(new TestStringValidator(), params_?.stringParams)
+          )
         );
       }
     }
@@ -634,8 +637,10 @@ describe('complex', () => {
       TestDictionaryValidationParams
     > {
       constructor() {
-        super((validateWith_, params_) =>
-          validateWith_(new TestStringValidator(), params_?.stringParams)
+        super(
+          ti.nested((validateWith_, params_) =>
+            validateWith_(new TestStringValidator(), params_?.stringParams)
+          )
         );
       }
     }
@@ -667,8 +672,9 @@ describe('complex', () => {
     > {
       constructor() {
         super({
-          data: (validateWith_, params_) =>
+          data: ti.nested((validateWith_, params_) =>
             validateWith_(new TestStringValidator(), params_?.dataParams)
+          )
         });
       }
     }
@@ -698,8 +704,10 @@ describe('complex', () => {
       TestTupleValidationParams
     > {
       constructor() {
-        super((validateWith_, params_) =>
-          validateWith_(new TestStringValidator(), params_?.stringParams)
+        super(
+          ti.nested((validateWith_, params_) =>
+            validateWith_(new TestStringValidator(), params_?.stringParams)
+          )
         );
       }
     }

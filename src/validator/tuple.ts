@@ -65,7 +65,7 @@ export class DefaultTupleValidator<
 
     for (let i = 0; i < this._itemValidators.length; i++) {
       try {
-        this.validateNested(value_[i], this._itemValidators[i], params_);
+        this._itemValidators[i].validate(value_[i], params_);
       } catch (reason_) {
         this.rethrowError(reason_, i);
       }

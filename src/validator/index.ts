@@ -1,7 +1,6 @@
 import { ValidationError, isValidationError } from '@/error.js';
 import type {
   CustomValidation,
-  NestedValidator,
   ValidationCondition,
   ValidationErrorHandler,
   Validator
@@ -175,25 +174,6 @@ export abstract class DefaultValidator<Out, ValidationParams = unknown>
   ): this {
     this._conditions.push(condition_);
     return this;
-  }
-
-  protected validateNested(
-    value_: unknown,
-    nestedValidator_: NestedValidator<any, ValidationParams>,
-    params_?: ValidationParams
-  ) {
-    if (typeof nestedValidator_ === 'function') {
-      let nestedValidationParams: unknown;
-
-      const nestedValidator = nestedValidator_((cval_, cparams_) => {
-        nestedValidationParams = cparams_;
-        return cval_;
-      }, params_);
-
-      nestedValidator.validate(value_, nestedValidationParams);
-    } else {
-      nestedValidator_.validate(value_);
-    }
   }
 
   private hasMessage(value_: unknown): value_ is { message: any } {

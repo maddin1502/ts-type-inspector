@@ -1,9 +1,9 @@
+import type { Validator } from '@/types.js';
 import type {
   Dictionary,
   DictionaryKey,
   DictionaryValue
 } from 'ts-lib-extended';
-import type { NestedValidator, Validator } from '@/types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -49,7 +49,10 @@ export class DefaultDictionaryValidator<
   implements DictionaryValidator<Out, ValidationParams>
 {
   constructor(
-    private readonly _itemValidator: NestedValidator<DictionaryValue<Out>, ValidationParams>
+    private readonly _itemValidator: Validator<
+      DictionaryValue<Out>,
+      ValidationParams
+    >
   ) {
     super();
   }
@@ -58,17 +61,14 @@ export class DefaultDictionaryValidator<
     return this.setupCondition((value_) => this.checkKeys(value_, validator_));
   }
 
-  protected validateBaseType(
-    value_: unknown,
-    params_?: ValidationParams
-  ): Out {
+  protected validateBaseType(value_: unknown, params_?: ValidationParams): Out {
     if (!this.isDictionary(value_)) {
       this.throwValidationError('value is not a dictionary');
     }
 
     for (const dictionaryKey in value_) {
       try {
-        this.validateNested(value_[dictionaryKey], this._itemValidator, params_);
+        this._itemValidator.validate(value_[dictionaryKey], params_);
       } catch (reason_) {
         this.rethrowError(reason_, dictionaryKey);
       }
