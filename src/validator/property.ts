@@ -8,9 +8,9 @@ export type PVPar<T extends PartialPropertyValidators<any>> =
   T extends PartialPropertyValidators<any, infer P> ? P : never;
 
 export abstract class PropertiesValidator<
-  PV extends PartialPropertyValidators<any, any>,
-  Out extends InstanceLike = PVOUT<PV>,
-  ValidationParams = PVPar<PV>
+  Out extends InstanceLike,
+  ValidationParams,
+  PV extends PartialPropertyValidators<Out, ValidationParams>
 > extends DefaultValidator<Out, ValidationParams> {
   constructor(protected readonly _propertyValidators: PV) {
     super();

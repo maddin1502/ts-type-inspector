@@ -1,4 +1,4 @@
-import type { ArrayItem, MinArray, InstanceLike } from 'ts-lib-extended';
+import type { ArrayItem, InstanceLike, MinArray } from 'ts-lib-extended';
 import type { ValidationError } from './error.js';
 
 export type CustomValidation<V, ValidationParams = unknown> = (

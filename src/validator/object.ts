@@ -1,6 +1,6 @@
 import type { PropertyValidators, Validator } from '@/types.js';
 import type { InstanceLike } from 'ts-lib-extended';
-import { PropertiesValidator, type PVOUT, type PVPar } from './property.js';
+import { PropertiesValidator } from './property.js';
 
 /**
  * Validator for object based values. Each property has to match its specified validator
@@ -34,19 +34,26 @@ export interface ObjectValidator<
  * @class DefaultObjectValidator
  * @template {InstanceLike} Out
  * @template [ValidationParams=unknown] extended validation parameters
- * @extends {DefaultValidator<Out, ValidationParams>}
- * @implements {ObjectValidator<Out, ValidationParams>}
+ * @extends {PropertiesValidator<Out, ValidationParams, PropertyValidators<Out, ValidationParams>>}
+ * @implements {Validator<Out, ValidationParams>}
  * @since 1.0.0
  */
-export class DefaultObjectValidator<PV extends PropertyValidators<any>>
-  extends PropertiesValidator<PV>
-  implements Validator<PVOUT<PV>, PVPar<PV>>
+export class DefaultObjectValidator<
+    Out extends InstanceLike,
+    ValidationParams = unknown
+  >
+  extends PropertiesValidator<
+    Out,
+    ValidationParams,
+    PropertyValidators<Out, ValidationParams>
+  >
+  implements Validator<Out, ValidationParams>
 {
   public get noOverload(): this {
     return this.setupCondition((value_) => this.checkOverload(value_));
   }
 
-  protected validateBaseType(value_: unknown, params_?: PVPar<PV>): PVOUT<PV> {
+  protected validateBaseType(value_: unknown, params_?: ValidationParams): Out {
     if (!this.isObjectLike(value_)) {
       this.throwValidationError('value is not an object');
     }
@@ -67,7 +74,7 @@ export class DefaultObjectValidator<PV extends PropertyValidators<any>>
     return value_;
   }
 
-  private isObjectLike(value_: unknown): value_ is PVOUT<PV> {
+  private isObjectLike(value_: unknown): value_ is InstanceLike {
     return typeof value_ === 'object' && value_ !== null;
   }
 

@@ -3,6 +3,7 @@ import type {
   Dictionary,
   DictionaryValue,
   Enumerable,
+  InstanceLike,
   MethodLike
 } from 'ts-lib-extended';
 import type {
@@ -193,10 +194,10 @@ export class TypeInspector {
    * @returns {DefaultObjectValidator<Out>}
    * @since 1.0.0
    */
-  public object<PV extends PropertyValidators<any>>(
-    propertyValidators_: PV
-  ): DefaultObjectValidator<PV> {
-    return new DefaultObjectValidator<PV>(propertyValidators_);
+  public object<Out extends InstanceLike>(
+    propertyValidators_: PropertyValidators<Out>
+  ): DefaultObjectValidator<Out> {
+    return new DefaultObjectValidator<Out>(propertyValidators_);
   }
 
   /**
@@ -208,10 +209,10 @@ export class TypeInspector {
    * @returns {DefaultPartialValidator<Out>}
    * @since 2.0.0
    */
-  public partial<PV extends PartialPropertyValidators<any>>(
-    propertyValidators_: PV
-  ): DefaultPartialValidator<PV> {
-    return new DefaultPartialValidator<PV>(propertyValidators_);
+  public partial<Out extends InstanceLike>(
+    propertyValidators_: PartialPropertyValidators<Out>
+  ): DefaultPartialValidator<Out> {
+    return new DefaultPartialValidator<Out>(propertyValidators_);
   }
 
   /**
