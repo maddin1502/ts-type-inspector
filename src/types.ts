@@ -1,5 +1,6 @@
 import type { ArrayItem, InstanceLike, MinArray } from 'ts-lib-extended';
 import type { ValidationError } from './error.js';
+import type { NestedValidator } from './validator/nested.js';
 
 export type CustomValidation<V, ValidationParams = unknown> = (
   value_: V,
@@ -9,7 +10,10 @@ export type ValidationErrorHandler<ValidationParams> = (
   error_: ValidationError,
   params_?: ValidationParams
 ) => string | void;
-export interface Validator<Out, ValidationParams = unknown> {
+export interface Validator<
+  Out,
+  ValidationParams = unknown
+> {
   /**
    * retrieve error from last validation; undefined if validation succeeded
    *
@@ -83,7 +87,7 @@ export interface Validator<Out, ValidationParams = unknown> {
 
 export type NestedValidationParams<CV extends Validator<any>> =
   CV extends Validator<any, infer P> ? P : never;
-export type NestedValidateWith<Out, ValidationParams> = (
+export type NestedValidateWith<Out, ParentValidationParams> = (
   validateWith_: <
     CV extends Validator<Out>,
     P extends NestedValidationParams<CV>
@@ -91,20 +95,23 @@ export type NestedValidateWith<Out, ValidationParams> = (
     validator_: CV,
     params_?: P
   ) => CV,
-  params_?: ValidationParams
+  params_?: ParentValidationParams
 ) => ReturnType<typeof validateWith_>;
 
 export type PropertyValidators<
   V extends InstanceLike,
-  ValidationParams = unknown
+  ParentValidationParams
 > = {
-  readonly [key in keyof V]-?: Validator<V[key], ValidationParams>;
+  readonly [key in keyof V]-?: Validator<
+    V[key],
+    unknown
+  > | NestedValidator<V[key], ParentValidationParams>;
 };
 
 export type PartialPropertyValidators<
   V extends InstanceLike,
-  ValidationParams = unknown
-> = Partial<PropertyValidators<V, ValidationParams>>;
+  ParentValidationParams
+> = Partial<PropertyValidators<V, ParentValidationParams>>;
 export type SelectPropertyValidators<
   V extends InstanceLike,
   K extends keyof V

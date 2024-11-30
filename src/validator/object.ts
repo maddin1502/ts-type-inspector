@@ -1,6 +1,7 @@
 import type { PropertyValidators, Validator } from '@/types.js';
 import type { InstanceLike } from 'ts-lib-extended';
 import { PropertiesValidator } from './property.js';
+import { DefaultValidator } from './index.js';
 
 /**
  * Validator for object based values. Each property has to match its specified validator
@@ -42,6 +43,7 @@ export class DefaultObjectValidator<
     Out extends InstanceLike,
     ValidationParams = unknown
   >
+  // extends DefaultValidator<Out, ValidationParams>
   extends PropertiesValidator<
     Out,
     ValidationParams,
@@ -49,6 +51,10 @@ export class DefaultObjectValidator<
   >
   implements Validator<Out, ValidationParams>
 {
+  // constructor(private readonly _propertyValidators: PropertyValidators<Out, ValidationParams>) {
+  //   super();
+  // }
+
   public get noOverload(): this {
     return this.setupCondition((value_) => this.checkOverload(value_));
   }

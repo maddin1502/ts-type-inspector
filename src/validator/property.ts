@@ -2,10 +2,10 @@ import type { PartialPropertyValidators } from '@/types.js';
 import type { InstanceLike } from 'ts-lib-extended';
 import { DefaultValidator } from './index.js';
 
-export type PVOUT<T extends PartialPropertyValidators<any>> =
-  T extends PartialPropertyValidators<infer P> ? P : never;
-export type PVPar<T extends PartialPropertyValidators<any>> =
-  T extends PartialPropertyValidators<any, infer P> ? P : never;
+// export type PVOUT<T extends PartialPropertyValidators<any>> =
+//   T extends PartialPropertyValidators<infer P> ? P : never;
+// export type PVPar<T extends PartialPropertyValidators<any>> =
+//   T extends PartialPropertyValidators<any, infer P> ? P : never;
 
 export abstract class PropertiesValidator<
   Out extends InstanceLike,

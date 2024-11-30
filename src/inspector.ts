@@ -9,6 +9,7 @@ import type {
 import type {
   CustomValidation,
   NestedValidateWith,
+  NestedValidationParams,
   PartialPropertyValidators,
   PropertyValidators,
   TupleItemValidators,
@@ -197,7 +198,7 @@ export class TypeInspector {
    * @since 1.0.0
    */
   public object<Out extends InstanceLike>(
-    propertyValidators_: PropertyValidators<Out>
+    propertyValidators_: PropertyValidators<Out, unknown>
   ): DefaultObjectValidator<Out> {
     return new DefaultObjectValidator<Out>(propertyValidators_);
   }
@@ -212,7 +213,7 @@ export class TypeInspector {
    * @since 2.0.0
    */
   public partial<Out extends InstanceLike>(
-    propertyValidators_: PartialPropertyValidators<Out>
+    propertyValidators_: PartialPropertyValidators<Out, unknown>
   ): DefaultPartialValidator<Out> {
     return new DefaultPartialValidator<Out>(propertyValidators_);
   }
@@ -322,9 +323,14 @@ export class TypeInspector {
     return new DefaultTupleValidator<Out>(...itemValidators_);
   }
 
-  public nested<Out, ValidationParams>(
-    callback_: NestedValidateWith<Out, ValidationParams>
-  ): NestedValidator<Out, ValidationParams> {
-    return new NestedValidator<Out, ValidationParams>(callback_);
+  public nested<Out, ParentValidationParams, V extends Validator<Out> = Validator<Out>>(
+    validator_: V,
+    withParams_: (parentParams_: ParentValidationParams | undefined) => NestedValidationParams<V> | undefined
+  ): NestedValidator<Out, ParentValidationParams, V> {
+    return new NestedValidator<Out, ParentValidationParams, V>(validator_, withParams_);
   }
+
+  // public string(): number {
+
+  // }
 }
