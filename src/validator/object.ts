@@ -1,7 +1,6 @@
 import type { PropertyValidators, Validator } from '@/types.js';
 import type { InstanceLike } from 'ts-lib-extended';
 import { PropertiesValidator } from './property.js';
-import { DefaultValidator } from './index.js';
 
 /**
  * Validator for object based values. Each property has to match its specified validator
@@ -26,6 +25,15 @@ export interface ObjectValidator<
    * @since 1.0.0
    */
   get noOverload(): this;
+
+  /**
+   * Reject array values
+   *
+   * @readonly
+   * @type {this}
+   * @since 3.4.0
+   */
+  get rejectArray(): this;
 }
 
 /**
@@ -49,7 +57,7 @@ export class DefaultObjectValidator<
     ValidationParams,
     PropertyValidators<Out, ValidationParams>
   >
-  implements Validator<Out, ValidationParams>
+  implements ObjectValidator<Out, ValidationParams>
 {
   // constructor(private readonly _propertyValidators: PropertyValidators<Out, ValidationParams>) {
   //   super();
@@ -57,6 +65,10 @@ export class DefaultObjectValidator<
 
   public get noOverload(): this {
     return this.setupCondition((value_) => this.checkOverload(value_));
+  }
+
+  public get rejectArray(): this {
+    return this.setupCondition((value_) => this.checkArray(value_));
   }
 
   protected validateBaseType(value_: unknown, params_?: ValidationParams): Out {
@@ -88,6 +100,12 @@ export class DefaultObjectValidator<
       if (!(propertyKey in this._propertyValidators)) {
         this.throwValidationError('value is overloaded');
       }
+    }
+  }
+
+  private checkArray(value_: InstanceLike): void {
+    if (Array.isArray(value_)) {
+      this.throwValidationError('value must not be an array');
     }
   }
 }
