@@ -329,8 +329,4 @@ export class TypeInspector {
   ): NestedValidator<Out, ParentValidationParams, V> {
     return new NestedValidator<Out, ParentValidationParams, V>(validator_, withParams_);
   }
-
-  // public string(): number {
-
-  // }
 }

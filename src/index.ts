@@ -1,10 +1,7 @@
 import { TypeInspector } from './inspector.js';
-import { NestedValidator } from './validator/nested.js';
-import { DefaultObjectValidator } from './validator/object.js';
-import { DefaultStringValidator } from './validator/string.js';
 
-export type { AnyLike, MethodLike, InstanceLike } from 'ts-lib-extended';
-export { ValidationError, isValidationError } from './error.js';
+export type { AnyLike, InstanceLike, MethodLike } from 'ts-lib-extended';
+export { isValidationError, ValidationError } from './error.js';
 export type * from './types.js';
 export { DefaultAnyValidator, type AnyValidator } from './validator/any.js';
 export {
@@ -80,34 +77,3 @@ export const ti = new TypeInspector();
 
 export { TypeInspector };
 export default ti;
-
-
-
-
-
-
-type TEST = {
-  affe: string;
-  tiger: string;
-};
-
-class MeinTest extends DefaultObjectValidator<TEST, { flag: boolean }> {}
-class MeinNestedTest extends DefaultStringValidator<boolean> {}
-
-const xxx = new MeinTest({
-  // tiger: new NestedValidator((validateWith_, params_) => validateWith_(new MeinNestedTest(), params_?.flag)),
-  tiger: ti.nested(new MeinNestedTest(), (params_) => params_?.flag),
-  // tiger: new NestedValidator(new MeinNestedTest(), (params_) => params_?.flag),
-  affe: ti.string
-});
-
-// const zzz = ti.object({
-//   affe: ti.string,
-//   tiger: ti.nested(ti.string, (params_) => params_)
-// });
-
-const xpAffe = xxx.prop('affe');
-const xpTiger = xxx.prop('tiger');
-// const zpAffe = zzz.prop('affe');
-// const zpTiger = zzz.prop('tiger');
-

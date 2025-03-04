@@ -212,18 +212,26 @@ describe(DefaultObjectValidator, () => {
   });
 
   test('isValid - correct conditions', () => {
-    expect.assertions(1);
+    expect.assertions(2);
     expect(
       ti.object({ p1: ti.string }).noOverload.isValid({ p1: 'hello' })
+    ).toBe(true);
+    expect(
+      ti.object({ p1: ti.string }).rejectArray.isValid({ p1: 'hello' })
     ).toBe(true);
   });
 
   test('isValid - incorrect conditions', () => {
-    expect.assertions(1);
+    expect.assertions(2);
     expect(
       ti
         .object({ p1: ti.string })
         .noOverload.isValid({ p1: 'hello', p2: 'world' })
+    ).toBe(false);
+    expect(
+      ti
+        .object({ p1: ti.optional(ti.string) })
+        .rejectArray.isValid([])
     ).toBe(false);
   });
 
