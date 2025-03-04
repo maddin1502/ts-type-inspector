@@ -10,10 +10,7 @@ export type ValidationErrorHandler<ValidationParams> = (
   error_: ValidationError,
   params_?: ValidationParams
 ) => string | void;
-export interface Validator<
-  Out,
-  ValidationParams = unknown
-> {
+export interface Validator<Out, ValidationParams = unknown> {
   /**
    * retrieve error from last validation; undefined if validation succeeded
    *
@@ -87,31 +84,25 @@ export interface Validator<
 
 export type NestedValidationParams<CV extends Validator<any>> =
   CV extends Validator<any, infer P> ? P : never;
-export type NestedValidateWith<Out, ParentValidationParams> = (
-  validateWith_: <
-    CV extends Validator<Out>,
-    P extends NestedValidationParams<CV>
-  >(
-    validator_: CV,
-    params_?: P
-  ) => CV,
-  params_?: ParentValidationParams
-) => ReturnType<typeof validateWith_>;
 
-export type PropertyValidators<
-  V extends InstanceLike,
-  ParentValidationParams
-> = {
-  readonly [key in keyof V]-?: Validator<
-    V[key],
-    unknown
-  > | NestedValidator<V[key], ParentValidationParams>;
-};
+export type X<T, ParentValidationParams> =
+  | Validator<T, unknown>
+  | NestedValidator<T, ParentValidationParams>;
 
 export type PartialPropertyValidators<
   V extends InstanceLike,
   ParentValidationParams
-> = Partial<PropertyValidators<V, ParentValidationParams>>;
+> = {
+  readonly [key in keyof V]?: X<V[key], ParentValidationParams>;
+};
+
+export type RequiredPropertyValidators<
+  V extends InstanceLike,
+  ParentValidationParams
+> = {
+  readonly [key in keyof V]-?: X<V[key], ParentValidationParams>;
+};
+
 export type SelectPropertyValidators<
   V extends InstanceLike,
   K extends keyof V
@@ -128,5 +119,5 @@ export type TupleItemValidators<
   A extends unknown[],
   ValidationParams = unknown
 > = {
-  [index in keyof A]: Validator<A[index], ValidationParams>;
+  [index in keyof A]: X<A[index], ValidationParams>;
 };

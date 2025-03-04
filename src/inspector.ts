@@ -8,10 +8,9 @@ import type {
 } from 'ts-lib-extended';
 import type {
   CustomValidation,
-  NestedValidateWith,
   NestedValidationParams,
   PartialPropertyValidators,
-  PropertyValidators,
+  RequiredPropertyValidators,
   TupleItemValidators,
   UnionValidators,
   Validator
@@ -193,12 +192,12 @@ export class TypeInspector {
    *
    * @public
    * @template {InstanceLike} Out
-   * @param {PropertyValidators<Out>} propertyValidators_ Validators for each object property
+   * @param {RequiredPropertyValidators<Out>} propertyValidators_ Validators for each object property
    * @returns {DefaultObjectValidator<Out>}
    * @since 1.0.0
    */
   public object<Out extends InstanceLike>(
-    propertyValidators_: PropertyValidators<Out, unknown>
+    propertyValidators_: RequiredPropertyValidators<Out, unknown>
   ): DefaultObjectValidator<Out> {
     return new DefaultObjectValidator<Out>(propertyValidators_);
   }

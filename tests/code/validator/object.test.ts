@@ -204,11 +204,13 @@ describe(DefaultObjectValidator, () => {
         .isValid({})
     ).toBe(false);
 
-    expect(ti.object({}).isValid(undefined)).toBe(false);
-    expect(ti.object({}).isValid(1)).toBe(false);
-    expect(ti.object({}).isValid(() => true)).toBe(false);
-    expect(ti.object({}).isValid(DefaultObjectValidator)).toBe(false);
-    expect(ti.object({}).isValid(null)).toBe(false);
+    expect(ti.object({ any: ti.any }).isValid(undefined)).toBe(false);
+    expect(ti.object({ any: ti.any }).isValid(1)).toBe(false);
+    expect(ti.object({ any: ti.any }).isValid(() => true)).toBe(false);
+    expect(ti.object({ any: ti.any }).isValid(DefaultObjectValidator)).toBe(
+      false
+    );
+    expect(ti.object({ any: ti.any }).isValid(null)).toBe(false);
   });
 
   test('isValid - correct conditions', () => {
@@ -229,9 +231,7 @@ describe(DefaultObjectValidator, () => {
         .noOverload.isValid({ p1: 'hello', p2: 'world' })
     ).toBe(false);
     expect(
-      ti
-        .object({ p1: ti.optional(ti.string) })
-        .rejectArray.isValid([])
+      ti.object({ p1: ti.optional(ti.string) }).rejectArray.isValid([])
     ).toBe(false);
   });
 

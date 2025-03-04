@@ -71,7 +71,9 @@ describe(TypeInspector, () => {
 
   test('object', () => {
     expect.assertions(1);
-    expect(ti.object({}) === ti.object({})).toBe(false);
+    expect(ti.object({ any: ti.any }) === ti.object({ any: ti.any })).toBe(
+      false
+    );
   });
 
   test('optional', () => {

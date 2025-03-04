@@ -576,8 +576,9 @@ describe('complex', () => {
     > {
       constructor() {
         super({
-          data: ti.nested((validateWith_, params_) =>
-            validateWith_(new TestStringValidator(), params_?.dataParams)
+          data: ti.nested(
+            new TestStringValidator(),
+            (params_) => params_?.dataParams
           )
         });
       }
@@ -609,8 +610,9 @@ describe('complex', () => {
     > {
       constructor() {
         super(
-          ti.nested((validateWith_, params_) =>
-            validateWith_(new TestStringValidator(), params_?.stringParams)
+          ti.nested(
+            new TestStringValidator(),
+            (params_) => params_?.stringParams
           )
         );
       }
@@ -638,8 +640,9 @@ describe('complex', () => {
     > {
       constructor() {
         super(
-          ti.nested((validateWith_, params_) =>
-            validateWith_(new TestStringValidator(), params_?.stringParams)
+          ti.nested(
+            new TestStringValidator(),
+            (params_) => params_?.stringParams
           )
         );
       }
@@ -666,20 +669,21 @@ describe('complex', () => {
       dataParams?: TestStringValidationParams;
     };
 
-    class TestPartualValidator extends DefaultPartialValidator<
+    class TestPartialValidator extends DefaultPartialValidator<
       CommonData,
       CommonDataValidationParams
     > {
       constructor() {
         super({
-          data: ti.nested((validateWith_, params_) =>
-            validateWith_(new TestStringValidator(), params_?.dataParams)
+          data: ti.nested(
+            new TestStringValidator(),
+            (params_) => params_?.dataParams
           )
         });
       }
     }
 
-    const tpv = new TestPartualValidator();
+    const tpv = new TestPartialValidator();
     expect(tpv.isValid({ data: '' }, {})).toBe(true);
     expect(tpv.isValid({ data: '' }, { dataParams: {} })).toBe(true);
     expect(tpv.isValid({ data: '' }, { dataParams: { notEmpty: false } })).toBe(
@@ -705,8 +709,9 @@ describe('complex', () => {
     > {
       constructor() {
         super(
-          ti.nested((validateWith_, params_) =>
-            validateWith_(new TestStringValidator(), params_?.stringParams)
+          ti.nested(
+            new TestStringValidator(),
+            (params_) => params_?.stringParams
           )
         );
       }

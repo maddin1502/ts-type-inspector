@@ -1,4 +1,4 @@
-import type { Validator } from '@/types.js';
+import type { Validator, X } from '@/types.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -70,9 +70,7 @@ export class DefaultArrayValidator<const Out, ValidationParams = unknown>
   extends DefaultValidator<Out[], ValidationParams>
   implements ArrayValidator<Out, ValidationParams>
 {
-  constructor(
-    private readonly _itemValidator: Validator<Out, ValidationParams>
-  ) {
+  constructor(private readonly _itemValidator: X<Out, ValidationParams>) {
     super();
   }
 

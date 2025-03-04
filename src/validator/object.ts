@@ -1,4 +1,4 @@
-import type { PropertyValidators, Validator } from '@/types.js';
+import type { RequiredPropertyValidators, Validator } from '@/types.js';
 import type { InstanceLike } from 'ts-lib-extended';
 import { PropertiesValidator } from './property.js';
 
@@ -43,7 +43,7 @@ export interface ObjectValidator<
  * @class DefaultObjectValidator
  * @template {InstanceLike} Out
  * @template [ValidationParams=unknown] extended validation parameters
- * @extends {PropertiesValidator<Out, ValidationParams, PropertyValidators<Out, ValidationParams>>}
+ * @extends {PropertiesValidator<Out, ValidationParams, RequiredPropertyValidators<Out, ValidationParams>>}
  * @implements {Validator<Out, ValidationParams>}
  * @since 1.0.0
  */
@@ -55,14 +55,10 @@ export class DefaultObjectValidator<
   extends PropertiesValidator<
     Out,
     ValidationParams,
-    PropertyValidators<Out, ValidationParams>
+    RequiredPropertyValidators<Out, ValidationParams>
   >
   implements ObjectValidator<Out, ValidationParams>
 {
-  // constructor(private readonly _propertyValidators: PropertyValidators<Out, ValidationParams>) {
-  //   super();
-  // }
-
   public get noOverload(): this {
     return this.setupCondition((value_) => this.checkOverload(value_));
   }
