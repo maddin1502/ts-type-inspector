@@ -197,7 +197,7 @@ export class TypeInspector {
    * @since 1.0.0
    */
   public object<Out extends InstanceLike>(
-    propertyValidators_: RequiredPropertyValidators<Out, unknown>
+    propertyValidators_: RequiredPropertyValidators<Out>
   ): DefaultObjectValidator<Out> {
     return new DefaultObjectValidator<Out>(propertyValidators_);
   }
@@ -212,7 +212,7 @@ export class TypeInspector {
    * @since 2.0.0
    */
   public partial<Out extends InstanceLike>(
-    propertyValidators_: PartialPropertyValidators<Out, unknown>
+    propertyValidators_: PartialPropertyValidators<Out>
   ): DefaultPartialValidator<Out> {
     return new DefaultPartialValidator<Out>(propertyValidators_);
   }

@@ -1,4 +1,4 @@
-import type { Validator, X } from '@/types.js';
+import type { Validator, PropertyValidator } from '@/types.js';
 import type {
   Dictionary,
   DictionaryKey,
@@ -49,7 +49,7 @@ export class DefaultDictionaryValidator<
   implements DictionaryValidator<Out, ValidationParams>
 {
   constructor(
-    private readonly _itemValidator: X<DictionaryValue<Out>, ValidationParams>
+    private readonly _itemValidator: PropertyValidator<DictionaryValue<Out>, ValidationParams>
   ) {
     super();
   }
