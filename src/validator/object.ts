@@ -1,5 +1,5 @@
 import type { PropertyValidators, Validator } from '@/types.js';
-import type { ObjectLike } from 'ts-lib-extended';
+import type { InstanceLike } from 'ts-lib-extended';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -7,13 +7,13 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface ObjectValidator
- * @template {ObjectLike} Out
+ * @template {InstanceLike} Out
  * @template [ValidationParams=unknown] extended validation parameters
  * @extends {Validator<Out, ValidationParams>}
  * @since 1.0.0
  */
 export interface ObjectValidator<
-  Out extends ObjectLike,
+  Out extends InstanceLike,
   ValidationParams = unknown
 > extends Validator<Out, ValidationParams> {
   /**
@@ -32,14 +32,14 @@ export interface ObjectValidator<
  *
  * @export
  * @class DefaultObjectValidator
- * @template {ObjectLike} Out
+ * @template {InstanceLike} Out
  * @template [ValidationParams=unknown] extended validation parameters
  * @extends {DefaultValidator<Out, ValidationParams>}
  * @implements {ObjectValidator<Out, ValidationParams>}
  * @since 1.0.0
  */
 export class DefaultObjectValidator<
-    Out extends ObjectLike,
+    Out extends InstanceLike,
     ValidationParams = unknown
   >
   extends DefaultValidator<Out, ValidationParams>
@@ -79,11 +79,11 @@ export class DefaultObjectValidator<
     return value_;
   }
 
-  private isObjectLike(value_: unknown): value_ is ObjectLike {
+  private isObjectLike(value_: unknown): value_ is InstanceLike {
     return typeof value_ === 'object' && value_ !== null;
   }
 
-  private checkOverload(value_: ObjectLike): void {
+  private checkOverload(value_: InstanceLike): void {
     for (const propertyKey in value_) {
       if (!(propertyKey in this._propertyValidators)) {
         this.throwValidationError('value is overloaded');

@@ -1,4 +1,4 @@
-import type { ArrayItem, MinArray, ObjectLike } from 'ts-lib-extended';
+import type { ArrayItem, MinArray, InstanceLike } from 'ts-lib-extended';
 import type { ValidationError } from './error.js';
 
 export type CustomValidation<V, ValidationParams = unknown> = (
@@ -70,18 +70,18 @@ export type NestedValidator<Out, ValidationParams> =
     ) => ReturnType<typeof validateWith_>);
 
 export type PropertyValidators<
-  V extends ObjectLike,
+  V extends InstanceLike,
   ValidationParams = unknown
 > = {
   readonly [key in keyof V]-?: NestedValidator<V[key], ValidationParams>;
 };
 
 export type PartialPropertyValidators<
-  V extends ObjectLike,
+  V extends InstanceLike,
   ValidationParams = unknown
 > = Partial<PropertyValidators<V, ValidationParams>>;
 export type SelectPropertyValidators<
-  V extends ObjectLike,
+  V extends InstanceLike,
   K extends keyof V
 > = { readonly [key in K]?: Validator<V[key]> };
 export type UnionValidators<V = any> = MinArray<Validator<V>, 2>;

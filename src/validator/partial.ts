@@ -1,5 +1,5 @@
 import type { PartialPropertyValidators, Validator } from '@/types.js';
-import type { ObjectLike } from 'ts-lib-extended';
+import type { InstanceLike } from 'ts-lib-extended';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -7,13 +7,13 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface PartialValidator
- * @template {ObjectLike} Out
+ * @template {InstanceLike} Out
  * @template [ValidationParams=unknown] extended validation parameters
  * @extends {Validator<Out, ValidationParams>}
  * @since 2.0.0
  */
 export interface PartialValidator<
-  Out extends ObjectLike,
+  Out extends InstanceLike,
   ValidationParams = unknown
 > extends Validator<Out, ValidationParams> {}
 
@@ -22,14 +22,14 @@ export interface PartialValidator<
  *
  * @export
  * @class DefaultPartialValidator
- * @template {ObjectLike} Out
+ * @template {InstanceLike} Out
  * @template [ValidationParams=unknown] extended validation parameters
  * @extends {DefaultValidator<Out, ValidationParams>}
  * @implements {PartialValidator<Out, ValidationParams>}
  * @since 2.0.0
  */
 export class DefaultPartialValidator<
-    Out extends ObjectLike,
+    Out extends InstanceLike,
     ValidationParams = unknown
   >
   extends DefaultValidator<Out, ValidationParams>
@@ -64,7 +64,7 @@ export class DefaultPartialValidator<
     return value_;
   }
 
-  private isObjectLike(value_: unknown): value_ is ObjectLike {
+  private isObjectLike(value_: unknown): value_ is InstanceLike {
     return typeof value_ === 'object' && value_ !== null;
   }
 }
