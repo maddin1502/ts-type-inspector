@@ -1,4 +1,8 @@
+import type { InstanceLike } from 'ts-lib-extended';
 import { TypeInspector } from './inspector.js';
+import { DefaultObjectValidator } from './validator/object.js';
+import { DefaultStringValidator } from './validator/string.js';
+import type { RequiredPropertyValidators } from './types.js';
 
 export type { AnyLike, InstanceLike, MethodLike } from 'ts-lib-extended';
 export { isValidationError, ValidationError } from './error.js';
@@ -78,29 +82,23 @@ export const ti = new TypeInspector();
 export { TypeInspector };
 export default ti;
 
-// type TEST = {
-//   affe: string;
-//   tiger: string;
-// };
+type TEST = {
+  affe: string;
+  tiger: string;
+};
 
-// class MeinTest extends DefaultObjectValidator<TEST, { flag: boolean }> {}
-// class MeinNestedTest extends DefaultStringValidator<boolean> {}
+class MeinTest extends DefaultObjectValidator<TEST, { flag: boolean }> {}
+class MeinNestedTest extends DefaultStringValidator<boolean> {}
 
-// const xxx = new MeinTest({
-//   tiger: ti.nested(new MeinNestedTest(), (params_) => params_?.flag),
-//   affe: ti.string
-// });
+const xxx = new MeinTest({
+  tiger: ti.nested(new MeinNestedTest(), (params_) => params_?.flag),
+  affe: ti.string
+});
 
-// const zzz = ti.object({
-//   affe: ti.string,
-//   tiger: ti.nested<string, unknown>(
-//     new MeinNestedTest(),
-//     (params_) => params_?.flag
-//   )
-// });
 
-// const xpAffe = xxx.prop('affe');
-// const xpTiger = xxx.prop('tiger');
+
+const xpAffe = xxx.prop('affe');
+const xpTiger = xxx.prop('tiger');
 // const zpAffe = zzz.prop('affe');
 // const zpTiger = zzz.prop('tiger');
 
@@ -117,18 +115,27 @@ export default ti;
 //   tiger: ti.nested(new MeinNestedTest(), (pp_) => pp_?.flag)
 // });
 
-// function yyyyy<T extends InstanceLike, P = unknown>(): <
-//   PV extends PropertyValidators<T, P>
-// >(
-//   ov_: PV
-// ) => PV {
-//   return null as any;
-// }
+function yyyyy<T extends InstanceLike, P = unknown>(): <
+  PV extends RequiredPropertyValidators<T, P>
+>(
+  ov_: PV
+) => PV {
+  return null as any;
+}
 
-// const joijoijopjop = yyyyy<TEST, { flag: boolean }>()({
-//   affe: ti.string,
-//   tiger: ti.nested(new MeinNestedTest(), (pp_) => pp_?.flag)
-// });
+const joijoijopjop = yyyyy<TEST, { flag: boolean }>()({
+  affe: ti.string,
+  tiger: ti.nested(new MeinNestedTest(), (pp_) => pp_?.flag)
+});
+
+
+const xcssd = ti.object({
+  affe: ti.string,
+  tiger: ti.nested<string>(new MeinNestedTest(), (pp_) => undefined)
+})
+
+const a = xcssd.prop('affe')
+const t = xcssd.prop('tiger')
 
 // function zzzzz<PV extends PropertyValidators<any, unknown>>(): (pv_: PV) => PV {
 //   return null as any;

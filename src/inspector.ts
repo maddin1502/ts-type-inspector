@@ -196,11 +196,17 @@ export class TypeInspector {
    * @returns {DefaultObjectValidator<Out>}
    * @since 1.0.0
    */
-  public object<Out extends InstanceLike>(
-    propertyValidators_: RequiredPropertyValidators<Out>
-  ): DefaultObjectValidator<Out> {
-    return new DefaultObjectValidator<Out>(propertyValidators_);
+  // public object<Out extends InstanceLike>(
+  //   propertyValidators_: RequiredPropertyValidators<Out>
+  // ): DefaultObjectValidator<Out> {
+  //   return new DefaultObjectValidator<Out>(propertyValidators_);
+  // }
+  public object<PV extends RequiredPropertyValidators<any, any>>(
+    propertyValidators_: PV
+  ): DefaultObjectValidator<PV extends RequiredPropertyValidators<infer Out> ? Out : never> {
+    return new DefaultObjectValidator<any>(propertyValidators_);
   }
+
 
   /**
    * Validator for object based values. This is an **UNSAFE** validator that only validates some properties and ignores others
@@ -322,7 +328,7 @@ export class TypeInspector {
     return new DefaultTupleValidator<Out>(...itemValidators_);
   }
 
-  public nested<Out, ParentValidationParams, V extends Validator<Out> = Validator<Out>>(
+  public nested<Out, ParentValidationParams = unknown, V extends Validator<Out> = Validator<Out>>(
     validator_: V,
     withParams_: (parentParams_: ParentValidationParams | undefined) => NestedValidationParams<V> | undefined
   ): NestedValidator<Out, ParentValidationParams, V> {
