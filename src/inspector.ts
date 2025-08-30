@@ -4,7 +4,7 @@ import type {
   DictionaryValue,
   Enumerable,
   MethodLike,
-  ObjectLike
+  InstanceLike
 } from 'ts-lib-extended';
 import type {
   CustomValidation,
@@ -189,12 +189,12 @@ export class TypeInspector {
    * Validate object based values. Each property has to match its specified validator
    *
    * @public
-   * @template {ObjectLike} Out
+   * @template {InstanceLike} Out
    * @param {PropertyValidators<Out>} propertyValidators_ Validators for each object property
    * @returns {DefaultObjectValidator<Out>}
    * @since 1.0.0
    */
-  public object<Out extends ObjectLike>(
+  public object<Out extends InstanceLike>(
     propertyValidators_: PropertyValidators<Out>
   ): DefaultObjectValidator<Out> {
     return new DefaultObjectValidator<Out>(propertyValidators_);
@@ -204,12 +204,12 @@ export class TypeInspector {
    * Validator for object based values. This is an **UNSAFE** validator that only validates some properties and ignores others
    *
    * @public
-   * @template {ObjectLike} Out
+   * @template {InstanceLike} Out
    * @param {PartialPropertyValidators<Out>} propertyValidators_
    * @returns {DefaultPartialValidator<Out>}
    * @since 2.0.0
    */
-  public partial<Out extends ObjectLike>(
+  public partial<Out extends InstanceLike>(
     propertyValidators_: PartialPropertyValidators<Out>
   ): DefaultPartialValidator<Out> {
     return new DefaultPartialValidator<Out>(propertyValidators_);
@@ -274,13 +274,13 @@ export class TypeInspector {
    * Validate enum values
    *
    * @public
-   * @template {Enumerable<unknown>} E
+   * @template {Enumerable} E
    * @param {E} enum_ the enum instance itself, NOT a value from enum
    * @param {boolean} [allowFlags=false] (since 3.3.0) allow flagged values
    * @returns {DefaultEnumValidator<E>}
    * @since 1.0.2
    */
-  public enum<E extends Enumerable<unknown>>(
+  public enum<E extends Enumerable>(
     enum_: E,
     allowFlags: boolean = false
   ): DefaultEnumValidator<E> {
