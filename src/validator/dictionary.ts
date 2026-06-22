@@ -4,6 +4,7 @@ import type {
   DictionaryValue
 } from 'ts-lib-extended';
 import type { NestedValidator, Validator } from '@/types.js';
+import { isObject } from '@/utils.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -38,7 +39,7 @@ export interface DictionaryValidator<
  * @template {Dictionary} Out
  * @template [ValidationParams=unknown] extended validation parameters
  * @extends {DefaultValidator<Out, ValidationParams>}
- * @implements {DictionaryValidator<Out, ValidationParams, ValidationParams>}
+ * @implements {DictionaryValidator<Out, ValidationParams>}
  * @since 1.0.0
  */
 export class DefaultDictionaryValidator<
@@ -62,7 +63,7 @@ export class DefaultDictionaryValidator<
     value_: unknown,
     params_?: ValidationParams
   ): Out {
-    if (!this.isDictionary(value_)) {
+    if (!isObject<Dictionary<unknown>>(value_)) {
       this.throwValidationError('value is not a dictionary');
     }
 
@@ -77,12 +78,8 @@ export class DefaultDictionaryValidator<
     return value_ as Out;
   }
 
-  private isDictionary(value_: unknown): value_ is Dictionary<any> {
-    return typeof value_ === 'object' && value_ !== null;
-  }
-
   private checkKeys(
-    value_: Dictionary<any>,
+    value_: Dictionary<unknown>,
     keyValidator_: Validator<DictionaryKey<Out>>
   ): void {
     for (const dictionaryKey in value_) {

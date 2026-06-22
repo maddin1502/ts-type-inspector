@@ -6,13 +6,14 @@ const ti = new TypeInspector();
 
 describe(DefaultNumberValidator, () => {
   test('isValid - success', () => {
-    expect.assertions(6);
+    expect.assertions(7);
     expect(ti.number.isValid(42)).toBe(true);
     expect(ti.number.isValid(1 + 1)).toBe(true);
     expect(ti.number.isValid(0)).toBe(true);
     expect(ti.number.isValid(-42)).toBe(true);
     expect(ti.number.isValid(NaN)).toBe(true);
     expect(ti.number.isValid(Infinity)).toBe(true);
+    expect(ti.number.isValid(-Infinity)).toBe(true);
   });
 
   test('isValid - failure', () => {
@@ -49,7 +50,7 @@ describe(DefaultNumberValidator, () => {
   });
 
   test('isValid - incorrect conditions', () => {
-    expect.assertions(14);
+    expect.assertions(15);
     expect(ti.number.positive.isValid(-42)).toBe(false);
     expect(ti.number.negative.isValid(42)).toBe(false);
     expect(ti.number.rejectZero.isValid(0)).toBe(false);
@@ -61,6 +62,7 @@ describe(DefaultNumberValidator, () => {
     expect(ti.number.reject(42).isValid(42)).toBe(false);
     expect(ti.number.reject(-42).isValid(-42)).toBe(false);
     expect(ti.number.rejectInfinity.isValid(Infinity)).toBe(false);
+    expect(ti.number.rejectInfinity.isValid(-Infinity)).toBe(false);
     expect(ti.number.rejectNaN.isValid(NaN)).toBe(false);
     expect(
       ti.number

@@ -1,3 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any --
+ * This is the "any" validator: its `Out` type is intentionally `any`, not
+ * `unknown`. The validated value must stay freely assignable, and when used as
+ * a nested validator (e.g. `ti.object({ x: ti.any })`) the inferred property
+ * type must remain `any` to provide the documented "bypass deep validation"
+ * behaviour. Replacing it with `unknown` would force consumers to narrow and
+ * break that contract. */
 import type { Validator } from '@/types.js';
 import { DefaultValidator } from './index.js';
 
@@ -59,13 +66,13 @@ export class DefaultAnyValidator<ValidationParams = unknown>
     return value_;
   }
 
-  private checkNullish(value_: any): void {
+  private checkNullish(value_: unknown): void {
     if (value_ === null || value_ === undefined) {
       this.throwValidationError('value is nullish');
     }
   }
 
-  private checkFalsy(value_: any): void {
+  private checkFalsy(value_: unknown): void {
     if (!value_) {
       this.throwValidationError('value is falsy');
     }

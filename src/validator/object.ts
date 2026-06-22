@@ -1,5 +1,6 @@
 import type { PropertyValidators, Validator } from '@/types.js';
-import type { InstanceLike } from 'ts-lib-extended';
+import { isObject } from '@/utils.js';
+import type { RecordLike } from 'ts-lib-extended';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -7,13 +8,13 @@ import { DefaultValidator } from './index.js';
  *
  * @export
  * @interface ObjectValidator
- * @template {InstanceLike} Out
+ * @template {RecordLike} Out
  * @template [ValidationParams=unknown] extended validation parameters
  * @extends {Validator<Out, ValidationParams>}
  * @since 1.0.0
  */
 export interface ObjectValidator<
-  Out extends InstanceLike,
+  Out extends RecordLike,
   ValidationParams = unknown
 > extends Validator<Out, ValidationParams> {
   /**
@@ -32,14 +33,14 @@ export interface ObjectValidator<
  *
  * @export
  * @class DefaultObjectValidator
- * @template {InstanceLike} Out
+ * @template {RecordLike} Out
  * @template [ValidationParams=unknown] extended validation parameters
  * @extends {DefaultValidator<Out, ValidationParams>}
  * @implements {ObjectValidator<Out, ValidationParams>}
  * @since 1.0.0
  */
 export class DefaultObjectValidator<
-    Out extends InstanceLike,
+    Out extends RecordLike,
     ValidationParams = unknown
   >
   extends DefaultValidator<Out, ValidationParams>
@@ -59,7 +60,7 @@ export class DefaultObjectValidator<
   }
 
   protected validateBaseType(value_: unknown, params_?: ValidationParams): Out {
-    if (!this.isObjectLike(value_)) {
+    if (!isObject(value_)) {
       this.throwValidationError('value is not an object');
     }
 
@@ -79,11 +80,7 @@ export class DefaultObjectValidator<
     return value_;
   }
 
-  private isObjectLike(value_: unknown): value_ is InstanceLike {
-    return typeof value_ === 'object' && value_ !== null;
-  }
-
-  private checkOverload(value_: InstanceLike): void {
+  private checkOverload(value_: RecordLike): void {
     for (const propertyKey in value_) {
       if (!(propertyKey in this._propertyValidators)) {
         this.throwValidationError('value is overloaded');

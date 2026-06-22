@@ -56,7 +56,7 @@ export class DefaultTupleValidator<
 
   protected validateBaseType(value_: unknown, params_?: ValidationParams): Out {
     if (!Array.isArray(value_)) {
-      this.throwValidationError('value is not an tuple');
+      this.throwValidationError('value is not a tuple');
     }
 
     if (value_.length < this._itemValidators.length) {

@@ -162,9 +162,9 @@ export abstract class DefaultValidator<Out, ValidationParams = unknown>
     return this;
   }
 
-  protected validateNested(
+  protected validateNested<NestedOut>(
     value_: unknown,
-    nestedValidator_: NestedValidator<any, ValidationParams>,
+    nestedValidator_: NestedValidator<NestedOut, ValidationParams>,
     params_?: ValidationParams
   ) {
     if (typeof nestedValidator_ === 'function') {
@@ -181,7 +181,7 @@ export abstract class DefaultValidator<Out, ValidationParams = unknown>
     }
   }
 
-  private hasMessage(value_: unknown): value_ is { message: any } {
+  private hasMessage(value_: unknown): value_ is { message: unknown } {
     return typeof value_ === 'object' && value_ !== null && 'message' in value_;
   }
 }

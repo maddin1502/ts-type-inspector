@@ -17,13 +17,13 @@ export interface UndefinedValidator<ValidationParams = unknown>
  * Validator for undefined values
  *
  * @export
- * @class DefaulUndefinedValidator
+ * @class DefaultUndefinedValidator
  * @template [ValidationParams=unknown] extended validation parameters
  * @extends {DefaultValidator<undefined, ValidationParams>}
  * @implements {UndefinedValidator<ValidationParams>}
  * @since 1.0.0
  */
-export class DefaulUndefinedValidator<ValidationParams = unknown>
+export class DefaultUndefinedValidator<ValidationParams = unknown>
   extends DefaultValidator<undefined, ValidationParams>
   implements UndefinedValidator<ValidationParams>
 {
@@ -38,3 +38,22 @@ export class DefaulUndefinedValidator<ValidationParams = unknown>
     this.throwValidationError('value is defined');
   }
 }
+
+/**
+ * Validator for undefined values
+ *
+ * @export
+ * @deprecated misspelled name - use {@link DefaultUndefinedValidator} instead
+ * @since 1.0.0
+ */
+export const DefaulUndefinedValidator = DefaultUndefinedValidator;
+
+/**
+ * Validator for undefined values
+ *
+ * @export
+ * @deprecated misspelled name - use {@link DefaultUndefinedValidator} instead
+ * @since 1.0.0
+ */
+export type DefaulUndefinedValidator<ValidationParams = unknown> =
+  DefaultUndefinedValidator<ValidationParams>;

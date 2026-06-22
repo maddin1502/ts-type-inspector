@@ -176,7 +176,7 @@ export class DefaultNumberValidator<ValidationParams = unknown>
   }
 
   private checkInfinity(value_: number): void {
-    if (value_ === Infinity) {
+    if (value_ === Infinity || value_ === -Infinity) {
       this.throwValidationError('number is infinite');
     }
   }
