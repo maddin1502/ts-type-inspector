@@ -63,7 +63,7 @@
   },
   "dependencies": {
     "email-validator": "^2.0.4",
-    "ts-lib-extended": "^4.1.5",
+    "ts-lib-extended": "^4.1.6",
     "valid-url": "^1.0.9"
   }
 }

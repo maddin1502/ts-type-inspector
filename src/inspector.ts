@@ -4,7 +4,7 @@ import type {
   DictionaryValue,
   Enumerable,
   MethodLike,
-  InstanceLike
+  RecordLike
 } from 'ts-lib-extended';
 import type {
   CustomValidation,
@@ -189,12 +189,12 @@ export class TypeInspector {
    * Validate object based values. Each property has to match its specified validator
    *
    * @public
-   * @template {InstanceLike} Out
+   * @template {RecordLike} Out
    * @param {PropertyValidators<Out>} propertyValidators_ Validators for each object property
    * @returns {DefaultObjectValidator<Out>}
    * @since 1.0.0
    */
-  public object<Out extends InstanceLike>(
+  public object<Out extends RecordLike>(
     propertyValidators_: PropertyValidators<Out>
   ): DefaultObjectValidator<Out> {
     return new DefaultObjectValidator<Out>(propertyValidators_);
@@ -204,12 +204,12 @@ export class TypeInspector {
    * Validator for object based values. This is an **UNSAFE** validator that only validates some properties and ignores others
    *
    * @public
-   * @template {InstanceLike} Out
+   * @template {RecordLike} Out
    * @param {PartialPropertyValidators<Out>} propertyValidators_
    * @returns {DefaultPartialValidator<Out>}
    * @since 2.0.0
    */
-  public partial<Out extends InstanceLike>(
+  public partial<Out extends RecordLike>(
     propertyValidators_: PartialPropertyValidators<Out>
   ): DefaultPartialValidator<Out> {
     return new DefaultPartialValidator<Out>(propertyValidators_);

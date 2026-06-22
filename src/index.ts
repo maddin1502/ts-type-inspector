@@ -1,6 +1,11 @@
 import { TypeInspector } from './inspector.js';
 
-export type { AnyLike, MethodLike, InstanceLike } from 'ts-lib-extended';
+export type {
+  AnyLike,
+  MethodLike,
+  InstanceLike,
+  RecordLike
+} from 'ts-lib-extended';
 export { ValidationError, isValidationError } from './error.js';
 export type * from './types.js';
 export { DefaultAnyValidator, type AnyValidator } from './validator/any.js';
