@@ -54,8 +54,8 @@ export interface Validator<Out, ValidationParams = unknown> {
   isValid(value_: unknown, params_?: ValidationParams): value_ is Out;
 }
 
-export type NestedValidationParams<CV extends Validator<any>> =
-  CV extends Validator<any, infer P> ? P : never;
+export type NestedValidationParams<CV extends Validator<unknown>> =
+  CV extends Validator<unknown, infer P> ? P : never;
 export type NestedValidator<Out, ValidationParams> =
   | Validator<Out>
   | ((
@@ -84,7 +84,7 @@ export type SelectPropertyValidators<
   V extends InstanceLike,
   K extends keyof V
 > = { readonly [key in K]?: Validator<V[key]> };
-export type UnionValidators<V = any> = MinArray<Validator<V>, 2>;
+export type UnionValidators<V = unknown> = MinArray<Validator<V>, 2>;
 export type UnionValidatorsItem<U extends UnionValidators> =
   ArrayItem<U> extends Validator<infer V> ? V : never;
 export type ValidationCondition<V, ValidationParams = unknown> = (
