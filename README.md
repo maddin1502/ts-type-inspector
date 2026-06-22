@@ -42,9 +42,9 @@
 - type safe (no automatic type conversions/casting)
 - determine the value's data type based on the validators used (generic type arguments are mostly optional)
 - custom error messages
-- flexibel & additional custom validation
+- flexible and additional custom validation
 - predefined default-validators for most common data types
-- extendable valdators to take external dependencies into account
+- extendable validators to take external dependencies into account
 
 ## Installation
 ```bash
@@ -90,7 +90,7 @@ Both modes perform the same validation, but their result outputs are different.
 
 ### isValid
 
-This mode uses the [type predicate](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates) feature of Typescript and therefore returns a boolean value as validation result. This assigns an exact type to the (successfully) validated value based on the validator used.
+This mode uses the [type predicate](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates) feature of TypeScript and therefore returns a boolean value as validation result. This assigns an exact type to the (successfully) validated value based on the validator used.
 
 ```ts
 import ti from 'ts-type-inspector';
@@ -190,8 +190,8 @@ export class CommonDataValidator extends DefaultObjectValidator<CommonData> {
 }
 
 const cdv = new CommonDataValidator();
-cdv.isValide({ data: undefined }) // true
-cdv.isValide({ data: false }) // false
+cdv.isValid({ data: undefined }) // true
+cdv.isValid({ data: false }) // false
 ```
 
 ### Validation based on external influences
@@ -321,7 +321,7 @@ Most of the examples given here indicate generic type information of validators.
 import ti from 'ts-type-inspector';
 
 const <VALUE> = ti.object({
-  greeting: ti.string.accept('hello', 'hi')
+  greeting: ti.string.accept('hello', 'hi'),
   greeting2: ti.strict('hello', 'hi')
 })
 
@@ -342,21 +342,21 @@ Validator for string values.
 
 | Condition | Description |
 |---|---|
-| shortest | reject strings with lenght less than minimal value |
-| longest | reject strings with lenght greater than maximal value |
+| shortest | reject strings with length less than minimal value |
+| longest | reject strings with length greater than maximal value |
 | accept | accept specific values only; `regexp` can be used to apply patterns |
 | reject | reject specific values; `regexp` can be used to apply patterns |
 | length | reject strings with divergent length |
 | rejectEmpty | reject empty strings |
-| base64 | accept just base64 encoded strings |
+| base64 | accept only base64 encoded strings |
 | json | strings have to be json parsable |
 | date | reject strings that are not in ISO8601 date format |
 | numeric | strings have to contain a numeric value |
-| uuid | reject strings that are no UUIDs |
+| uuid | reject strings that are not UUIDs |
 | email | string has to match email pattern (uses [email-validator](https://www.npmjs.com/package/email-validator)) |
-| uri | string has to match uri pattern (uses [url-validator](https://www.npmjs.com/package/url-validator)) |
+| uri | string has to match uri pattern (uses [valid-url](https://www.npmjs.com/package/valid-url)) |
 | url | string has to match url pattern |
-| hex | accept just hexadecimal strings |
+| hex | accept only hexadecimal strings |
 
 ### Number
 
@@ -595,20 +595,20 @@ interface MoreDataInterface {
   data2: DataInterface | undefined;
 }
 
-ti.object<MoreDataInterface>(
+ti.object<MoreDataInterface>({
   data1: ti.optional(
     ti.object({
-      prop1: ti.string;
-      prop2: ti.number;
+      prop1: ti.string,
+      prop2: ti.number
     })
   ),
   data2: ti.optional(
     ti.object({
-      prop1: ti.string;
-      prop2: ti.number;
+      prop1: ti.string,
+      prop2: ti.number
     })
   )
-);
+});
 ```
 
 ### Any
