@@ -463,8 +463,8 @@ Validator for array values.
 | length | reject arrays with divergent length |
 | min | reject arrays with length less than minimal value |
 | max | reject arrays with length greater than maximal value |
-| accept | accept arrays with specific length only |
-| reject | reject arrays with specific length values |
+| accept | accept only arrays whose items are all among the given values |
+| reject | reject arrays that contain any of the given values |
 
 ```ts
 import ti from 'ts-type-inspector';

@@ -4,7 +4,7 @@ import { DefaultValidator } from './index.js';
 
 /**
  * Validator for precisely defined values (not just of specific type)
- * Keep in mind that object are compaired by reference (equality)
+ * Keep in mind that objects are compared by reference (equality)
  *
  * @export
  * @interface StrictValidator
@@ -20,7 +20,7 @@ export interface StrictValidator<
 
 /**
  * Validator for precisely defined values (not just of specific type)
- * Keep in mind that object are compaired by reference (equality)
+ * Keep in mind that objects are compared by reference (equality)
  *
  * @export
  * @class DefaultStrictValidator

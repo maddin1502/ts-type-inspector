@@ -33,7 +33,7 @@ import { DefaultPartialValidator } from './validator/partial.js';
 import { DefaultStrictValidator } from './validator/strict.js';
 import { DefaultStringValidator } from './validator/string.js';
 import { DefaultTupleValidator } from './validator/tuple.js';
-import { DefaulUndefinedValidator } from './validator/undefined.js';
+import { DefaultUndefinedValidator } from './validator/undefined.js';
 import { DefaultUnionValidator } from './validator/union.js';
 
 /**
@@ -94,7 +94,7 @@ export class TypeInspector {
   }
 
   /**
-   * Validate data values.
+   * Validate date values.
    *
    * @public
    * @readonly
@@ -110,11 +110,11 @@ export class TypeInspector {
    *
    * @public
    * @readonly
-   * @type {DefaulUndefinedValidator}
+   * @type {DefaultUndefinedValidator}
    * @since 1.0.0
    */
-  public get undefined(): DefaulUndefinedValidator {
-    return new DefaulUndefinedValidator();
+  public get undefined(): DefaultUndefinedValidator {
+    return new DefaultUndefinedValidator();
   }
 
   /**

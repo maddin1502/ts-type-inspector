@@ -1,4 +1,5 @@
 import type { PartialPropertyValidators, Validator } from '@/types.js';
+import { isObject } from '@/utils.js';
 import type { InstanceLike } from 'ts-lib-extended';
 import { DefaultValidator } from './index.js';
 
@@ -45,7 +46,7 @@ export class DefaultPartialValidator<
   }
 
   protected validateBaseType(value_: unknown, params_?: ValidationParams): Out {
-    if (!this.isObjectLike(value_)) {
+    if (!isObject(value_)) {
       this.throwValidationError('value is not an object');
     }
 
@@ -62,9 +63,5 @@ export class DefaultPartialValidator<
     }
 
     return value_;
-  }
-
-  private isObjectLike(value_: unknown): value_ is InstanceLike {
-    return typeof value_ === 'object' && value_ !== null;
   }
 }

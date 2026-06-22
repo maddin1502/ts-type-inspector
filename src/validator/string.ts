@@ -108,11 +108,11 @@ export interface StringValidator<ValidationParams = unknown>
    *
    * @readonly
    * @type {this}
-   * @since X1.0.0
+   * @since 1.0.0
    */
   get email(): this;
   /**
-   * string has to be an uri - uses [url-validator](https://www.npmjs.com/package/url-validator)
+   * string has to be an uri - uses [valid-url](https://www.npmjs.com/package/valid-url)
    *
    * @readonly
    * @type {this}
@@ -120,7 +120,7 @@ export interface StringValidator<ValidationParams = unknown>
    */
   get uri(): this;
   /**
-   * string has to be an web-url (http, https) - uses [url-validator](https://www.npmjs.com/package/url-validator)
+   * string has to be an web-url (http, https) - uses [valid-url](https://www.npmjs.com/package/valid-url)
    *
    * @readonly
    * @type {this}
@@ -294,7 +294,7 @@ export class DefaultStringValidator<ValidationParams = unknown>
 
   private checkBase64(value_: string): void {
     if (
-      !/^([0-9a-zA-Z+\/]{4})*(([0-9a-zA-Z+\/]{2}==)|([0-9a-zA-Z+\/]{3}=))?$/.test(
+      !/^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/.test(
         value_
       )
     ) {

@@ -63,7 +63,7 @@ export interface ArrayValidator<Out, ValidationParams = unknown>
  * @template Out
  * @template [ValidationParams=unknown] extended validation parameters
  * @extends {DefaultValidator<Out[], ValidationParams>}
- * @implements {ArrayValidator<Out, ItemValidationParams, ValidationParams>}
+ * @implements {ArrayValidator<Out, ValidationParams>}
  * @since 1.0.0
  */
 export class DefaultArrayValidator<const Out, ValidationParams = unknown>
@@ -135,7 +135,7 @@ export class DefaultArrayValidator<const Out, ValidationParams = unknown>
 
   private checkAccepted(
     value_: Out[],
-    acceptedItems_: ReadonlyArray<any>
+    acceptedItems_: ReadonlyArray<Out>
   ): void {
     for (let i = 0; i < value_.length; i++) {
       if (!acceptedItems_.includes(value_[i])) {
@@ -146,7 +146,7 @@ export class DefaultArrayValidator<const Out, ValidationParams = unknown>
 
   private checkRejected(
     value_: Out[],
-    rejectedItems_: ReadonlyArray<any>
+    rejectedItems_: ReadonlyArray<Out>
   ): void {
     for (let i = 0; i < value_.length; i++) {
       if (rejectedItems_.includes(value_[i])) {

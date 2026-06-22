@@ -1,10 +1,10 @@
 import { TypeInspector } from '@/inspector.js';
-import { DefaulUndefinedValidator } from '@/validator/undefined.js';
+import { DefaultUndefinedValidator } from '@/validator/undefined.js';
 import { describe, expect, test } from 'vitest';
 
 const ti = new TypeInspector();
 
-describe(DefaulUndefinedValidator, () => {
+describe(DefaultUndefinedValidator, () => {
   test('isValid - success', () => {
     expect.assertions(1);
     expect(ti.undefined.isValid(undefined)).toBe(true);

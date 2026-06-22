@@ -46,9 +46,9 @@ export class DefaultCustomValidator<Out, ValidationParams = unknown>
 
   protected validateBaseType(
     value_: unknown,
-    _params_?: ValidationParams
+    params_?: ValidationParams
   ): Out {
-    const result = this._validationCallback(value_);
+    const result = this._validationCallback(value_, params_);
 
     if (result === undefined) {
       return value_ as Out;

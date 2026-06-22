@@ -47,7 +47,7 @@ export class DefaultUnionValidator<
 
   protected validateBaseType(
     value_: unknown,
-    _params_?: ValidationParams
+    params_?: ValidationParams
   ): UnionValidatorsItem<V> {
     const errors: Error[] = [];
 
@@ -55,7 +55,7 @@ export class DefaultUnionValidator<
       const validator = this._validators[i];
 
       try {
-        validator.validate(value_);
+        validator.validate(value_, params_);
         break;
       } catch (reason_) {
         errors.push(this.detectError(reason_).error);

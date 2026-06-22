@@ -65,6 +65,7 @@ export {
   type TupleValidator
 } from './validator/tuple.js';
 export {
+  DefaultUndefinedValidator,
   DefaulUndefinedValidator,
   type UndefinedValidator
 } from './validator/undefined.js';
