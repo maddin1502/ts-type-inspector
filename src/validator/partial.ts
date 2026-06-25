@@ -1,3 +1,4 @@
+import type { ValidationError } from '@/error.js';
 import type { PartialPropertyValidators, Validator } from '@/types.js';
 import { isObject } from '@/utils.js';
 import type { RecordLike } from 'ts-lib-extended';
@@ -30,9 +31,9 @@ export interface PartialValidator<
  * @since 2.0.0
  */
 export class DefaultPartialValidator<
-    Out extends RecordLike,
-    ValidationParams = unknown
-  >
+  Out extends RecordLike,
+  ValidationParams = unknown
+>
   extends DefaultValidator<Out, ValidationParams>
   implements PartialValidator<Out, ValidationParams>
 {
@@ -50,6 +51,8 @@ export class DefaultPartialValidator<
       this.throwValidationError('value is not an object');
     }
 
+    const errors: ValidationError[] = [];
+
     for (const validatorKey in this._propertyValidators) {
       try {
         const propertyValidator = this._propertyValidators[validatorKey];
@@ -58,8 +61,20 @@ export class DefaultPartialValidator<
           this.validateNested(value_[validatorKey], propertyValidator, params_);
         }
       } catch (reason_) {
-        this.rethrowError(reason_, validatorKey);
+        if (this.aggregatesErrors) {
+          errors.push(this.collectNestedError(reason_, validatorKey));
+        } else {
+          this.rethrowError(reason_, validatorKey);
+        }
       }
+    }
+
+    if (errors.length > 0) {
+      this.throwValidationError(
+        'one or more properties are invalid',
+        undefined,
+        errors
+      );
     }
 
     return value_;

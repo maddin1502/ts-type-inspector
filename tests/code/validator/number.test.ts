@@ -28,7 +28,7 @@ describe(DefaultNumberValidator, () => {
   });
 
   test('isValid - correct conditions', () => {
-    expect.assertions(14);
+    expect.assertions(17);
     expect(ti.number.positive.isValid(42)).toBe(true);
     expect(ti.number.negative.isValid(-42)).toBe(true);
     expect(ti.number.rejectZero.isValid(42)).toBe(true);
@@ -47,10 +47,13 @@ describe(DefaultNumberValidator, () => {
         .isValid(42)
     ).toBe(true);
     expect(ti.number.finite.isValid(42)).toBe(true);
+    expect(ti.number.integer.isValid(42)).toBe(true);
+    expect(ti.number.safeInteger.isValid(42)).toBe(true);
+    expect(ti.number.multipleOf(7).isValid(42)).toBe(true);
   });
 
   test('isValid - incorrect conditions', () => {
-    expect.assertions(15);
+    expect.assertions(18);
     expect(ti.number.positive.isValid(-42)).toBe(false);
     expect(ti.number.negative.isValid(42)).toBe(false);
     expect(ti.number.rejectZero.isValid(0)).toBe(false);
@@ -70,5 +73,10 @@ describe(DefaultNumberValidator, () => {
         .isValid(42)
     ).toBe(false);
     expect(ti.number.finite.isValid(Infinity)).toBe(false);
+    expect(ti.number.integer.isValid(42.5)).toBe(false);
+    expect(ti.number.safeInteger.isValid(Number.MAX_SAFE_INTEGER + 1)).toBe(
+      false
+    );
+    expect(ti.number.multipleOf(5).isValid(42)).toBe(false);
   });
 });

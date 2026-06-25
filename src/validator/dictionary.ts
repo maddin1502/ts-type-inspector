@@ -1,10 +1,11 @@
+import type { ValidationError } from '@/error.js';
+import type { NestedValidator, Validator } from '@/types.js';
+import { isObject } from '@/utils.js';
 import type {
   Dictionary,
   DictionaryKey,
   DictionaryValue
 } from 'ts-lib-extended';
-import type { NestedValidator, Validator } from '@/types.js';
-import { isObject } from '@/utils.js';
 import { DefaultValidator } from './index.js';
 
 /**
@@ -43,14 +44,17 @@ export interface DictionaryValidator<
  * @since 1.0.0
  */
 export class DefaultDictionaryValidator<
-    Out extends Dictionary,
-    ValidationParams = unknown
-  >
+  Out extends Dictionary,
+  ValidationParams = unknown
+>
   extends DefaultValidator<Out, ValidationParams>
   implements DictionaryValidator<Out, ValidationParams>
 {
   constructor(
-    private readonly _itemValidator: NestedValidator<DictionaryValue<Out>, ValidationParams>
+    private readonly _itemValidator: NestedValidator<
+      DictionaryValue<Out>,
+      ValidationParams
+    >
   ) {
     super();
   }
@@ -59,20 +63,35 @@ export class DefaultDictionaryValidator<
     return this.setupCondition((value_) => this.checkKeys(value_, validator_));
   }
 
-  protected validateBaseType(
-    value_: unknown,
-    params_?: ValidationParams
-  ): Out {
+  protected validateBaseType(value_: unknown, params_?: ValidationParams): Out {
     if (!isObject<Dictionary<unknown>>(value_)) {
       this.throwValidationError('value is not a dictionary');
     }
 
+    const errors: ValidationError[] = [];
+
     for (const dictionaryKey in value_) {
       try {
-        this.validateNested(value_[dictionaryKey], this._itemValidator, params_);
+        this.validateNested(
+          value_[dictionaryKey],
+          this._itemValidator,
+          params_
+        );
       } catch (reason_) {
-        this.rethrowError(reason_, dictionaryKey);
+        if (this.aggregatesErrors) {
+          errors.push(this.collectNestedError(reason_, dictionaryKey));
+        } else {
+          this.rethrowError(reason_, dictionaryKey);
+        }
       }
+    }
+
+    if (errors.length > 0) {
+      this.throwValidationError(
+        'one or more values are invalid',
+        undefined,
+        errors
+      );
     }
 
     return value_ as Out;

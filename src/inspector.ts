@@ -1,5 +1,6 @@
 import type {
   AnyLike,
+  Constructor,
   Dictionary,
   DictionaryValue,
   Enumerable,
@@ -20,10 +21,16 @@ import { DefaultBooleanValidator } from './validator/boolean.js';
 import { DefaultCustomValidator } from './validator/custom.js';
 import { DefaultDateValidator } from './validator/date.js';
 import { DefaultDictionaryValidator } from './validator/dictionary.js';
+import { DefaultBigIntValidator } from './validator/bigint.js';
 import { DefaultEnumValidator } from './validator/enum.js';
 import { DefaultExcludeValidator } from './validator/exclude.js';
 import { DefaultValidator } from './validator/index.js';
+import { DefaultInstanceValidator } from './validator/instance.js';
+import { DefaultLazyValidator } from './validator/lazy.js';
+import { DefaultMapValidator } from './validator/map.js';
 import { DefaultMethodValidator } from './validator/method.js';
+import { DefaultSetValidator } from './validator/set.js';
+import { DefaultSymbolValidator } from './validator/symbol.js';
 import { DefaultNullValidator } from './validator/null.js';
 import { DefaultNullishValidator } from './validator/nullish.js';
 import { DefaultNumberValidator } from './validator/number.js';
@@ -318,5 +325,91 @@ export class TypeInspector {
     ...itemValidators_: TupleItemValidators<Out>
   ): DefaultTupleValidator<Out> {
     return new DefaultTupleValidator<Out>(...itemValidators_);
+  }
+
+  /**
+   * Validate bigint values.
+   *
+   * @public
+   * @readonly
+   * @type {DefaultBigIntValidator}
+   * @since 4.0.0
+   */
+  public get bigint(): DefaultBigIntValidator {
+    return new DefaultBigIntValidator();
+  }
+
+  /**
+   * Validate symbol values.
+   *
+   * @public
+   * @readonly
+   * @type {DefaultSymbolValidator}
+   * @since 4.0.0
+   */
+  public get symbol(): DefaultSymbolValidator {
+    return new DefaultSymbolValidator();
+  }
+
+  /**
+   * Validate class instances through the `instanceof` operator.
+   *
+   * @public
+   * @template Out
+   * @param {Constructor<Out>} constructor_ the class/constructor to check against
+   * @returns {DefaultInstanceValidator<Out>}
+   * @since 4.0.0
+   */
+  public instance<Out>(
+    constructor_: Constructor<Out>
+  ): DefaultInstanceValidator<Out> {
+    return new DefaultInstanceValidator<Out>(constructor_);
+  }
+
+  /**
+   * Validate Map values. Each key and value has to match its validator.
+   *
+   * @public
+   * @template K
+   * @template V
+   * @param {Validator<K>} keyValidator_ validator for the map keys
+   * @param {Validator<V>} valueValidator_ validator for the map values
+   * @returns {DefaultMapValidator<K, V>}
+   * @since 4.0.0
+   */
+  public map<K, V>(
+    keyValidator_: Validator<K>,
+    valueValidator_: Validator<V>
+  ): DefaultMapValidator<K, V> {
+    return new DefaultMapValidator<K, V>(keyValidator_, valueValidator_);
+  }
+
+  /**
+   * Validate Set values. Each item has to match the item validator.
+   *
+   * @public
+   * @template V
+   * @param {Validator<V>} itemValidator_ validator for the set items
+   * @returns {DefaultSetValidator<V>}
+   * @since 4.0.0
+   */
+  public set<V>(itemValidator_: Validator<V>): DefaultSetValidator<V> {
+    return new DefaultSetValidator<V>(itemValidator_);
+  }
+
+  /**
+   * Resolve a validator lazily (on validation). Use this for recursive or
+   * self-referential schemas where the validator has to reference itself.
+   *
+   * @public
+   * @template Out
+   * @param {() => Validator<Out>} validatorFactory_ produces the actual validator on demand
+   * @returns {DefaultLazyValidator<Out>}
+   * @since 4.0.0
+   */
+  public lazy<Out>(
+    validatorFactory_: () => Validator<Out>
+  ): DefaultLazyValidator<Out> {
+    return new DefaultLazyValidator<Out>(validatorFactory_);
   }
 }

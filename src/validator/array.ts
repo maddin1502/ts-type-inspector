@@ -1,3 +1,4 @@
+import type { ValidationError } from '@/error.js';
 import type { NestedValidator, Validator } from '@/types.js';
 import { DefaultValidator } from './index.js';
 
@@ -11,8 +12,10 @@ import { DefaultValidator } from './index.js';
  * @extends {Validator<Out[], ValidationParams>}
  * @since 1.0.0
  */
-export interface ArrayValidator<Out, ValidationParams = unknown>
-  extends Validator<Out[], ValidationParams> {
+export interface ArrayValidator<
+  Out,
+  ValidationParams = unknown
+> extends Validator<Out[], ValidationParams> {
   /**
    * validate exact array length
    *
@@ -104,12 +107,26 @@ export class DefaultArrayValidator<const Out, ValidationParams = unknown>
       this.throwValidationError('value is not an array');
     }
 
+    const errors: ValidationError[] = [];
+
     for (let i = 0; i < value_.length; i++) {
       try {
         this.validateNested(value_[i], this._itemValidator, params_);
       } catch (reason_) {
-        this.rethrowError(reason_, i);
+        if (this.aggregatesErrors) {
+          errors.push(this.collectNestedError(reason_, i));
+        } else {
+          this.rethrowError(reason_, i);
+        }
       }
+    }
+
+    if (errors.length > 0) {
+      this.throwValidationError(
+        'one or more items are invalid',
+        undefined,
+        errors
+      );
     }
 
     return value_ as Out[];

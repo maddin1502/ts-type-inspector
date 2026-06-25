@@ -2,17 +2,26 @@ import { TypeInspector } from './inspector.js';
 
 export type {
   AnyLike,
-  MethodLike,
   InstanceLike,
+  MethodLike,
   RecordLike
 } from 'ts-lib-extended';
-export { ValidationError, isValidationError } from './error.js';
+export {
+  flattenValidationError,
+  isValidationError,
+  ValidationError,
+  type FlatValidationError
+} from './error.js';
 export type * from './types.js';
 export { DefaultAnyValidator, type AnyValidator } from './validator/any.js';
 export {
   DefaultArrayValidator,
   type ArrayValidator
 } from './validator/array.js';
+export {
+  DefaultBigIntValidator,
+  type BigIntValidator
+} from './validator/bigint.js';
 export {
   DefaultBooleanValidator,
   type BooleanValidator
@@ -32,6 +41,12 @@ export {
   type ExcludeValidator
 } from './validator/exclude.js';
 export { DefaultValidator } from './validator/index.js';
+export {
+  DefaultInstanceValidator,
+  type InstanceValidator
+} from './validator/instance.js';
+export { DefaultLazyValidator, type LazyValidator } from './validator/lazy.js';
+export { DefaultMapValidator, type MapValidator } from './validator/map.js';
 export {
   DefaultMethodValidator,
   type MethodValidator
@@ -57,6 +72,7 @@ export {
   DefaultPartialValidator,
   type PartialValidator
 } from './validator/partial.js';
+export { DefaultSetValidator, type SetValidator } from './validator/set.js';
 export {
   DefaultStrictValidator,
   type StrictValidator
@@ -65,6 +81,10 @@ export {
   DefaultStringValidator,
   type StringValidator
 } from './validator/string.js';
+export {
+  DefaultSymbolValidator,
+  type SymbolValidator
+} from './validator/symbol.js';
 export {
   DefaultTupleValidator,
   type TupleValidator

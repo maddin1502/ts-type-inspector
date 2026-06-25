@@ -1,3 +1,4 @@
+import type { ValidationError } from '@/error.js';
 import type { PropertyValidators, Validator } from '@/types.js';
 import { isObject } from '@/utils.js';
 import type { RecordLike } from 'ts-lib-extended';
@@ -40,9 +41,9 @@ export interface ObjectValidator<
  * @since 1.0.0
  */
 export class DefaultObjectValidator<
-    Out extends RecordLike,
-    ValidationParams = unknown
-  >
+  Out extends RecordLike,
+  ValidationParams = unknown
+>
   extends DefaultValidator<Out, ValidationParams>
   implements ObjectValidator<Out, ValidationParams>
 {
@@ -64,6 +65,8 @@ export class DefaultObjectValidator<
       this.throwValidationError('value is not an object');
     }
 
+    const errors: ValidationError[] = [];
+
     // keep optional parameters in mind! The value must be validated even if it is undefined
     for (const validatorKey in this._propertyValidators) {
       try {
@@ -73,8 +76,20 @@ export class DefaultObjectValidator<
           params_
         );
       } catch (reason_) {
-        this.rethrowError(reason_, validatorKey);
+        if (this.aggregatesErrors) {
+          errors.push(this.collectNestedError(reason_, validatorKey));
+        } else {
+          this.rethrowError(reason_, validatorKey);
+        }
       }
+    }
+
+    if (errors.length > 0) {
+      this.throwValidationError(
+        'one or more properties are invalid',
+        undefined,
+        errors
+      );
     }
 
     return value_;
