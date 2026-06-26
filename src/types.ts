@@ -1,5 +1,6 @@
 import type { ArrayItem, MinArray, RecordLike } from 'ts-lib-extended';
 import type { ValidationError } from './error.js';
+import type { NestedValidator } from './validator/nested.js';
 
 export type CustomValidation<V, ValidationParams = unknown> = (
   value_: V,
@@ -52,28 +53,51 @@ export interface Validator<Out, ValidationParams = unknown> {
    * @returns {value_ is Out} true if valid; false if invalid; this is a type predicate - asserted type will be associated to value if true
    */
   isValid(value_: unknown, params_?: ValidationParams): value_ is Out;
+  /**
+   * validate value; return the validated value (same reference) when valid, else undefined
+   *
+   * @param {unknown} value_
+   * @param {?ValidationParams} [params_]
+   * @returns {Out | undefined}
+   * @since 4.0.0
+   */
+  validOrDefault(value_: unknown, params_?: ValidationParams): Out | undefined;
+  /**
+   * validate value; return the validated value (same reference) when valid, else the given fallback
+   *
+   * @param {unknown} value_
+   * @param {Out} fallback_
+   * @param {?ValidationParams} [params_]
+   * @returns {Out}
+   * @since 4.0.0
+   */
+  validOrFallback(
+    value_: unknown,
+    fallback_: Out,
+    params_?: ValidationParams
+  ): Out;
 }
 
 export type NestedValidationParams<CV extends Validator<unknown>> =
   CV extends Validator<unknown, infer P> ? P : never;
-export type NestedValidator<Out, ValidationParams> =
+export type ValidatorOut<V extends Validator<unknown>> =
+  V extends Validator<infer Out> ? Out : never;
+
+/**
+ * A property/item validator: either a plain validator or a {@link NestedValidator}
+ * (created via `ti.nested`) that forwards the parent's validation params.
+ *
+ * @since 4.0.0
+ */
+export type PropertyValidator<Out, ParentValidationParams = unknown> =
   | Validator<Out>
-  | ((
-      validateWith_: <
-        CV extends Validator<Out>,
-        P extends NestedValidationParams<CV>
-      >(
-        validator_: CV,
-        params_?: P
-      ) => CV,
-      params_?: ValidationParams
-    ) => ReturnType<typeof validateWith_>);
+  | NestedValidator<Out, ParentValidationParams>;
 
 export type PropertyValidators<
   V extends RecordLike,
   ValidationParams = unknown
 > = {
-  readonly [key in keyof V]-?: NestedValidator<V[key], ValidationParams>;
+  readonly [key in keyof V]-?: PropertyValidator<V[key], ValidationParams>;
 };
 
 export type PartialPropertyValidators<
@@ -96,5 +120,5 @@ export type TupleItemValidators<
   A extends unknown[],
   ValidationParams = unknown
 > = {
-  [index in keyof A]: NestedValidator<A[index], ValidationParams>;
+  [index in keyof A]: PropertyValidator<A[index], ValidationParams>;
 };

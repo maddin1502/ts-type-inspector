@@ -9,11 +9,13 @@ import type {
 } from 'ts-lib-extended';
 import type {
   CustomValidation,
+  NestedValidationParams,
   PartialPropertyValidators,
   PropertyValidators,
   TupleItemValidators,
   UnionValidators,
-  Validator
+  Validator,
+  ValidatorOut
 } from './types.js';
 import { DefaultAnyValidator } from './validator/any.js';
 import { DefaultArrayValidator } from './validator/array.js';
@@ -28,6 +30,10 @@ import { DefaultValidator } from './validator/index.js';
 import { DefaultInstanceValidator } from './validator/instance.js';
 import { DefaultLazyValidator } from './validator/lazy.js';
 import { DefaultMapValidator } from './validator/map.js';
+import {
+  DefaultNestedValidator,
+  type NestedValidator
+} from './validator/nested.js';
 import { DefaultMethodValidator } from './validator/method.js';
 import { DefaultSetValidator } from './validator/set.js';
 import { DefaultSymbolValidator } from './validator/symbol.js';
@@ -411,5 +417,36 @@ export class TypeInspector {
     validatorFactory_: () => Validator<Out>
   ): DefaultLazyValidator<Out> {
     return new DefaultLazyValidator<Out>(validatorFactory_);
+  }
+
+  /**
+   * Wrap a validator so the parent's validation params get mapped to the nested
+   * validator's params. Use this to forward (and transform) validation params
+   * into nested/sub validators.
+   *
+   * @public
+   * @template Out
+   * @template [ParentValidationParams=unknown] params handed in by the parent validator
+   * @template {Validator<Out>} [V=Validator<Out>] the wrapped validator
+   * @param {V} validator_ the nested validator
+   * @param {(parentParams_: ParentValidationParams | undefined) => NestedValidationParams<V> | undefined} withParams_ maps the parent params to the nested validator's params
+   * @returns {DefaultNestedValidator<Out, ParentValidationParams, V>}
+   * @since 4.0.0
+   */
+  public nested<V extends Validator<unknown>, ParentValidationParams = unknown>(
+    validator_: V,
+    withParams_: (
+      parentParams_: ParentValidationParams | undefined
+    ) => NestedValidationParams<V> | undefined
+  ): NestedValidator<ValidatorOut<V>, ParentValidationParams> {
+    return new DefaultNestedValidator<
+      ValidatorOut<V>,
+      ParentValidationParams,
+      NestedValidationParams<V>
+    >(
+      // safe: V is Validator<ValidatorOut<V>, NestedValidationParams<V>> by construction
+      validator_ as Validator<ValidatorOut<V>, NestedValidationParams<V>>,
+      withParams_
+    );
   }
 }

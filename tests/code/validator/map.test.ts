@@ -47,4 +47,26 @@ describe(DefaultMapValidator, () => {
     const objectKeyMap = new Map<unknown, unknown>([[{}, 'not a number']]);
     expect(() => ti.map(ti.any, ti.number).validate(objectKeyMap)).toThrow();
   });
+
+  test('aggregate collects invalid keys', () => {
+    expect.assertions(2);
+    const validator = ti.map(ti.number, ti.number).aggregate;
+    expect(
+      validator.isValid(
+        new Map<unknown, number>([
+          ['a', 1],
+          ['b', 2]
+        ])
+      )
+    ).toBe(false);
+    expect(validator.validationError?.subErrors?.length).toBe(2);
+  });
+
+  test('aggregate collects invalid value of an object key (no trace)', () => {
+    expect.assertions(1);
+    const validator = ti.map(ti.any, ti.number).aggregate;
+    expect(
+      validator.isValid(new Map<unknown, unknown>([[{}, 'not a number']]))
+    ).toBe(false);
+  });
 });

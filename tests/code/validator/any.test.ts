@@ -19,6 +19,12 @@ describe(DefaultAnyValidator, () => {
     expect(ti.any.isValid(NaN)).toBe(true);
   });
 
+  test('isValid - correct conditions', () => {
+    expect.assertions(2);
+    expect(ti.any.notNullish.isValid(42)).toBe(true);
+    expect(ti.any.notFalsy.isValid(42)).toBe(true);
+  });
+
   test('isValid - incorrect conditions', () => {
     expect.assertions(4);
     expect(ti.any.notNullish.isValid(undefined)).toBe(false);

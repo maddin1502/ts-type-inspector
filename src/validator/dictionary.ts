@@ -1,12 +1,12 @@
 import type { ValidationError } from '@/error.js';
-import type { NestedValidator, Validator } from '@/types.js';
+import type { PropertyValidator, Validator } from '@/types.js';
 import { isObject } from '@/utils.js';
 import type {
   Dictionary,
   DictionaryKey,
   DictionaryValue
 } from 'ts-lib-extended';
-import { DefaultValidator } from './index.js';
+import { ContainerValidator } from './container.js';
 
 /**
  * Validator for dictionary objects
@@ -39,7 +39,7 @@ export interface DictionaryValidator<
  * @class DefaultDictionaryValidator
  * @template {Dictionary} Out
  * @template [ValidationParams=unknown] extended validation parameters
- * @extends {DefaultValidator<Out, ValidationParams>}
+ * @extends {ContainerValidator<Out, ValidationParams>}
  * @implements {DictionaryValidator<Out, ValidationParams>}
  * @since 1.0.0
  */
@@ -47,11 +47,11 @@ export class DefaultDictionaryValidator<
   Out extends Dictionary,
   ValidationParams = unknown
 >
-  extends DefaultValidator<Out, ValidationParams>
+  extends ContainerValidator<Out, ValidationParams>
   implements DictionaryValidator<Out, ValidationParams>
 {
   constructor(
-    private readonly _itemValidator: NestedValidator<
+    private readonly _itemValidator: PropertyValidator<
       DictionaryValue<Out>,
       ValidationParams
     >
@@ -71,28 +71,16 @@ export class DefaultDictionaryValidator<
     const errors: ValidationError[] = [];
 
     for (const dictionaryKey in value_) {
-      try {
-        this.validateNested(
-          value_[dictionaryKey],
-          this._itemValidator,
-          params_
-        );
-      } catch (reason_) {
-        if (this.aggregatesErrors) {
-          errors.push(this.collectNestedError(reason_, dictionaryKey));
-        } else {
-          this.rethrowError(reason_, dictionaryKey);
-        }
-      }
-    }
-
-    if (errors.length > 0) {
-      this.throwValidationError(
-        'one or more values are invalid',
-        undefined,
-        errors
+      this.validateChild(
+        errors,
+        () => value_[dictionaryKey],
+        this._itemValidator,
+        dictionaryKey,
+        params_
       );
     }
+
+    this.throwOnErrors(errors, 'one or more values are invalid');
 
     return value_ as Out;
   }

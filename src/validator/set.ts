@@ -1,6 +1,6 @@
 import type { ValidationError } from '@/error.js';
-import type { NestedValidator, Validator } from '@/types.js';
-import { DefaultValidator } from './index.js';
+import type { PropertyValidator, Validator } from '@/types.js';
+import { ContainerValidator } from './container.js';
 
 /**
  * Validator for Set values. Each item has to match the item validator.
@@ -24,16 +24,16 @@ export interface SetValidator<V, ValidationParams = unknown> extends Validator<
  * @class DefaultSetValidator
  * @template V
  * @template [ValidationParams=unknown] extended validation parameters
- * @extends {DefaultValidator<Set<V>, ValidationParams>}
+ * @extends {ContainerValidator<Set<V>, ValidationParams>}
  * @implements {SetValidator<V, ValidationParams>}
  * @since 4.0.0
  */
 export class DefaultSetValidator<V, ValidationParams = unknown>
-  extends DefaultValidator<Set<V>, ValidationParams>
+  extends ContainerValidator<Set<V>, ValidationParams>
   implements SetValidator<V, ValidationParams>
 {
   constructor(
-    private readonly _itemValidator: NestedValidator<V, ValidationParams>
+    private readonly _itemValidator: PropertyValidator<V, ValidationParams>
   ) {
     super();
   }
@@ -51,26 +51,11 @@ export class DefaultSetValidator<V, ValidationParams = unknown>
     let index = 0;
 
     for (const item of set) {
-      try {
-        this.validateNested(item, this._itemValidator, params_);
-      } catch (reason_) {
-        if (this.aggregatesErrors) {
-          errors.push(this.collectNestedError(reason_, index));
-        } else {
-          this.rethrowError(reason_, index);
-        }
-      }
-
+      this.validateChild(errors, () => item, this._itemValidator, index, params_);
       index++;
     }
 
-    if (errors.length > 0) {
-      this.throwValidationError(
-        'one or more items are invalid',
-        undefined,
-        errors
-      );
-    }
+    this.throwOnErrors(errors, 'one or more items are invalid');
 
     return value_ as Set<V>;
   }

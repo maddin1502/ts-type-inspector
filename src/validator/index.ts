@@ -1,7 +1,6 @@
 import { ValidationError, isValidationError } from '@/error.js';
 import type {
   CustomValidation,
-  NestedValidator,
   ValidationCondition,
   ValidationErrorHandler,
   Validator
@@ -31,32 +30,14 @@ export abstract class DefaultValidator<
   private readonly _errorHandlers: ValidationErrorHandler<ValidationParams>[];
   private readonly _conditions: ValidationCondition<Out, ValidationParams>[];
 
-  private _aggregateErrors: boolean;
-
   constructor() {
     this._conditions = [];
     this._customValidations = [];
     this._errorHandlers = [];
-    this._aggregateErrors = false;
   }
 
   public get validationError(): ValidationError | undefined {
     return this._validationError;
-  }
-
-  /**
-   * Collect ALL nested invalidities instead of failing on the first one.
-   * Only affects container validators (object, partial, array, tuple,
-   * dictionary, map, set); a no-op on value validators. The thrown
-   * ValidationError carries one sub-error per invalid child.
-   *
-   * @readonly
-   * @type {this}
-   * @since 4.0.0
-   */
-  public get aggregate(): this {
-    this._aggregateErrors = true;
-    return this;
   }
 
   public custom(validation_: CustomValidation<Out, ValidationParams>): this {
@@ -100,6 +81,21 @@ export abstract class DefaultValidator<
     } catch {
       return false;
     }
+  }
+
+  public validOrDefault(
+    value_: unknown,
+    params_?: ValidationParams
+  ): Out | undefined {
+    return this.isValid(value_, params_) ? value_ : undefined;
+  }
+
+  public validOrFallback(
+    value_: unknown,
+    fallback_: Out,
+    params_?: ValidationParams
+  ): Out {
+    return this.validOrDefault(value_, params_) ?? fallback_;
   }
 
   protected abstract validateBaseType(
@@ -147,42 +143,6 @@ export abstract class DefaultValidator<
     );
   }
 
-  /**
-   * whether this validator collects all nested invalidities (see {@link aggregate})
-   *
-   * @readonly
-   * @type {boolean}
-   * @since 4.0.0
-   */
-  protected get aggregatesErrors(): boolean {
-    return this._aggregateErrors;
-  }
-
-  /**
-   * build (but do NOT throw) a nested ValidationError - used by container
-   * validators to collect all invalidities when {@link aggregate} is active
-   *
-   * @param {unknown} reason_
-   * @param {?PropertyKey} [trace_]
-   * @returns {ValidationError}
-   * @since 4.0.0
-   */
-  protected collectNestedError(
-    reason_: unknown,
-    trace_?: PropertyKey
-  ): ValidationError {
-    const propertyTraces: PropertyKey[] = trace_ === undefined ? [] : [trace_];
-    const { error, originalMessage } = this.detectError(
-      reason_,
-      propertyTraces
-    );
-    return new ValidationError(
-      originalMessage ?? error.message,
-      propertyTraces,
-      [error]
-    );
-  }
-
   protected throwValidationError(
     message_: string,
     propertyTrace_?: ReadonlyArray<PropertyKey>,
@@ -215,25 +175,6 @@ export abstract class DefaultValidator<
   ): this {
     this._conditions.push(condition_);
     return this;
-  }
-
-  protected validateNested<NestedOut>(
-    value_: unknown,
-    nestedValidator_: NestedValidator<NestedOut, ValidationParams>,
-    params_?: ValidationParams
-  ) {
-    if (typeof nestedValidator_ === 'function') {
-      let nestedValidationParams: unknown;
-
-      const nestedValidator = nestedValidator_((cval_, cparams_) => {
-        nestedValidationParams = cparams_;
-        return cval_;
-      }, params_);
-
-      nestedValidator.validate(value_, nestedValidationParams);
-    } else {
-      nestedValidator_.validate(value_);
-    }
   }
 
   private hasMessage(value_: unknown): value_ is { message: unknown } {

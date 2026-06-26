@@ -1,6 +1,6 @@
 import type { ValidationError } from '@/error.js';
-import type { NestedValidator, Validator } from '@/types.js';
-import { DefaultValidator } from './index.js';
+import type { PropertyValidator, Validator } from '@/types.js';
+import { ContainerValidator } from './container.js';
 
 /**
  * Validator for Map values. Each key and value has to match its validator.
@@ -27,17 +27,17 @@ export interface MapValidator<
  * @template K
  * @template V
  * @template [ValidationParams=unknown] extended validation parameters
- * @extends {DefaultValidator<Map<K, V>, ValidationParams>}
+ * @extends {ContainerValidator<Map<K, V>, ValidationParams>}
  * @implements {MapValidator<K, V, ValidationParams>}
  * @since 4.0.0
  */
 export class DefaultMapValidator<K, V, ValidationParams = unknown>
-  extends DefaultValidator<Map<K, V>, ValidationParams>
+  extends ContainerValidator<Map<K, V>, ValidationParams>
   implements MapValidator<K, V, ValidationParams>
 {
   constructor(
-    private readonly _keyValidator: NestedValidator<K, ValidationParams>,
-    private readonly _valueValidator: NestedValidator<V, ValidationParams>
+    private readonly _keyValidator: PropertyValidator<K, ValidationParams>,
+    private readonly _valueValidator: PropertyValidator<V, ValidationParams>
   ) {
     super();
   }
@@ -56,34 +56,17 @@ export class DefaultMapValidator<K, V, ValidationParams = unknown>
     for (const [key, val] of map) {
       const trace = this.keyTrace(key);
 
-      try {
-        this.validateNested(key, this._keyValidator, params_);
-      } catch (reason_) {
-        if (this.aggregatesErrors) {
-          errors.push(this.collectNestedError(reason_, trace));
-        } else {
-          this.rethrowError(reason_, trace);
-        }
-      }
-
-      try {
-        this.validateNested(val, this._valueValidator, params_);
-      } catch (reason_) {
-        if (this.aggregatesErrors) {
-          errors.push(this.collectNestedError(reason_, trace));
-        } else {
-          this.rethrowError(reason_, trace);
-        }
-      }
-    }
-
-    if (errors.length > 0) {
-      this.throwValidationError(
-        'one or more entries are invalid',
-        undefined,
-        errors
+      this.validateChild(errors, () => key, this._keyValidator, trace, params_);
+      this.validateChild(
+        errors,
+        () => val,
+        this._valueValidator,
+        trace,
+        params_
       );
     }
+
+    this.throwOnErrors(errors, 'one or more entries are invalid');
 
     return value_ as Map<K, V>;
   }

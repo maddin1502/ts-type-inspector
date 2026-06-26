@@ -26,6 +26,7 @@ export {
   DefaultBooleanValidator,
   type BooleanValidator
 } from './validator/boolean.js';
+export { ContainerValidator } from './validator/container.js';
 export {
   DefaultCustomValidator,
   type CustomValidator
@@ -47,6 +48,10 @@ export {
 } from './validator/instance.js';
 export { DefaultLazyValidator, type LazyValidator } from './validator/lazy.js';
 export { DefaultMapValidator, type MapValidator } from './validator/map.js';
+export {
+  DefaultNestedValidator,
+  type NestedValidator
+} from './validator/nested.js';
 export {
   DefaultMethodValidator,
   type MethodValidator
@@ -72,6 +77,7 @@ export {
   DefaultPartialValidator,
   type PartialValidator
 } from './validator/partial.js';
+export { PropertiesValidator } from './validator/properties.js';
 export { DefaultSetValidator, type SetValidator } from './validator/set.js';
 export {
   DefaultStrictValidator,
@@ -91,7 +97,6 @@ export {
 } from './validator/tuple.js';
 export {
   DefaultUndefinedValidator,
-  DefaulUndefinedValidator,
   type UndefinedValidator
 } from './validator/undefined.js';
 export {

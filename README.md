@@ -11,6 +11,7 @@
 - [Validation modes](#validation-modes)
   - [isValid](#isvalid)
   - [validate](#validate)
+  - [validOrDefault / validOrFallback](#validordefault--validorfallback)
 - [Error evaluation](#error-evaluation)
 - [Collect all errors](#collect-all-errors)
 - [How to define custom validators](#how-to-define-custom-validators)
@@ -126,6 +127,22 @@ function processIncomingValueAsString(value_: unknown): number {
     return NaN;
   }
 }
+```
+
+### validOrDefault / validOrFallback
+
+> since 4.0.0
+
+Two shortcuts when you don't want to deal with `true`/`false` or try-catch. They don't throw: `validOrDefault` returns the validated value or `undefined`, `validOrFallback` returns the validated value or a fallback you provide.
+
+```ts
+import ti from 'ts-type-inspector';
+
+ti.number.validOrDefault(42);      // 42
+ti.number.validOrDefault('nope');  // undefined
+
+ti.number.validOrFallback(42, 0);     // 42
+ti.number.validOrFallback('nope', 0); // 0
 ```
 
 ## Error evaluation
@@ -301,15 +318,15 @@ cdv.failWhenRequired.isValid(value, { valueRequired: true }); // false
 
 ### External influences and nested validators
 
-Relevant to: Object, Partial, Dictionary, Array, Tuple
+Relevant to: Object, Partial, Dictionary, Array, Tuple, Map, Set
 
-It is possible to pass the external influence parameters to nested validators. For this it is necessary to use a wrapper, which is provided by the main validator.
+Sometimes a nested validator needs the parent's validation params. `ti.nested` (since 4.0.0) wraps a validator and maps the parent params to the nested validator's params. The type of the parent params is **inferred automatically** from the surrounding validator - no annotation, no assertion.
 
 ```ts
-import { DefaultObjectValidator, DefaultStringValidator } from 'ts-type-inspector';
+import { DefaultObjectValidator, DefaultStringValidator, ti } from 'ts-type-inspector';
 
 export type CommonData = {
-  data: string | undefined;
+  data: string;
 };
 export type SpecialStringValidationParams = {
   notEmpty?: boolean;
@@ -336,8 +353,11 @@ export class CommonDataValidator extends DefaultObjectValidator<
 > {
   constructor() {
     super({
-      data: (validateWith, validationParams) =>
-        validateWith(new SpecialStringValidator(), validationParams?.dataParams)
+      // params_ is automatically typed as CommonDataValidationParams | undefined
+      data: ti.nested(
+        new SpecialStringValidator(),
+        (params_) => params_?.dataParams
+      )
     });
   }
 }
@@ -346,6 +366,8 @@ const cdv = new CommonDataValidator();
 cdv.isValid({ data: '' }); // true
 cdv.isValid({ data: '' }, { dataParams: { notEmpty: true } }); // false
 ```
+
+> `ti.nested` only makes sense inside a container (object, partial, dictionary, array, tuple, map, set) - it is not a standalone validator.
 
 ## Predefined validators
 
@@ -427,6 +449,7 @@ Validator for object based values.
 | Condition | Description |
 |---|---|
 | noOverload | reject objects that contain more keys than have been validated. **USE FOR POJOs ONLY!**. Getters/setters or private properties can produce false negatives. |
+| rejectArray | reject array values (arrays are objects too and pass by default) |
 
 ```ts
 import ti from 'ts-type-inspector';
@@ -440,6 +463,17 @@ ti.object<DataInterface>({
   prop1: ti.string,
   prop2: ti.number
 });
+```
+
+Since 4.0.0 you can get back the validators you defined for the properties via `prop` / `props` (works on object and partial):
+
+```ts
+import ti from 'ts-type-inspector';
+
+const validator = ti.object({ prop1: ti.string, prop2: ti.number });
+
+validator.prop('prop1'); // the validator defined for prop1
+validator.props();       // the whole property validators map
 ```
 
 ### Partial

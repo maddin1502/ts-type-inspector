@@ -24,7 +24,7 @@ describe(DefaultStringValidator, () => {
   });
 
   test('isValid - correct conditions', () => {
-    expect.assertions(29);
+    expect.assertions(30);
     expect(ti.string.length(5).isValid('hello')).toBe(true);
     expect(ti.string.length(5).longest(6).isValid('hello')).toBe(true);
     expect(ti.string.length(5).shortest(4).isValid('hello')).toBe(true);
@@ -83,6 +83,7 @@ describe(DefaultStringValidator, () => {
     expect(ti.string.startsWith('hel').isValid('hello')).toBe(true);
     expect(ti.string.endsWith('llo').isValid('hello')).toBe(true);
     expect(ti.string.includes('ell').isValid('hello')).toBe(true);
+    expect(ti.string.rejectEmpty.isValid('hello')).toBe(true);
   });
 
   test('isValid - incorrect conditions', () => {

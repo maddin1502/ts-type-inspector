@@ -1,8 +1,15 @@
 import { flattenValidationError } from '@/error.js';
+import { DefaultValidator } from '@/index.js';
 import { TypeInspector } from '@/inspector.js';
 import { describe, expect, test } from 'vitest';
 
 const ti = new TypeInspector();
+
+class RawThrowValidator extends DefaultValidator<string> {
+  protected validateBaseType(): string {
+    throw new Error('raw boom');
+  }
+}
 
 describe('aggregate (collect-all) mode', () => {
   test('object collects all invalid properties', () => {
@@ -77,6 +84,15 @@ describe('aggregate (collect-all) mode', () => {
   test('aggregate is a no-op on valid input', () => {
     expect.assertions(1);
     expect(ti.array(ti.number).aggregate.isValid([1, 2, 3])).toBe(true);
+  });
+
+  test('aggregate preserves a non-ValidationError message', () => {
+    expect.assertions(2);
+    const validator = ti.object({ a: new RawThrowValidator() }).aggregate;
+    expect(validator.isValid({ a: 'x' })).toBe(false);
+    expect(validator.validationError?.subErrors?.[0]?.message).toContain(
+      'raw boom'
+    );
   });
 });
 

@@ -10,8 +10,9 @@ import { DefaultValidator } from './index.js';
  * @extends {Validator<undefined, ValidationParams>}
  * @since 1.0.0
  */
-export interface UndefinedValidator<ValidationParams = unknown>
-  extends Validator<undefined, ValidationParams> {}
+export interface UndefinedValidator<
+  ValidationParams = unknown
+> extends Validator<undefined, ValidationParams> {}
 
 /**
  * Validator for undefined values
@@ -38,22 +39,3 @@ export class DefaultUndefinedValidator<ValidationParams = unknown>
     this.throwValidationError('value is defined');
   }
 }
-
-/**
- * Validator for undefined values
- *
- * @export
- * @deprecated misspelled name - use {@link DefaultUndefinedValidator} instead
- * @since 1.0.0
- */
-export const DefaulUndefinedValidator = DefaultUndefinedValidator;
-
-/**
- * Validator for undefined values
- *
- * @export
- * @deprecated misspelled name - use {@link DefaultUndefinedValidator} instead
- * @since 1.0.0
- */
-export type DefaulUndefinedValidator<ValidationParams = unknown> =
-  DefaultUndefinedValidator<ValidationParams>;
