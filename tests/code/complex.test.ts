@@ -708,12 +708,12 @@ describe('complex', () => {
       TestTupleValidationParams
     > {
       constructor() {
-        super(
+        super([
           ti.nested(
             new TestStringValidator(),
             (params_) => params_?.stringParams
           )
-        );
+        ]);
       }
     }
 

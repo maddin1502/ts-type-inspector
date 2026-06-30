@@ -46,7 +46,7 @@ export class DefaultTupleValidator<
 {
   private readonly _itemValidators: TupleItemValidators<Out, ValidationParams>;
 
-  constructor(...itemValidators_: TupleItemValidators<Out, ValidationParams>) {
+  constructor(itemValidators_: TupleItemValidators<Out, ValidationParams>) {
     super();
     this._itemValidators = itemValidators_;
   }

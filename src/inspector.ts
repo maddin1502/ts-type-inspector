@@ -337,7 +337,7 @@ export class TypeInspector {
   public tuple<const Out extends unknown[]>(
     ...itemValidators_: TupleItemValidators<Out>
   ): DefaultTupleValidator<Out> {
-    return new DefaultTupleValidator(...itemValidators_);
+    return new DefaultTupleValidator(itemValidators_);
   }
 
   /**
