@@ -1,4 +1,4 @@
-import type { Validator } from '@/types.js';
+import type { ValidationParamsMapper, Validator } from '@/types.js';
 
 const NESTED_VALIDATOR_MARKER = Symbol('NESTED_VALIDATOR_MARKER');
 
@@ -56,13 +56,14 @@ export class DefaultNestedValidator<
    *
    * @constructor
    * @param {Validator<Out, ChildValidationParams>} _validator the wrapped (nested) validator
-   * @param {(parentParams_: ParentValidationParams | undefined) => ChildValidationParams | undefined} _withParams maps the parent params to the wrapped validator's params
+   * @param {ValidationParamsMapper<ChildValidationParams, ParentValidationParams>} _withParams maps the parent params to the wrapped validator's params
    */
   constructor(
     private readonly _validator: Validator<Out, ChildValidationParams>,
-    private readonly _withParams: (
-      parentParams_: ParentValidationParams | undefined
-    ) => ChildValidationParams | undefined
+    private readonly _withParams: ValidationParamsMapper<
+      ChildValidationParams,
+      ParentValidationParams
+    >
   ) {}
 
   public validateNested(

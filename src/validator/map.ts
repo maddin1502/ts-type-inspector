@@ -50,7 +50,7 @@ export class DefaultMapValidator<K, V, ValidationParams = unknown>
       this.throwValidationError('value is not a map');
     }
 
-    const map = value_ as Map<unknown, unknown>;
+    const map: Map<unknown, unknown> = value_;
     const errors: ValidationError[] = [];
 
     for (const [key, val] of map) {
@@ -72,10 +72,10 @@ export class DefaultMapValidator<K, V, ValidationParams = unknown>
   }
 
   private keyTrace(key_: unknown): PropertyKey | undefined {
-    const type = typeof key_;
-
-    return type === 'string' || type === 'number' || type === 'symbol'
-      ? (key_ as PropertyKey)
+    return typeof key_ === 'string' ||
+      typeof key_ === 'number' ||
+      typeof key_ === 'symbol'
+      ? key_
       : undefined;
   }
 }

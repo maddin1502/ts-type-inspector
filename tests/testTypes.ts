@@ -28,7 +28,7 @@ export class ExtendedValidationParametersValidator extends DefaultValidator<
 
   protected validateBaseType(
     value_: unknown,
-    params_?: TestExtendedValidationParameters | undefined
+    params_?: TestExtendedValidationParameters
   ): unknown {
     if (params_?.failOn === 'validate') {
       this.throwValidationError('extended failure on validate');

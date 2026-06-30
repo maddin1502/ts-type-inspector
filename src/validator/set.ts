@@ -46,7 +46,7 @@ export class DefaultSetValidator<V, ValidationParams = unknown>
       this.throwValidationError('value is not a set');
     }
 
-    const set = value_ as Set<unknown>;
+    const set: Set<unknown> = value_;
     const errors: ValidationError[] = [];
     let index = 0;
 

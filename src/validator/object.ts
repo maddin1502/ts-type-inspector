@@ -1,9 +1,5 @@
 import type { ValidationError } from '@/error.js';
-import type {
-  PropertyValidator,
-  PropertyValidators,
-  Validator
-} from '@/types.js';
+import type { PropertyValidators, Validator } from '@/types.js';
 import { isObject } from '@/utils.js';
 import type { RecordLike } from 'ts-lib-extended';
 import { PropertiesValidator } from './properties.js';
@@ -15,12 +11,17 @@ import { PropertiesValidator } from './properties.js';
  * @interface ObjectValidator
  * @template {RecordLike} Out
  * @template [ValidationParams=unknown] extended validation parameters
+ * @template {PropertyValidators<Out, ValidationParams>} [PV=PropertyValidators<Out, ValidationParams>] the concrete property validators map
  * @extends {Validator<Out, ValidationParams>}
  * @since 1.0.0
  */
 export interface ObjectValidator<
   Out extends RecordLike,
-  ValidationParams = unknown
+  ValidationParams = unknown,
+  PV extends PropertyValidators<Out, ValidationParams> = PropertyValidators<
+    Out,
+    ValidationParams
+  >
 > extends Validator<Out, ValidationParams> {
   /**
    * Reject objects that contain more keys than have been validated
@@ -42,21 +43,19 @@ export interface ObjectValidator<
   /**
    * Retrieve the validator defined for a specific property.
    *
-   * @template {keyof Out} Key
+   * @template {keyof PV} Key
    * @param {Key} key_
-   * @returns {PropertyValidator<Out[Key], ValidationParams>}
+   * @returns {PV[Key]}
    * @since 4.0.0
    */
-  prop<Key extends keyof Out>(
-    key_: Key
-  ): PropertyValidator<Out[Key], ValidationParams>;
+  prop<Key extends keyof PV>(key_: Key): PV[Key];
   /**
    * Retrieve the validators defined for all properties.
    *
-   * @returns {PropertyValidators<Out, ValidationParams>}
+   * @returns {PV}
    * @since 4.0.0
    */
-  props(): PropertyValidators<Out, ValidationParams>;
+  props(): PV;
 }
 
 /**
@@ -66,20 +65,21 @@ export interface ObjectValidator<
  * @class DefaultObjectValidator
  * @template {RecordLike} Out
  * @template [ValidationParams=unknown] extended validation parameters
- * @extends {PropertiesValidator<Out, ValidationParams, PropertyValidators<Out, ValidationParams>>}
+ * @template {PropertyValidators<Out, ValidationParams>} [PV=PropertyValidators<Out, ValidationParams>] the concrete property validators map (lets `prop`/`props` return the exact validator types)
+ * @extends {PropertiesValidator<Out, ValidationParams, PV>}
  * @implements {ObjectValidator<Out, ValidationParams>}
  * @since 1.0.0
  */
 export class DefaultObjectValidator<
     Out extends RecordLike,
-    ValidationParams = unknown
+    ValidationParams = unknown,
+    PV extends PropertyValidators<Out, ValidationParams> = PropertyValidators<
+      Out,
+      ValidationParams
+    >
   >
-  extends PropertiesValidator<
-    Out,
-    ValidationParams,
-    PropertyValidators<Out, ValidationParams>
-  >
-  implements ObjectValidator<Out, ValidationParams>
+  extends PropertiesValidator<Out, ValidationParams, PV>
+  implements ObjectValidator<Out, ValidationParams, PV>
 {
   public get noOverload(): this {
     return this.setupCondition((value_) => this.checkOverload(value_));

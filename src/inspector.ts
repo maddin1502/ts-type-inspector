@@ -9,13 +9,12 @@ import type {
 } from 'ts-lib-extended';
 import type {
   CustomValidation,
-  NestedValidationParams,
   PartialPropertyValidators,
   PropertyValidators,
   TupleItemValidators,
   UnionValidators,
-  Validator,
-  ValidatorOut
+  ValidationParamsMapper,
+  Validator
 } from './types.js';
 import { DefaultAnyValidator } from './validator/any.js';
 import { DefaultArrayValidator } from './validator/array.js';
@@ -103,7 +102,7 @@ export class TypeInspector {
    * @since 1.0.0
    */
   public get method(): DefaultMethodValidator<MethodLike> {
-    return new DefaultMethodValidator<MethodLike>();
+    return new DefaultMethodValidator();
   }
 
   /**
@@ -164,7 +163,7 @@ export class TypeInspector {
    * @since 1.0.0
    */
   public strict<V extends AnyLike[]>(...values_: V): DefaultStrictValidator<V> {
-    return new DefaultStrictValidator<V>(...values_);
+    return new DefaultStrictValidator(...values_);
   }
 
   /**
@@ -179,7 +178,7 @@ export class TypeInspector {
   public array<const Item>(
     itemValidator_: Validator<Item>
   ): DefaultArrayValidator<Item> {
-    return new DefaultArrayValidator<Item>(itemValidator_);
+    return new DefaultArrayValidator(itemValidator_);
   }
 
   /**
@@ -195,7 +194,7 @@ export class TypeInspector {
   public union<V extends UnionValidators>(
     ...validators_: V
   ): DefaultUnionValidator<V> {
-    return new DefaultUnionValidator<V>(...validators_);
+    return new DefaultUnionValidator(...validators_);
   }
 
   /**
@@ -203,14 +202,18 @@ export class TypeInspector {
    *
    * @public
    * @template {RecordLike} Out
-   * @param {PropertyValidators<Out>} propertyValidators_ Validators for each object property
-   * @returns {DefaultObjectValidator<Out>}
+   * @template {PropertyValidators<Out>} PV the concrete property validators map
+   * @param {PV & PropertyValidators<Out>} propertyValidators_ Validators for each object property
+   * @returns {DefaultObjectValidator<Out, unknown, PV>}
    * @since 1.0.0
    */
-  public object<Out extends RecordLike>(
-    propertyValidators_: PropertyValidators<Out>
-  ): DefaultObjectValidator<Out> {
-    return new DefaultObjectValidator<Out>(propertyValidators_);
+  public object<
+    Out extends RecordLike,
+    PV extends PropertyValidators<Out> = PropertyValidators<Out>
+  >(
+    propertyValidators_: PV & PropertyValidators<Out>
+  ): DefaultObjectValidator<Out, unknown, PV> {
+    return new DefaultObjectValidator(propertyValidators_);
   }
 
   /**
@@ -218,14 +221,18 @@ export class TypeInspector {
    *
    * @public
    * @template {RecordLike} Out
-   * @param {PartialPropertyValidators<Out>} propertyValidators_
-   * @returns {DefaultPartialValidator<Out>}
+   * @template {PartialPropertyValidators<Out>} PV the concrete property validators map
+   * @param {PV & PartialPropertyValidators<Out>} propertyValidators_
+   * @returns {DefaultPartialValidator<Out, unknown, PV>}
    * @since 2.0.0
    */
-  public partial<Out extends RecordLike>(
-    propertyValidators_: PartialPropertyValidators<Out>
-  ): DefaultPartialValidator<Out> {
-    return new DefaultPartialValidator<Out>(propertyValidators_);
+  public partial<
+    Out extends RecordLike,
+    PV extends PartialPropertyValidators<Out> = PartialPropertyValidators<Out>
+  >(
+    propertyValidators_: PV & PartialPropertyValidators<Out>
+  ): DefaultPartialValidator<Out, unknown, PV> {
+    return new DefaultPartialValidator(propertyValidators_);
   }
 
   /**
@@ -240,7 +247,7 @@ export class TypeInspector {
   public dictionary<V extends Dictionary>(
     itemValidator_: Validator<DictionaryValue<V>>
   ): DefaultDictionaryValidator<V> {
-    return new DefaultDictionaryValidator<V>(itemValidator_);
+    return new DefaultDictionaryValidator(itemValidator_);
   }
 
   /**
@@ -327,10 +334,10 @@ export class TypeInspector {
    * @returns {DefaultTupleValidator<Out>}
    * @since 3.0.0
    */
-  public tuple<Out extends unknown[]>(
+  public tuple<const Out extends unknown[]>(
     ...itemValidators_: TupleItemValidators<Out>
   ): DefaultTupleValidator<Out> {
-    return new DefaultTupleValidator<Out>(...itemValidators_);
+    return new DefaultTupleValidator(...itemValidators_);
   }
 
   /**
@@ -369,7 +376,7 @@ export class TypeInspector {
   public instance<Out>(
     constructor_: Constructor<Out>
   ): DefaultInstanceValidator<Out> {
-    return new DefaultInstanceValidator<Out>(constructor_);
+    return new DefaultInstanceValidator(constructor_);
   }
 
   /**
@@ -387,7 +394,7 @@ export class TypeInspector {
     keyValidator_: Validator<K>,
     valueValidator_: Validator<V>
   ): DefaultMapValidator<K, V> {
-    return new DefaultMapValidator<K, V>(keyValidator_, valueValidator_);
+    return new DefaultMapValidator(keyValidator_, valueValidator_);
   }
 
   /**
@@ -400,7 +407,7 @@ export class TypeInspector {
    * @since 4.0.0
    */
   public set<V>(itemValidator_: Validator<V>): DefaultSetValidator<V> {
-    return new DefaultSetValidator<V>(itemValidator_);
+    return new DefaultSetValidator(itemValidator_);
   }
 
   /**
@@ -416,7 +423,7 @@ export class TypeInspector {
   public lazy<Out>(
     validatorFactory_: () => Validator<Out>
   ): DefaultLazyValidator<Out> {
-    return new DefaultLazyValidator<Out>(validatorFactory_);
+    return new DefaultLazyValidator(validatorFactory_);
   }
 
   /**
@@ -425,28 +432,25 @@ export class TypeInspector {
    * into nested/sub validators.
    *
    * @public
-   * @template Out
+   * @template Out the value type the wrapped validator produces
+   * @template ChildValidationParams params the wrapped validator expects
    * @template [ParentValidationParams=unknown] params handed in by the parent validator
-   * @template {Validator<Out>} [V=Validator<Out>] the wrapped validator
-   * @param {V} validator_ the nested validator
-   * @param {(parentParams_: ParentValidationParams | undefined) => NestedValidationParams<V> | undefined} withParams_ maps the parent params to the nested validator's params
-   * @returns {DefaultNestedValidator<Out, ParentValidationParams, V>}
+   * @param {Validator<Out, ChildValidationParams>} validator_ the nested validator
+   * @param {ValidationParamsMapper<ChildValidationParams, ParentValidationParams>} withParams_ maps the parent params to the nested validator's params
+   * @returns {NestedValidator<Out, ParentValidationParams>}
    * @since 4.0.0
    */
-  public nested<V extends Validator<unknown>, ParentValidationParams = unknown>(
-    validator_: V,
-    withParams_: (
-      parentParams_: ParentValidationParams | undefined
-    ) => NestedValidationParams<V> | undefined
-  ): NestedValidator<ValidatorOut<V>, ParentValidationParams> {
+  public nested<Out, ChildValidationParams, ParentValidationParams = unknown>(
+    validator_: Validator<Out, ChildValidationParams>,
+    withParams_: ValidationParamsMapper<
+      ChildValidationParams,
+      ParentValidationParams
+    >
+  ): NestedValidator<Out, ParentValidationParams> {
     return new DefaultNestedValidator<
-      ValidatorOut<V>,
+      Out,
       ParentValidationParams,
-      NestedValidationParams<V>
-    >(
-      // safe: V is Validator<ValidatorOut<V>, NestedValidationParams<V>> by construction
-      validator_ as Validator<ValidatorOut<V>, NestedValidationParams<V>>,
-      withParams_
-    );
+      ChildValidationParams
+    >(validator_, withParams_);
   }
 }

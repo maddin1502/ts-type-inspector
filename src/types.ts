@@ -82,6 +82,16 @@ export type NestedValidationParams<CV extends Validator<unknown>> =
   CV extends Validator<unknown, infer P> ? P : never;
 export type ValidatorOut<V extends Validator<unknown>> =
   V extends Validator<infer Out> ? Out : never;
+/**
+ * Maps a parent validator's params to the params a (nested) child validator
+ * expects. This is the signature of the conversion callback used by `ti.nested`.
+ *
+ * @since 4.0.0
+ */
+export type ValidationParamsMapper<
+  ValidationParams,
+  ParentValidationParams = unknown
+> = (parentParams_?: ParentValidationParams) => ValidationParams | undefined;
 
 /**
  * A property/item validator: either a plain validator or a {@link NestedValidator}

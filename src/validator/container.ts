@@ -95,11 +95,13 @@ export abstract class ContainerValidator<
     params_?: ValidationParams
   ): void {
     if (isNestedValidator(propertyValidator_)) {
-      // ti.nested: maps + forwards the parent's params to the wrapped validator
+      // ti.nested: the conversion point that maps + forwards the parent's params
+      // to the wrapped validator
       propertyValidator_.validateNested(value_, params_);
     } else {
-      // plain validator: forward params too (it ignores them if unused)
-      propertyValidator_.validate(value_, params_);
+      // plain validator: without a conversion point (ti.nested) the parent's
+      // params do not match the child's params, so none are passed
+      propertyValidator_.validate(value_);
     }
   }
 

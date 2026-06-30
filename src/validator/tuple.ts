@@ -38,7 +38,7 @@ export interface TupleValidator<
  * @since 3.0.0
  */
 export class DefaultTupleValidator<
-  Out extends unknown[],
+  const Out extends unknown[],
   ValidationParams = unknown
 >
   extends ContainerValidator<Out, ValidationParams>

@@ -18,6 +18,17 @@ describe('prop / props', () => {
     });
   });
 
+  test('object: prop resolves to the precise validator type', () => {
+    expect.assertions(2);
+    const validator = ti.object({ name: ti.string, age: ti.number });
+
+    const nameValidator = validator.prop('name');
+    const ageValidator = validator.prop('age');
+
+    expect(nameValidator.shortest(2).isValid('x')).toBe(false);
+    expect(ageValidator.positive.isValid(-1)).toBe(false);
+  });
+
   test('partial: prop returns the defined validator or undefined', () => {
     expect.assertions(2);
     const nameValidator = ti.string;
@@ -34,8 +45,6 @@ describe('prop / props', () => {
     const nameValidator = ti.string.shortest(2);
     const validator = ti.object({ name: nameValidator });
 
-    // prop returns PropertyValidator<...> (Validator | nested descriptor); when
-    // it is a plain validator it is the exact instance and stays usable
     expect(validator.prop('name')).toBe(nameValidator);
     expect(nameValidator.isValid('x')).toBe(false);
   });
