@@ -1,11 +1,12 @@
+import type { ValidationError } from '@/error.js';
+import type { PropertyValidator, Validator } from '@/types.js';
+import { isObject } from '@/utils.js';
 import type {
   Dictionary,
   DictionaryKey,
   DictionaryValue
 } from 'ts-lib-extended';
-import type { NestedValidator, Validator } from '@/types.js';
-import { isObject } from '@/utils.js';
-import { DefaultValidator } from './index.js';
+import { ContainerValidator } from './container.js';
 
 /**
  * Validator for dictionary objects
@@ -38,19 +39,22 @@ export interface DictionaryValidator<
  * @class DefaultDictionaryValidator
  * @template {Dictionary} Out
  * @template [ValidationParams=unknown] extended validation parameters
- * @extends {DefaultValidator<Out, ValidationParams>}
+ * @extends {ContainerValidator<Out, ValidationParams>}
  * @implements {DictionaryValidator<Out, ValidationParams>}
  * @since 1.0.0
  */
 export class DefaultDictionaryValidator<
-    Out extends Dictionary,
-    ValidationParams = unknown
-  >
-  extends DefaultValidator<Out, ValidationParams>
+  Out extends Dictionary,
+  ValidationParams = unknown
+>
+  extends ContainerValidator<Out, ValidationParams>
   implements DictionaryValidator<Out, ValidationParams>
 {
   constructor(
-    private readonly _itemValidator: NestedValidator<DictionaryValue<Out>, ValidationParams>
+    private readonly _itemValidator: PropertyValidator<
+      DictionaryValue<Out>,
+      ValidationParams
+    >
   ) {
     super();
   }
@@ -59,21 +63,24 @@ export class DefaultDictionaryValidator<
     return this.setupCondition((value_) => this.checkKeys(value_, validator_));
   }
 
-  protected validateBaseType(
-    value_: unknown,
-    params_?: ValidationParams
-  ): Out {
+  protected validateBaseType(value_: unknown, params_?: ValidationParams): Out {
     if (!isObject<Dictionary<unknown>>(value_)) {
       this.throwValidationError('value is not a dictionary');
     }
 
+    const errors: ValidationError[] = [];
+
     for (const dictionaryKey in value_) {
-      try {
-        this.validateNested(value_[dictionaryKey], this._itemValidator, params_);
-      } catch (reason_) {
-        this.rethrowError(reason_, dictionaryKey);
-      }
+      this.validateChild(
+        errors,
+        () => value_[dictionaryKey],
+        this._itemValidator,
+        dictionaryKey,
+        params_
+      );
     }
+
+    this.throwOnErrors(errors, 'one or more values are invalid');
 
     return value_ as Out;
   }

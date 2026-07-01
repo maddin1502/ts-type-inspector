@@ -1,5 +1,6 @@
-import type { NestedValidator, Validator } from '@/types.js';
-import { DefaultValidator } from './index.js';
+import type { ValidationError } from '@/error.js';
+import type { PropertyValidator, Validator } from '@/types.js';
+import { ContainerValidator } from './container.js';
 
 /**
  * Validator for array values
@@ -11,8 +12,10 @@ import { DefaultValidator } from './index.js';
  * @extends {Validator<Out[], ValidationParams>}
  * @since 1.0.0
  */
-export interface ArrayValidator<Out, ValidationParams = unknown>
-  extends Validator<Out[], ValidationParams> {
+export interface ArrayValidator<
+  Out,
+  ValidationParams = unknown
+> extends Validator<Out[], ValidationParams> {
   /**
    * validate exact array length
    *
@@ -62,16 +65,16 @@ export interface ArrayValidator<Out, ValidationParams = unknown>
  * @class DefaultArrayValidator
  * @template Out
  * @template [ValidationParams=unknown] extended validation parameters
- * @extends {DefaultValidator<Out[], ValidationParams>}
+ * @extends {ContainerValidator<Out[], ValidationParams>}
  * @implements {ArrayValidator<Out, ValidationParams>}
  * @since 1.0.0
  */
 export class DefaultArrayValidator<const Out, ValidationParams = unknown>
-  extends DefaultValidator<Out[], ValidationParams>
+  extends ContainerValidator<Out[], ValidationParams>
   implements ArrayValidator<Out, ValidationParams>
 {
   constructor(
-    private readonly _itemValidator: NestedValidator<Out, ValidationParams>
+    private readonly _itemValidator: PropertyValidator<Out, ValidationParams>
   ) {
     super();
   }
@@ -104,13 +107,13 @@ export class DefaultArrayValidator<const Out, ValidationParams = unknown>
       this.throwValidationError('value is not an array');
     }
 
+    const errors: ValidationError[] = [];
+
     for (let i = 0; i < value_.length; i++) {
-      try {
-        this.validateNested(value_[i], this._itemValidator, params_);
-      } catch (reason_) {
-        this.rethrowError(reason_, i);
-      }
+      this.validateChild(errors, () => value_[i], this._itemValidator, i, params_);
     }
+
+    this.throwOnErrors(errors, 'one or more items are invalid');
 
     return value_ as Out[];
   }

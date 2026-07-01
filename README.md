@@ -11,7 +11,9 @@
 - [Validation modes](#validation-modes)
   - [isValid](#isvalid)
   - [validate](#validate)
+  - [validOrDefault / validOrFallback](#validordefault--validorfallback)
 - [Error evaluation](#error-evaluation)
+- [Collect all errors](#collect-all-errors)
 - [How to define custom validators](#how-to-define-custom-validators)
   - [Create specialized (data type related) validators](#create-specialized-data-type-related-validators)
   - [Validation based on external influences](#validation-based-on-external-influences)
@@ -34,6 +36,12 @@
   - [Enum](#enum)
   - [Exclude](#exclude)
   - [Boolean](#boolean)
+  - [BigInt](#bigint)
+  - [Symbol](#symbol)
+  - [Instance](#instance)
+  - [Map](#map)
+  - [Set](#set)
+  - [Lazy](#lazy)
   - [Undefined](#undefined)
   - [Null](#null)
   - [Nullish](#nullish)
@@ -121,6 +129,22 @@ function processIncomingValueAsString(value_: unknown): number {
 }
 ```
 
+### validOrDefault / validOrFallback
+
+> since 4.0.0
+
+Two shortcuts when you don't want to deal with `true`/`false` or try-catch. They don't throw: `validOrDefault` returns the validated value or `undefined`, `validOrFallback` returns the validated value or a fallback you provide.
+
+```ts
+import ti from 'ts-type-inspector';
+
+ti.number.validOrDefault(42);      // 42
+ti.number.validOrDefault('nope');  // undefined
+
+ti.number.validOrFallback(42, 0);     // 42
+ti.number.validOrFallback('nope', 0); // 0
+```
+
 ## Error evaluation
 
 The validator saves the last validation error that occurred, making it easy to evaluate. Since the validation is terminated immediately when an invalidity occurs, the error only contains information about this specific invalidity.
@@ -167,6 +191,33 @@ Parameter | Description
 &rarr; `propertyTrace` | equivalent to `propertyPath` but stored as array >> `[propertyX, 5, propertyY]`
 &rarr; `subErrors` | Each chained validator has its own validation error instance. Errors are caught, processed/expanded and then thrown again by parent validators. Each validator captures thrown child validation errors.
 &rarr; `message` | Specific message describing the invalidity
+
+## Collect all errors
+
+By default validation stops at the first invalidity. If you want ALL of them instead (e.g. to show every invalid form field at once) add `.aggregate` to a container validator (object, partial, array, tuple, dictionary, map, set). It collects one sub-error per invalid child instead of throwing on the first one.
+
+```ts
+import ti, { flattenValidationError } from 'ts-type-inspector';
+
+const validator = ti.object({
+  name: ti.string,
+  age: ti.number
+}).aggregate;
+
+validator.isValid({ name: 42, age: 'old' }); // false
+
+// flattenValidationError turns the (nested) error into a flat list
+flattenValidationError(validator.validationError);
+/*
+  [
+    { path: 'name', message: 'value is not a string' },
+    { path: 'age', message: 'value is not a number' }
+  ]
+*/
+```
+
+> `.aggregate` only affects container validators. On value validators (string, number, ...) it does nothing.
+> `flattenValidationError` also works without `.aggregate` - then you simply get a single entry.
 
 ## How to define custom validators
 
@@ -267,15 +318,15 @@ cdv.failWhenRequired.isValid(value, { valueRequired: true }); // false
 
 ### External influences and nested validators
 
-Relevant to: Object, Partial, Dictionary, Array, Tuple
+Relevant to: Object, Partial, Dictionary, Array, Tuple, Map, Set
 
-It is possible to pass the external influence parameters to nested validators. For this it is necessary to use a wrapper, which is provided by the main validator.
+Sometimes a nested validator needs the parent's validation params. `ti.nested` (since 4.0.0) wraps a validator and maps the parent params to the nested validator's params.
 
 ```ts
-import { DefaultObjectValidator, DefaultStringValidator } from 'ts-type-inspector';
+import { DefaultObjectValidator, DefaultStringValidator, ti } from 'ts-type-inspector';
 
 export type CommonData = {
-  data: string | undefined;
+  data: string;
 };
 export type SpecialStringValidationParams = {
   notEmpty?: boolean;
@@ -302,8 +353,11 @@ export class CommonDataValidator extends DefaultObjectValidator<
 > {
   constructor() {
     super({
-      data: (validateWith, validationParams) =>
-        validateWith(new SpecialStringValidator(), validationParams?.dataParams)
+      // params_ is automatically typed as CommonDataValidationParams | undefined
+      data: ti.nested(
+        new SpecialStringValidator(),
+        (params_) => params_?.dataParams
+      )
     });
   }
 }
@@ -312,6 +366,8 @@ const cdv = new CommonDataValidator();
 cdv.isValid({ data: '' }); // true
 cdv.isValid({ data: '' }, { dataParams: { notEmpty: true } }); // false
 ```
+
+> `ti.nested` only makes sense inside a container (object, partial, dictionary, array, tuple, map, set) - it is not a standalone validator.
 
 ## Predefined validators
 
@@ -357,6 +413,9 @@ Validator for string values.
 | uri | string has to match uri pattern (uses [valid-url](https://www.npmjs.com/package/valid-url)) |
 | url | string has to match url pattern |
 | hex | accept only hexadecimal strings |
+| startsWith | string has to start with the given value |
+| endsWith | string has to end with the given value |
+| includes | string has to contain the given value |
 
 ### Number
 
@@ -376,6 +435,9 @@ Validator for number values.
 | max | reject numbers greater than maximal value |
 | accept | accept specific numbers only |
 | reject | reject specific numbers |
+| integer | accept integers only |
+| safeInteger | accept safe integers only |
+| multipleOf | number has to be a multiple of the given base |
 
 ### Object
 
@@ -387,6 +449,7 @@ Validator for object based values.
 | Condition | Description |
 |---|---|
 | noOverload | reject objects that contain more keys than have been validated. **USE FOR POJOs ONLY!**. Getters/setters or private properties can produce false negatives. |
+| rejectArray | reject array values (arrays are objects too and pass by default) |
 
 ```ts
 import ti from 'ts-type-inspector';
@@ -400,6 +463,17 @@ ti.object<DataInterface>({
   prop1: ti.string,
   prop2: ti.number
 });
+```
+
+Since 4.0.0 you can get back the validators you defined for the properties via `prop` / `props` (works on object and partial):
+
+```ts
+import ti from 'ts-type-inspector';
+
+const validator = ti.object({ prop1: ti.string, prop2: ti.number });
+
+validator.prop('prop1'); // the validator defined for prop1
+validator.props();       // the whole property validators map
 ```
 
 ### Partial
@@ -722,6 +796,89 @@ Validator for boolean values.
 |---|---|
 | true | only true is valid |
 | false | only false is valid |
+
+### BigInt
+
+> since 4.0.0
+
+Validator for bigint values.
+
+| Condition | Description |
+|---|---|
+| positive | accept positive values only (zero is not positive) |
+| negative | accept negative values only (zero is not negative) |
+| rejectZero | reject 0n |
+| min | reject values less than minimal value |
+| max | reject values greater than maximal value |
+| accept | accept specific values only |
+| reject | reject specific values |
+
+### Symbol
+
+> since 4.0.0
+
+Validator for symbol values.
+
+### Instance
+
+> since 4.0.0
+
+Validator for class instances. Uses the `instanceof` operator.
+
+```ts
+import ti from 'ts-type-inspector';
+
+class Animal {}
+
+ti.instance(Animal);
+// .isValid(new Animal()) ==> true
+```
+
+### Map
+
+> since 4.0.0
+
+Validator for Map values. Each key and value has to match its validator.
+
+```ts
+import ti from 'ts-type-inspector';
+
+ti.map(ti.string, ti.number);
+// .isValid(new Map([['a', 1]])) ==> true
+```
+
+### Set
+
+> since 4.0.0
+
+Validator for Set values. Each item has to match the item validator.
+
+```ts
+import ti from 'ts-type-inspector';
+
+ti.set(ti.number);
+// .isValid(new Set([1, 2, 3])) ==> true
+```
+
+### Lazy
+
+> since 4.0.0
+
+Resolves the validator lazily (on validation). Use this for recursive/self-referential types where the validator has to reference itself.
+
+```ts
+import ti from 'ts-type-inspector';
+
+interface TreeNode {
+  value: number;
+  children: TreeNode[];
+}
+
+const treeValidator = ti.object<TreeNode>({
+  value: ti.number,
+  children: ti.array(ti.lazy(() => treeValidator)) // reference itself
+});
+```
 
 ### Undefined
 

@@ -1,5 +1,6 @@
+import type { ValidationError } from '@/error.js';
 import type { TupleItemValidators, Validator } from '@/types.js';
-import { DefaultValidator } from './index.js';
+import { ContainerValidator } from './container.js';
 
 /**
  * Validator for tuple based values. Each item has to match its specified validator
@@ -32,20 +33,20 @@ export interface TupleValidator<
  * @class DefaultTupleValidator
  * @template {unknown[]} Out
  * @template [ValidationParams=unknown] extended validation parameters
- * @extends {DefaultValidator<Out, ValidationParams>}
+ * @extends {ContainerValidator<Out, ValidationParams>}
  * @implements {TupleValidator<Out, ValidationParams>}
  * @since 3.0.0
  */
 export class DefaultTupleValidator<
-    Out extends unknown[],
-    ValidationParams = unknown
-  >
-  extends DefaultValidator<Out, ValidationParams>
+  const Out extends unknown[],
+  ValidationParams = unknown
+>
+  extends ContainerValidator<Out, ValidationParams>
   implements TupleValidator<Out, ValidationParams>
 {
   private readonly _itemValidators: TupleItemValidators<Out, ValidationParams>;
 
-  constructor(...itemValidators_: TupleItemValidators<Out, ValidationParams>) {
+  constructor(itemValidators_: TupleItemValidators<Out, ValidationParams>) {
     super();
     this._itemValidators = itemValidators_;
   }
@@ -63,13 +64,19 @@ export class DefaultTupleValidator<
       this.throwValidationError('too few items');
     }
 
+    const errors: ValidationError[] = [];
+
     for (let i = 0; i < this._itemValidators.length; i++) {
-      try {
-        this.validateNested(value_[i], this._itemValidators[i], params_);
-      } catch (reason_) {
-        this.rethrowError(reason_, i);
-      }
+      this.validateChild(
+        errors,
+        () => value_[i],
+        this._itemValidators[i],
+        i,
+        params_
+      );
     }
+
+    this.throwOnErrors(errors, 'one or more items are invalid');
 
     return value_ as Out;
   }

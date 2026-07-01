@@ -1,7 +1,8 @@
+import type { ValidationError } from '@/error.js';
 import type { PartialPropertyValidators, Validator } from '@/types.js';
 import { isObject } from '@/utils.js';
 import type { RecordLike } from 'ts-lib-extended';
-import { DefaultValidator } from './index.js';
+import { PropertiesValidator } from './properties.js';
 
 /**
  * Validator for object based values. This is an **UNSAFE** validator that only validates some properties and ignores others
@@ -10,13 +11,35 @@ import { DefaultValidator } from './index.js';
  * @interface PartialValidator
  * @template {RecordLike} Out
  * @template [ValidationParams=unknown] extended validation parameters
+ * @template {PartialPropertyValidators<Out, ValidationParams>} [PV=PartialPropertyValidators<Out, ValidationParams>] the concrete property validators map
  * @extends {Validator<Out, ValidationParams>}
  * @since 2.0.0
  */
 export interface PartialValidator<
   Out extends RecordLike,
-  ValidationParams = unknown
-> extends Validator<Out, ValidationParams> {}
+  ValidationParams = unknown,
+  PV extends PartialPropertyValidators<
+    Out,
+    ValidationParams
+  > = PartialPropertyValidators<Out, ValidationParams>
+> extends Validator<Out, ValidationParams> {
+  /**
+   * Retrieve the validator defined for a specific property (may be undefined).
+   *
+   * @template {keyof PV} Key
+   * @param {Key} key_
+   * @returns {PV[Key]}
+   * @since 4.0.0
+   */
+  prop<Key extends keyof PV>(key_: Key): PV[Key];
+  /**
+   * Retrieve the validators defined for all (specified) properties.
+   *
+   * @returns {PV}
+   * @since 4.0.0
+   */
+  props(): PV;
+}
 
 /**
  * Validator for object based values. This is an **UNSAFE** validator that only validates some properties and ignores others
@@ -25,42 +48,45 @@ export interface PartialValidator<
  * @class DefaultPartialValidator
  * @template {RecordLike} Out
  * @template [ValidationParams=unknown] extended validation parameters
- * @extends {DefaultValidator<Out, ValidationParams>}
+ * @template {PartialPropertyValidators<Out, ValidationParams>} [PV=PartialPropertyValidators<Out, ValidationParams>] the concrete property validators map (lets `prop`/`props` return the exact validator types)
+ * @extends {PropertiesValidator<Out, ValidationParams, PV>}
  * @implements {PartialValidator<Out, ValidationParams>}
  * @since 2.0.0
  */
 export class DefaultPartialValidator<
     Out extends RecordLike,
-    ValidationParams = unknown
-  >
-  extends DefaultValidator<Out, ValidationParams>
-  implements PartialValidator<Out, ValidationParams>
-{
-  constructor(
-    private readonly _propertyValidators: PartialPropertyValidators<
+    ValidationParams = unknown,
+    PV extends PartialPropertyValidators<
       Out,
       ValidationParams
-    >
-  ) {
-    super();
-  }
+    > = PartialPropertyValidators<Out, ValidationParams>
+  >
+  extends PropertiesValidator<Out, ValidationParams, PV>
+  implements PartialValidator<Out, ValidationParams, PV>
+{
 
   protected validateBaseType(value_: unknown, params_?: ValidationParams): Out {
     if (!isObject(value_)) {
       this.throwValidationError('value is not an object');
     }
 
-    for (const validatorKey in this._propertyValidators) {
-      try {
-        const propertyValidator = this._propertyValidators[validatorKey];
+    const errors: ValidationError[] = [];
 
-        if (propertyValidator) {
-          this.validateNested(value_[validatorKey], propertyValidator, params_);
-        }
-      } catch (reason_) {
-        this.rethrowError(reason_, validatorKey);
+    for (const validatorKey in this._propertyValidators) {
+      const propertyValidator = this._propertyValidators[validatorKey];
+
+      if (propertyValidator) {
+        this.validateChild(
+          errors,
+          () => value_[validatorKey],
+          propertyValidator,
+          validatorKey,
+          params_
+        );
       }
     }
+
+    this.throwOnErrors(errors, 'one or more properties are invalid');
 
     return value_;
   }

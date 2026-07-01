@@ -6,7 +6,7 @@ const ti = new TypeInspector();
 
 describe(DefaultObjectValidator, () => {
   test('isValid - success', () => {
-    expect.assertions(2);
+    expect.assertions(3);
     expect(
       ti
         .partial({
@@ -29,6 +29,11 @@ describe(DefaultObjectValidator, () => {
 
     expect(
       ti.partial({ test: ti.string }).isValid({ test: 'hello', test2: 'world' })
+    ).toBe(true);
+
+    // a property with no validator (undefined) is skipped
+    expect(
+      ti.partial<{ a: string }>({ a: undefined }).isValid({ a: 123 })
     ).toBe(true);
   });
 

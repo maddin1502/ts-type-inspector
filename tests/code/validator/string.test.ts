@@ -24,7 +24,7 @@ describe(DefaultStringValidator, () => {
   });
 
   test('isValid - correct conditions', () => {
-    expect.assertions(26);
+    expect.assertions(30);
     expect(ti.string.length(5).isValid('hello')).toBe(true);
     expect(ti.string.length(5).longest(6).isValid('hello')).toBe(true);
     expect(ti.string.length(5).shortest(4).isValid('hello')).toBe(true);
@@ -79,10 +79,15 @@ describe(DefaultStringValidator, () => {
     expect(ti.string.url.isValid('http://www.ietf.org/rfc/rfc2396.txt')).toBe(
       true
     );
+
+    expect(ti.string.startsWith('hel').isValid('hello')).toBe(true);
+    expect(ti.string.endsWith('llo').isValid('hello')).toBe(true);
+    expect(ti.string.includes('ell').isValid('hello')).toBe(true);
+    expect(ti.string.rejectEmpty.isValid('hello')).toBe(true);
   });
 
   test('isValid - incorrect conditions', () => {
-    expect.assertions(32);
+    expect.assertions(35);
     expect(ti.string.length(6).isValid('hello')).toBe(false);
     expect(ti.string.length(5).longest(4).isValid('hello')).toBe(false);
     expect(ti.string.length(5).shortest(6).isValid('hello')).toBe(false);
@@ -146,5 +151,9 @@ describe(DefaultStringValidator, () => {
     );
     expect(ti.string.uri.isValid('tel+1-816-555-1212')).toBe(false);
     expect(ti.string.uri.isValid('telnet//192.0.2.16:80/')).toBe(false);
+
+    expect(ti.string.startsWith('xyz').isValid('hello')).toBe(false);
+    expect(ti.string.endsWith('xyz').isValid('hello')).toBe(false);
+    expect(ti.string.includes('xyz').isValid('hello')).toBe(false);
   });
 });

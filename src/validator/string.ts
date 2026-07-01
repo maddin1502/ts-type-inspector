@@ -12,8 +12,10 @@ import { DefaultValidator } from './index.js';
  * @extends {Validator<string, ValidationParams>}
  * @since 1.0.0
  */
-export interface StringValidator<ValidationParams = unknown>
-  extends Validator<string, ValidationParams> {
+export interface StringValidator<ValidationParams = unknown> extends Validator<
+  string,
+  ValidationParams
+> {
   /**
    * define minimum string length
    *
@@ -135,6 +137,30 @@ export interface StringValidator<ValidationParams = unknown>
    * @since 1.0.0
    */
   get hex(): this;
+  /**
+   * string has to start with the given substring
+   *
+   * @param {string} prefix_
+   * @returns {this}
+   * @since 4.0.0
+   */
+  startsWith(prefix_: string): this;
+  /**
+   * string has to end with the given substring
+   *
+   * @param {string} suffix_
+   * @returns {this}
+   * @since 4.0.0
+   */
+  endsWith(suffix_: string): this;
+  /**
+   * string has to contain the given substring
+   *
+   * @param {string} substring_
+   * @returns {this}
+   * @since 4.0.0
+   */
+  includes(substring_: string): this;
 }
 
 /**
@@ -213,6 +239,22 @@ export class DefaultStringValidator<ValidationParams = unknown>
 
   public get hex(): this {
     return this.setupCondition((value_) => this.checkHex(value_));
+  }
+
+  public startsWith(prefix_: string): this {
+    return this.setupCondition((value_) =>
+      this.checkStartsWith(value_, prefix_)
+    );
+  }
+
+  public endsWith(suffix_: string): this {
+    return this.setupCondition((value_) => this.checkEndsWith(value_, suffix_));
+  }
+
+  public includes(substring_: string): this {
+    return this.setupCondition((value_) =>
+      this.checkIncludes(value_, substring_)
+    );
   }
 
   protected validateBaseType(
@@ -333,6 +375,24 @@ export class DefaultStringValidator<ValidationParams = unknown>
   private checkHex(value_: string): void {
     if (!/^[0-9a-fA-F]+$/.test(value_)) {
       this.throwValidationError('string is not a hexadecimal value');
+    }
+  }
+
+  private checkStartsWith(value_: string, prefix_: string): void {
+    if (!value_.startsWith(prefix_)) {
+      this.throwValidationError('string does not start with the given value');
+    }
+  }
+
+  private checkEndsWith(value_: string, suffix_: string): void {
+    if (!value_.endsWith(suffix_)) {
+      this.throwValidationError('string does not end with the given value');
+    }
+  }
+
+  private checkIncludes(value_: string, substring_: string): void {
+    if (!value_.includes(substring_)) {
+      this.throwValidationError('string does not contain the given value');
     }
   }
 

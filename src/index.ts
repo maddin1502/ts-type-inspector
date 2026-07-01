@@ -2,11 +2,16 @@ import { TypeInspector } from './inspector.js';
 
 export type {
   AnyLike,
-  MethodLike,
   InstanceLike,
+  MethodLike,
   RecordLike
 } from 'ts-lib-extended';
-export { ValidationError, isValidationError } from './error.js';
+export {
+  flattenValidationError,
+  isValidationError,
+  ValidationError,
+  type FlatValidationError
+} from './error.js';
 export type * from './types.js';
 export { DefaultAnyValidator, type AnyValidator } from './validator/any.js';
 export {
@@ -14,9 +19,14 @@ export {
   type ArrayValidator
 } from './validator/array.js';
 export {
+  DefaultBigIntValidator,
+  type BigIntValidator
+} from './validator/bigint.js';
+export {
   DefaultBooleanValidator,
   type BooleanValidator
 } from './validator/boolean.js';
+export { ContainerValidator } from './validator/container.js';
 export {
   DefaultCustomValidator,
   type CustomValidator
@@ -32,6 +42,16 @@ export {
   type ExcludeValidator
 } from './validator/exclude.js';
 export { DefaultValidator } from './validator/index.js';
+export {
+  DefaultInstanceValidator,
+  type InstanceValidator
+} from './validator/instance.js';
+export { DefaultLazyValidator, type LazyValidator } from './validator/lazy.js';
+export { DefaultMapValidator, type MapValidator } from './validator/map.js';
+export {
+  DefaultNestedValidator,
+  type NestedValidator
+} from './validator/nested.js';
 export {
   DefaultMethodValidator,
   type MethodValidator
@@ -57,6 +77,8 @@ export {
   DefaultPartialValidator,
   type PartialValidator
 } from './validator/partial.js';
+export { PropertiesValidator } from './validator/properties.js';
+export { DefaultSetValidator, type SetValidator } from './validator/set.js';
 export {
   DefaultStrictValidator,
   type StrictValidator
@@ -66,12 +88,15 @@ export {
   type StringValidator
 } from './validator/string.js';
 export {
+  DefaultSymbolValidator,
+  type SymbolValidator
+} from './validator/symbol.js';
+export {
   DefaultTupleValidator,
   type TupleValidator
 } from './validator/tuple.js';
 export {
   DefaultUndefinedValidator,
-  DefaulUndefinedValidator,
   type UndefinedValidator
 } from './validator/undefined.js';
 export {

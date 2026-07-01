@@ -47,3 +47,53 @@ export function isValidationError(
     reason_[VALIDATION_ERROR_MARKER] === true
   );
 }
+
+/**
+ * a single flattened invalidity: the property path (if any) and its message
+ *
+ * @since 4.0.0
+ */
+export type FlatValidationError = {
+  path: string | undefined;
+  message: string;
+};
+
+/**
+ * Flatten a (possibly nested) ValidationError into a list of leaf invalidities,
+ * each with its property path and message. Especially useful together with the
+ * `aggregate` mode, which collects ALL invalidities instead of failing on the
+ * first one - e.g. to render every invalid field of a form at once.
+ *
+ * HINT: for deeply nested aggregate errors the reported path may be that of the
+ * nearest aggregating ancestor rather than the full leaf path.
+ *
+ * @export
+ * @param {ValidationError} error_
+ * @returns {ReadonlyArray<FlatValidationError>}
+ * @since 4.0.0
+ */
+export function flattenValidationError(
+  error_: ValidationError
+): ReadonlyArray<FlatValidationError> {
+  const result: FlatValidationError[] = [];
+
+  const visit = (error: ValidationError): void => {
+    const childErrors = (error.subErrors ?? []).filter(isValidationError);
+
+    if (childErrors.length > 1) {
+      // aggregate branch point -> descend into each collected sibling
+      for (let i = 0; i < childErrors.length; i++) {
+        visit(childErrors[i]);
+      }
+    } else {
+      result.push({
+        path: error.propertyPath,
+        message: error.originalErrorMessage
+      });
+    }
+  };
+
+  visit(error_);
+
+  return result;
+}

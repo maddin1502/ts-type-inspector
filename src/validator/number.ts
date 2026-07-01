@@ -10,8 +10,10 @@ import { DefaultValidator } from './index.js';
  * @extends {Validator<number, ValidationParams>}
  * @since 1.0.0
  */
-export interface NumberValidator<ValidationParams = unknown>
-  extends Validator<number, ValidationParams> {
+export interface NumberValidator<ValidationParams = unknown> extends Validator<
+  number,
+  ValidationParams
+> {
   /**
    * accept positive values only (zero is not positive)
    *
@@ -92,6 +94,30 @@ export interface NumberValidator<ValidationParams = unknown>
    * @since 1.0.0
    */
   reject(...numbers_: ReadonlyArray<number>): this;
+  /**
+   * accept integers only
+   *
+   * @readonly
+   * @type {this}
+   * @since 4.0.0
+   */
+  get integer(): this;
+  /**
+   * accept safe integers only
+   *
+   * @readonly
+   * @type {this}
+   * @since 4.0.0
+   */
+  get safeInteger(): this;
+  /**
+   * accept numbers that are a multiple of the given base only
+   *
+   * @param {number} base_
+   * @returns {this}
+   * @since 4.0.0
+   */
+  multipleOf(base_: number): this;
 }
 
 /**
@@ -150,6 +176,18 @@ export class DefaultNumberValidator<ValidationParams = unknown>
     return this.setupCondition((value_) =>
       this.checkRejected(value_, numbers_)
     );
+  }
+
+  public get integer(): this {
+    return this.setupCondition((value_) => this.checkInteger(value_));
+  }
+
+  public get safeInteger(): this {
+    return this.setupCondition((value_) => this.checkSafeInteger(value_));
+  }
+
+  public multipleOf(base_: number): this {
+    return this.setupCondition((value_) => this.checkMultipleOf(value_, base_));
   }
 
   protected validateBaseType(
@@ -226,6 +264,24 @@ export class DefaultNumberValidator<ValidationParams = unknown>
   ): void {
     if (rejected_.includes(value_)) {
       this.throwValidationError('number is rejected');
+    }
+  }
+
+  private checkInteger(value_: number): void {
+    if (!Number.isInteger(value_)) {
+      this.throwValidationError('number is not an integer');
+    }
+  }
+
+  private checkSafeInteger(value_: number): void {
+    if (!Number.isSafeInteger(value_)) {
+      this.throwValidationError('number is not a safe integer');
+    }
+  }
+
+  private checkMultipleOf(value_: number, base_: number): void {
+    if (base_ === 0 || value_ % base_ !== 0) {
+      this.throwValidationError('number is not a multiple of the given base');
     }
   }
 }

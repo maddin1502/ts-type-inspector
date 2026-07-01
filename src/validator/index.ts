@@ -1,7 +1,6 @@
 import { ValidationError, isValidationError } from '@/error.js';
 import type {
   CustomValidation,
-  NestedValidator,
   ValidationCondition,
   ValidationErrorHandler,
   Validator
@@ -19,9 +18,10 @@ import type {
  * @implements {Validator<Out, ValidationParams>}
  * @since 1.0.0
  */
-export abstract class DefaultValidator<Out, ValidationParams = unknown>
-  implements Validator<Out, ValidationParams>
-{
+export abstract class DefaultValidator<
+  Out,
+  ValidationParams = unknown
+> implements Validator<Out, ValidationParams> {
   private _validationError: ValidationError | undefined;
   private readonly _customValidations: CustomValidation<
     Out,
@@ -81,6 +81,21 @@ export abstract class DefaultValidator<Out, ValidationParams = unknown>
     } catch {
       return false;
     }
+  }
+
+  public validOrDefault(
+    value_: unknown,
+    params_?: ValidationParams
+  ): Out | undefined {
+    return this.isValid(value_, params_) ? value_ : undefined;
+  }
+
+  public validOrFallback(
+    value_: unknown,
+    fallback_: Out,
+    params_?: ValidationParams
+  ): Out {
+    return this.validOrDefault(value_, params_) ?? fallback_;
   }
 
   protected abstract validateBaseType(
@@ -160,25 +175,6 @@ export abstract class DefaultValidator<Out, ValidationParams = unknown>
   ): this {
     this._conditions.push(condition_);
     return this;
-  }
-
-  protected validateNested<NestedOut>(
-    value_: unknown,
-    nestedValidator_: NestedValidator<NestedOut, ValidationParams>,
-    params_?: ValidationParams
-  ) {
-    if (typeof nestedValidator_ === 'function') {
-      let nestedValidationParams: unknown;
-
-      const nestedValidator = nestedValidator_((cval_, cparams_) => {
-        nestedValidationParams = cparams_;
-        return cval_;
-      }, params_);
-
-      nestedValidator.validate(value_, nestedValidationParams);
-    } else {
-      nestedValidator_.validate(value_);
-    }
   }
 
   private hasMessage(value_: unknown): value_ is { message: unknown } {

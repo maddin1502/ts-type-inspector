@@ -25,8 +25,10 @@ const ti = new TypeInspector();
 
 describe(DefaultEnumValidator, () => {
   test('isValid - success', () => {
-    expect.assertions(9);
+    expect.assertions(10);
     expect(ti.enum(NumberEnum).isValid(0)).toBe(true);
+    // string enum with allowFlags=true: flag scan skips non-number values
+    expect(ti.enum(StringEnum, true).isValid('a')).toBe(true);
     expect(ti.enum(NumberEnum).isValid(1)).toBe(true);
     expect(ti.enum(NumberEnum).isValid(2)).toBe(true);
     expect(ti.enum(StringEnum).isValid('a')).toBe(true);

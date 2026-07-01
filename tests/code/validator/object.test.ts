@@ -227,6 +227,14 @@ describe(DefaultObjectValidator, () => {
     ).toBe(false);
   });
 
+  test('isValid - rejectArray', () => {
+    expect.assertions(3);
+    // without rejectArray an array passes the object base check
+    expect(ti.object({}).isValid([])).toBe(true);
+    expect(ti.object({}).rejectArray.isValid([])).toBe(false);
+    expect(ti.object({}).rejectArray.isValid({})).toBe(true);
+  });
+
   test('validate - success', () => {
     expect.assertions(2);
     expect(() =>
