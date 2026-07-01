@@ -320,7 +320,7 @@ cdv.failWhenRequired.isValid(value, { valueRequired: true }); // false
 
 Relevant to: Object, Partial, Dictionary, Array, Tuple, Map, Set
 
-Sometimes a nested validator needs the parent's validation params. `ti.nested` (since 4.0.0) wraps a validator and maps the parent params to the nested validator's params. The type of the parent params is **inferred automatically** from the surrounding validator - no annotation, no assertion.
+Sometimes a nested validator needs the parent's validation params. `ti.nested` (since 4.0.0) wraps a validator and maps the parent params to the nested validator's params.
 
 ```ts
 import { DefaultObjectValidator, DefaultStringValidator, ti } from 'ts-type-inspector';
