@@ -18,10 +18,26 @@ export type ValidationErrorHandler<ValidationParams> = (
 ) => string | void;
 
 /**
+ * A cast entry point. It can be used in two ways:
+ * - directly as the standard (default) target validator, e.g. `ti.asString.length(5)`
+ * - called with your OWN follow-up validator that matches the cast type, e.g.
+ *   `ti.asString(mySpecialStringValidator).mySpecialCheck` - the passed
+ *   validator's concrete type stays available for chaining
+ *
+ * @export
+ * @template T the cast target type
+ * @template {Validator<T>} D the standard target validator (used when not called)
+ * @since 4.1.0
+ */
+export type CastValidator<T, D extends Validator<T>> = D & {
+  <V extends Validator<T>>(validator_: V): V;
+};
+
+/**
  * The cast surface every validator exposes. A cast first validates the value
  * with the current validator, then converts (casts) the (validated) value to a
- * new type and hands it to a fresh follow-up validator that can be chained
- * further. A failed cast produces a regular {@link ValidationError}.
+ * new type and hands it to a follow-up validator that can be chained further.
+ * A failed cast produces a regular {@link ValidationError}.
  *
  * @export
  * @interface Castable
@@ -30,45 +46,50 @@ export type ValidationErrorHandler<ValidationParams> = (
  */
 export interface Castable<ValidationParams = unknown> {
   /**
-   * cast the (validated) value to a string and continue with a string validator
+   * cast the (validated) value to a string and continue with a string validator.
+   * Call with your own `Validator<string>` to use a custom follow-up validator.
    *
    * @readonly
-   * @type {StringValidator}
+   * @type {CastValidator<string, StringValidator>}
    * @since 4.1.0
    */
-  get asString(): StringValidator;
+  get asString(): CastValidator<string, StringValidator>;
   /**
-   * cast the (validated) value to a number and continue with a number validator
+   * cast the (validated) value to a number and continue with a number validator.
+   * Call with your own `Validator<number>` to use a custom follow-up validator.
    *
    * @readonly
-   * @type {NumberValidator}
+   * @type {CastValidator<number, NumberValidator>}
    * @since 4.1.0
    */
-  get asNumber(): NumberValidator;
+  get asNumber(): CastValidator<number, NumberValidator>;
   /**
-   * cast the (validated) value to a boolean and continue with a boolean validator
+   * cast the (validated) value to a boolean and continue with a boolean validator.
+   * Call with your own `Validator<boolean>` to use a custom follow-up validator.
    *
    * @readonly
-   * @type {BooleanValidator}
+   * @type {CastValidator<boolean, BooleanValidator>}
    * @since 4.1.0
    */
-  get asBoolean(): BooleanValidator;
+  get asBoolean(): CastValidator<boolean, BooleanValidator>;
   /**
-   * cast the (validated) value to a bigint and continue with a bigint validator
+   * cast the (validated) value to a bigint and continue with a bigint validator.
+   * Call with your own `Validator<bigint>` to use a custom follow-up validator.
    *
    * @readonly
-   * @type {BigIntValidator}
+   * @type {CastValidator<bigint, BigIntValidator>}
    * @since 4.1.0
    */
-  get asBigint(): BigIntValidator;
+  get asBigint(): CastValidator<bigint, BigIntValidator>;
   /**
-   * cast the (validated) value to a Date and continue with a date validator
+   * cast the (validated) value to a Date and continue with a date validator.
+   * Call with your own `Validator<Date>` to use a custom follow-up validator.
    *
    * @readonly
-   * @type {DateValidator}
+   * @type {CastValidator<Date, DateValidator>}
    * @since 4.1.0
    */
-  get asDate(): DateValidator;
+  get asDate(): CastValidator<Date, DateValidator>;
   /**
    * cast the (validated) value with a custom cast callback, continuing with the
    * given follow-up validator (its concrete type stays available for chaining)

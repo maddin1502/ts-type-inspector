@@ -9,6 +9,7 @@ import type {
 } from 'ts-lib-extended';
 import type { Caster } from './cast.js';
 import type {
+  CastValidator,
   CustomValidation,
   PartialPropertyValidators,
   PropertyValidators,
@@ -476,7 +477,7 @@ export class TypeInspector {
    * @type {StringValidator}
    * @since 4.1.0
    */
-  public get asString(): StringValidator {
+  public get asString(): CastValidator<string, StringValidator> {
     return this.any.asString;
   }
 
@@ -488,7 +489,7 @@ export class TypeInspector {
    * @type {NumberValidator}
    * @since 4.1.0
    */
-  public get asNumber(): NumberValidator {
+  public get asNumber(): CastValidator<number, NumberValidator> {
     return this.any.asNumber;
   }
 
@@ -500,7 +501,7 @@ export class TypeInspector {
    * @type {BooleanValidator}
    * @since 4.1.0
    */
-  public get asBoolean(): BooleanValidator {
+  public get asBoolean(): CastValidator<boolean, BooleanValidator> {
     return this.any.asBoolean;
   }
 
@@ -512,7 +513,7 @@ export class TypeInspector {
    * @type {BigIntValidator}
    * @since 4.1.0
    */
-  public get asBigint(): BigIntValidator {
+  public get asBigint(): CastValidator<bigint, BigIntValidator> {
     return this.any.asBigint;
   }
 
@@ -524,7 +525,7 @@ export class TypeInspector {
    * @type {DateValidator}
    * @since 4.1.0
    */
-  public get asDate(): DateValidator {
+  public get asDate(): CastValidator<Date, DateValidator> {
     return this.any.asDate;
   }
 

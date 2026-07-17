@@ -9,6 +9,7 @@ import {
 } from '@/cast.js';
 import { ValidationError, isValidationError } from '@/error.js';
 import type {
+  CastValidator,
   CustomValidation,
   ValidationCondition,
   ValidationErrorHandler,
@@ -154,24 +155,34 @@ export abstract class DefaultValidator<
     return this.validOrDefault(value_, params_) ?? fallback_;
   }
 
-  public get asString(): StringValidator {
-    return this.deriveCast(this.castFactories.string(), castToString);
+  public get asString(): CastValidator<string, StringValidator> {
+    return this.castAccessor<string, StringValidator>(castToString, () =>
+      this.castFactories.string()
+    );
   }
 
-  public get asNumber(): NumberValidator {
-    return this.deriveCast(this.castFactories.number(), castToNumber);
+  public get asNumber(): CastValidator<number, NumberValidator> {
+    return this.castAccessor<number, NumberValidator>(castToNumber, () =>
+      this.castFactories.number()
+    );
   }
 
-  public get asBoolean(): BooleanValidator {
-    return this.deriveCast(this.castFactories.boolean(), castToBoolean);
+  public get asBoolean(): CastValidator<boolean, BooleanValidator> {
+    return this.castAccessor<boolean, BooleanValidator>(castToBoolean, () =>
+      this.castFactories.boolean()
+    );
   }
 
-  public get asBigint(): BigIntValidator {
-    return this.deriveCast(this.castFactories.bigint(), castToBigint);
+  public get asBigint(): CastValidator<bigint, BigIntValidator> {
+    return this.castAccessor<bigint, BigIntValidator>(castToBigint, () =>
+      this.castFactories.bigint()
+    );
   }
 
-  public get asDate(): DateValidator {
-    return this.deriveCast(this.castFactories.date(), castToDate);
+  public get asDate(): CastValidator<Date, DateValidator> {
+    return this.castAccessor<Date, DateValidator>(castToDate, () =>
+      this.castFactories.date()
+    );
   }
 
   public asType<T, V extends Validator<T>>(
@@ -289,6 +300,32 @@ export abstract class DefaultValidator<
   ): this {
     this._transform = transform_;
     return this;
+  }
+
+  /**
+   * Build a cast entry point (asString/asNumber/...): a value that acts as the
+   * standard cast target validator when used directly AND is callable with a
+   * custom follow-up validator of the same type. Both variants first run THIS
+   * validator and then the cast.
+   */
+  private castAccessor<T, D extends Validator<T>>(
+    caster_: Caster<T, ValidationParams>,
+    createDefault_: () => DefaultValidator<T>
+  ): CastValidator<T, D> {
+    // used when the accessor is NOT called: ti.asString.length(5)
+    const fallback = this.deriveCast(createDefault_(), caster_);
+    // used when the accessor IS called with a custom validator: ti.asString(mine)
+    const callable = (validator_: Validator<T>): Validator<T> =>
+      this.deriveCast(this.asDefaultValidator(validator_), caster_);
+
+    return new Proxy(callable, {
+      get: (_target, property_): unknown => {
+        const value: unknown = Reflect.get(fallback, property_, fallback);
+        return typeof value === 'function'
+          ? (value as (...args: unknown[]) => unknown).bind(fallback)
+          : value;
+      }
+    }) as unknown as CastValidator<T, D>;
   }
 
   /**

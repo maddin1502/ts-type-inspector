@@ -9,9 +9,24 @@ import {
 import { isValidationError } from '@/error.js';
 import { TypeInspector } from '@/inspector.js';
 import type { Validator } from '@/types.js';
+import { DefaultStringValidator } from '@/validator/string.js';
 import { describe, expect, test } from 'vitest';
 
 const ti = new TypeInspector();
+
+/**
+ * A hand-written custom validator (as shown in the README): a string validator
+ * with an additional `mySpecialCheck` condition (value has to be all digits).
+ */
+class MySpecialStringValidator extends DefaultStringValidator {
+  public get mySpecialCheck(): this {
+    return this.setupCondition((value_) => {
+      if (!/^\d+$/.test(value_)) {
+        this.throwValidationError('string is not all digits');
+      }
+    });
+  }
+}
 
 describe('cast - caster functions', () => {
   test('castToString', () => {
@@ -126,6 +141,71 @@ describe('cast - primitive getters via inspector', () => {
     expect(ti.asDate.earliest('2019-01-01').isValid('2020-01-02')).toBe(true);
     expect(ti.asDate.earliest('2021-01-01').isValid('2020-01-02')).toBe(false);
     expect(ti.asDate.isValid('not a date')).toBe(false);
+  });
+});
+
+describe('cast - with a custom follow-up validator (call form)', () => {
+  test('returns the passed validator instance', () => {
+    const mine = ti.number.max(10);
+    expect(ti.asNumber(mine)).toBe(mine);
+  });
+
+  test('casts, then validates with the custom validator (incl. its conditions)', () => {
+    const validator = ti.asNumber(ti.number.max(10));
+    expect(validator.validate('5')).toBe(5);
+    expect(validator.isValid('50')).toBe(false); // max(10) on the cast value
+    expect(validator.isValid('abc')).toBe(false); // cast fails
+  });
+
+  test('works for every primitive cast', () => {
+    expect(ti.asString(ti.string.length(2)).validate(42)).toBe('42');
+    expect(ti.asString(ti.string.length(2)).isValid(5)).toBe(false);
+    expect(ti.asBoolean(ti.boolean.true).validate('yes')).toBe(true);
+    expect(ti.asBoolean(ti.boolean.true).isValid('no')).toBe(false);
+    expect(ti.asBigint(ti.bigint.max(10n)).validate('5')).toBe(5n);
+    expect(ti.asBigint(ti.bigint.max(10n)).isValid('50')).toBe(false);
+    expect(
+      ti.asDate(ti.date.earliest('2019-01-01')).isValid('2020-01-02')
+    ).toBe(true);
+    expect(
+      ti.asDate(ti.date.earliest('2021-01-01')).isValid('2020-01-02')
+    ).toBe(false);
+  });
+
+  test('chaining continues on the custom validator', () => {
+    const validator = ti.asDate(ti.date).earliest('2019-01-01');
+    expect(validator.isValid('2020-01-02')).toBe(true);
+    expect(validator.isValid('2018-01-02')).toBe(false);
+  });
+
+  test('with a hand-written custom validator (README example)', () => {
+    // ti.asString(mySpecialStringValidator).mySpecialCheck.length(5)
+    const validator = ti
+      .asString(new MySpecialStringValidator())
+      .mySpecialCheck.length(2);
+
+    // 42 -> "42": all digits (mySpecialCheck) and length 2 -> ok
+    expect(validator.validate(42)).toBe('42');
+    // true -> "true": not all digits -> custom check fails
+    expect(validator.isValid(true)).toBe(false);
+    // 5 -> "5": all digits but length 1 -> inherited length(2) fails
+    expect(validator.isValid(5)).toBe(false);
+    // the custom validator instance is returned (so its members are chainable)
+    const mine = new MySpecialStringValidator();
+    expect(ti.asString(mine)).toBe(mine);
+  });
+
+  test('the call form also works when chained off another validator', () => {
+    const validator = ti.string.length(2).asNumber(ti.number.max(50));
+    expect(validator.validate('42')).toBe(42);
+    expect(validator.isValid('421')).toBe(false); // source length check
+    expect(validator.isValid('99')).toBe(false); // target max check
+  });
+
+  test('usable inside containers', () => {
+    expect(
+      ti.object({ v: ti.asString(ti.string.length(2)) }).validate({ v: 42 })
+    ).toStrictEqual({ v: '42' });
   });
 });
 

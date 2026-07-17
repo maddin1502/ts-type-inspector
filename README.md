@@ -256,6 +256,34 @@ Cast | Target | Accepts (examples)
 `asBigint` | `bigint` | bigints, integer numbers, integer strings, booleans
 `asDate` | `Date` | valid `Date`, timestamps (number), parseable date strings
 
+Each `as*` cast can also be **called** with your own follow-up validator instead of the default one. The passed validator has to match the cast type (`asString` only accepts a `Validator<string>`, etc.), and its concrete type stays available for chaining. Here `mySpecialStringValidator` is an instance of a custom validator (see [How to define custom validators](#how-to-define-custom-validators)):
+
+```ts
+import ti, { DefaultStringValidator } from 'ts-type-inspector';
+
+// a hand-written string validator with an extra `mySpecialCheck` condition
+class MySpecialStringValidator extends DefaultStringValidator {
+  public get mySpecialCheck(): this {
+    return this.setupCondition((value_) => {
+      if (!/^\d+$/.test(value_)) {
+        this.throwValidationError('string is not all digits');
+      }
+    });
+  }
+}
+
+const mySpecialStringValidator = new MySpecialStringValidator();
+
+// default target validator
+ti.asString.length(5);
+
+// your own validator - cast to string first, then validate/chain with it
+ti.asString(mySpecialStringValidator).mySpecialCheck.length(5);
+
+// also chainable off another validator
+ti.string.length(2).asNumber(ti.number.max(50));
+```
+
 For anything else use `asType` with your own cast callback. Pass a follow-up validator to keep chaining its features; omit it to get a plain `Validator<T>`:
 
 ```ts
