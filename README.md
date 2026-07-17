@@ -14,6 +14,7 @@
   - [validOrDefault / validOrFallback](#validordefault--validorfallback)
 - [Error evaluation](#error-evaluation)
 - [Collect all errors](#collect-all-errors)
+- [Casting (type conversion)](#casting-type-conversion)
 - [How to define custom validators](#how-to-define-custom-validators)
   - [Create specialized (data type related) validators](#create-specialized-data-type-related-validators)
   - [Validation based on external influences](#validation-based-on-external-influences)
@@ -47,7 +48,7 @@
   - [Nullish](#nullish)
 
 ## Features
-- type safe (no automatic type conversions/casting)
+- type safe (no *implicit* type conversions - opt-in casting is available, see [Casting](#casting-type-conversion))
 - determine the value's data type based on the validators used (generic type arguments are mostly optional)
 - custom error messages
 - flexible and additional custom validation
@@ -218,6 +219,76 @@ flattenValidationError(validator.validationError);
 
 > `.aggregate` only affects container validators. On value validators (string, number, ...) it does nothing.
 > `flattenValidationError` also works without `.aggregate` - then you simply get a single entry.
+
+## Casting (type conversion)
+
+> since 4.1.0
+
+Sometimes incoming data has the wrong type - e.g. a number that arrives as a `"42"` string. Casting lets you **convert** the value during validation. A cast first casts the incoming value; if the cast fails a regular validation error is produced, and if it succeeds validation continues with the target validator (so all of its conditions stay available). `validate` (and `validOrDefault` / `validOrFallback`) then return the **converted** value.
+
+```ts
+import ti from 'ts-type-inspector';
+
+type MyType = { myValue: number };
+
+// { myValue: "42" }  ->  { myValue: 42 }
+const validator = ti.object<MyType>({
+  myValue: ti.asNumber.max(50)
+});
+
+validator.validate({ myValue: '42' }); // { myValue: 42 }
+```
+
+The `as*` casts are available on the inspector (`ti.asNumber`) *and* on every validator, so they can be chained. Conditions before the cast validate the source value, conditions after validate the converted value:
+
+```ts
+// validate as a string of length 2 first, THEN cast to number and check the range
+ti.string.length(2).asNumber.max(50);
+```
+
+Predefined casts for the standard primitive types:
+
+Cast | Target | Accepts (examples)
+--- | --- | ---
+`asString` | `string` | strings, finite numbers, bigints, booleans
+`asNumber` | `number` | numbers, numeric strings, bigints, booleans
+`asBoolean` | `boolean` | booleans, `1`/`0`, `1n`/`0n`, `'true'`/`'false'`/`'yes'`/`'no'`/`'1'`/`'0'`
+`asBigint` | `bigint` | bigints, integer numbers, integer strings, booleans
+`asDate` | `Date` | valid `Date`, timestamps (number), parseable date strings
+
+For anything else use `asType` with your own cast callback. Pass a follow-up validator to keep chaining its features; omit it to get a plain `Validator<T>`:
+
+```ts
+// custom cast + keep the concrete NumberValidator for chaining
+ti.asType(value => Number(value), ti.number).max(50).positive;
+
+// custom cast without a follow-up validator
+ti.asType(value => BigInt(value as string));
+```
+
+Complex/structured data (objects, tuples, dictionaries, ...) usually arrives as a JSON string. `asJson` parses it and validates the parsed structure with the given validator (kept for chaining):
+
+```ts
+// '{"a":1,"b":"x"}'  ->  { a: 1, b: 'x' }
+ti.asJson(ti.object({ a: ti.number, b: ti.string }));
+
+// '[42,"x"]'  ->  [42, 'x']
+ti.asJson(ti.tuple(ti.number, ti.string)).noOverload;
+```
+
+> Note: because a cast changes the value, prefer `validate` (it returns the converted value). `isValid` still works as a type guard, but keep in mind it narrows the *original* input reference.
+
+> **Reference identity:** when a cast actually converts a value inside a container (object, array, tuple, dictionary, map, set), `validate` returns a **new** object/collection - the input is never mutated. Without any cast the original reference is returned unchanged (copy-on-write).
+>
+> ```ts
+> const input = { myValue: '42' };
+> const result = ti.object<MyType>({ myValue: ti.asNumber }).validate(input);
+> result === input;      // false  -> a value was cast, so a new object is returned
+> input.myValue;         // '42'   -> the original input stays untouched
+>
+> const untouched = { myValue: 1 };
+> ti.object({ myValue: ti.number }).validate(untouched) === untouched; // true -> no cast, same reference
+> ```
 
 ## How to define custom validators
 

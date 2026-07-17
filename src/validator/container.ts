@@ -47,12 +47,17 @@ export abstract class ContainerValidator<
    * The child value is read lazily via `getValue_` so that throwing getters are
    * caught and turned into proper validation errors.
    *
+   * When the child validator transforms/casts the value (the validated value
+   * differs from the input) `onCasted_` is invoked so the container can carry
+   * the converted value into its output.
+   *
    * @template ChildOut
    * @param {ValidationError[]} errors_ collector for aggregate mode
    * @param {() => unknown} getValue_ reads the child value (inside the try)
    * @param {PropertyValidator<ChildOut, ValidationParams>} propertyValidator_
    * @param {PropertyKey | undefined} trace_ property key / index for the error path
    * @param {?ValidationParams} [params_]
+   * @param {?(value_: ChildOut) => void} [onCasted_] receives the converted value (only when it differs from the input)
    * @since 4.0.0
    */
   protected validateChild<ChildOut>(
@@ -60,10 +65,20 @@ export abstract class ContainerValidator<
     getValue_: () => unknown,
     propertyValidator_: PropertyValidator<ChildOut, ValidationParams>,
     trace_: PropertyKey | undefined,
-    params_?: ValidationParams
+    params_?: ValidationParams,
+    onCasted_?: (value_: ChildOut) => void
   ): void {
     try {
-      this.validateNested(getValue_(), propertyValidator_, params_);
+      const original = getValue_();
+      const validated = this.validateNested(
+        original,
+        propertyValidator_,
+        params_
+      );
+
+      if (onCasted_ !== undefined && !Object.is(validated, original)) {
+        onCasted_(validated);
+      }
     } catch (reason_) {
       if (this._aggregateErrors) {
         errors_.push(this.collectNestedError(reason_, trace_));
@@ -93,15 +108,15 @@ export abstract class ContainerValidator<
     value_: unknown,
     propertyValidator_: PropertyValidator<NestedOut, ValidationParams>,
     params_?: ValidationParams
-  ): void {
+  ): NestedOut {
     if (isNestedValidator(propertyValidator_)) {
       // ti.nested: the conversion point that maps + forwards the parent's params
       // to the wrapped validator
-      propertyValidator_.validateNested(value_, params_);
+      return propertyValidator_.validateNested(value_, params_);
     } else {
       // plain validator: without a conversion point (ti.nested) the parent's
       // params do not match the child's params, so none are passed
-      propertyValidator_.validate(value_);
+      return propertyValidator_.validate(value_);
     }
   }
 

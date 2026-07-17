@@ -52,23 +52,41 @@ export class DefaultMapValidator<K, V, ValidationParams = unknown>
 
     const map: Map<unknown, unknown> = value_;
     const errors: ValidationError[] = [];
+    const entries: [unknown, unknown][] = [];
+    let changed = false;
 
     for (const [key, val] of map) {
       const trace = this.keyTrace(key);
+      const entry: [unknown, unknown] = [key, val];
+      entries.push(entry);
 
-      this.validateChild(errors, () => key, this._keyValidator, trace, params_);
+      this.validateChild(
+        errors,
+        () => key,
+        this._keyValidator,
+        trace,
+        params_,
+        (validated) => {
+          changed = true;
+          entry[0] = validated;
+        }
+      );
       this.validateChild(
         errors,
         () => val,
         this._valueValidator,
         trace,
-        params_
+        params_,
+        (validated) => {
+          changed = true;
+          entry[1] = validated;
+        }
       );
     }
 
     this.throwOnErrors(errors, 'one or more entries are invalid');
 
-    return value_ as Map<K, V>;
+    return (changed ? new Map(entries) : value_) as Map<K, V>;
   }
 
   private keyTrace(key_: unknown): PropertyKey | undefined {

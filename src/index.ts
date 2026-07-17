@@ -7,6 +7,15 @@ export type {
   RecordLike
 } from 'ts-lib-extended';
 export {
+  castToBigint,
+  castToBoolean,
+  castToDate,
+  castToJson,
+  castToNumber,
+  castToString,
+  type Caster
+} from './cast.js';
+export {
   flattenValidationError,
   isValidationError,
   ValidationError,

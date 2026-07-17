@@ -48,15 +48,30 @@ export class DefaultSetValidator<V, ValidationParams = unknown>
 
     const set: Set<unknown> = value_;
     const errors: ValidationError[] = [];
+    const items: unknown[] = [];
+    let changed = false;
     let index = 0;
 
     for (const item of set) {
-      this.validateChild(errors, () => item, this._itemValidator, index, params_);
+      const itemIndex = index;
+      items.push(item);
+
+      this.validateChild(
+        errors,
+        () => item,
+        this._itemValidator,
+        itemIndex,
+        params_,
+        (validated) => {
+          changed = true;
+          items[itemIndex] = validated;
+        }
+      );
       index++;
     }
 
     this.throwOnErrors(errors, 'one or more items are invalid');
 
-    return value_ as Set<V>;
+    return (changed ? new Set(items) : value_) as Set<V>;
   }
 }

@@ -1,6 +1,12 @@
 import type { ArrayItem, MinArray, RecordLike } from 'ts-lib-extended';
+import type { Caster } from './cast.js';
 import type { ValidationError } from './error.js';
+import type { BigIntValidator } from './validator/bigint.js';
+import type { BooleanValidator } from './validator/boolean.js';
+import type { DateValidator } from './validator/date.js';
 import type { NestedValidator } from './validator/nested.js';
+import type { NumberValidator } from './validator/number.js';
+import type { StringValidator } from './validator/string.js';
 
 export type CustomValidation<V, ValidationParams = unknown> = (
   value_: V,
@@ -10,7 +16,98 @@ export type ValidationErrorHandler<ValidationParams> = (
   error_: ValidationError,
   params_?: ValidationParams
 ) => string | void;
-export interface Validator<Out, ValidationParams = unknown> {
+
+/**
+ * The cast surface every validator exposes. A cast first validates the value
+ * with the current validator, then converts (casts) the (validated) value to a
+ * new type and hands it to a fresh follow-up validator that can be chained
+ * further. A failed cast produces a regular {@link ValidationError}.
+ *
+ * @export
+ * @interface Castable
+ * @template [ValidationParams=unknown] extended validation parameters
+ * @since 4.1.0
+ */
+export interface Castable<ValidationParams = unknown> {
+  /**
+   * cast the (validated) value to a string and continue with a string validator
+   *
+   * @readonly
+   * @type {StringValidator}
+   * @since 4.1.0
+   */
+  get asString(): StringValidator;
+  /**
+   * cast the (validated) value to a number and continue with a number validator
+   *
+   * @readonly
+   * @type {NumberValidator}
+   * @since 4.1.0
+   */
+  get asNumber(): NumberValidator;
+  /**
+   * cast the (validated) value to a boolean and continue with a boolean validator
+   *
+   * @readonly
+   * @type {BooleanValidator}
+   * @since 4.1.0
+   */
+  get asBoolean(): BooleanValidator;
+  /**
+   * cast the (validated) value to a bigint and continue with a bigint validator
+   *
+   * @readonly
+   * @type {BigIntValidator}
+   * @since 4.1.0
+   */
+  get asBigint(): BigIntValidator;
+  /**
+   * cast the (validated) value to a Date and continue with a date validator
+   *
+   * @readonly
+   * @type {DateValidator}
+   * @since 4.1.0
+   */
+  get asDate(): DateValidator;
+  /**
+   * cast the (validated) value with a custom cast callback, continuing with the
+   * given follow-up validator (its concrete type stays available for chaining)
+   *
+   * @template T the cast target type
+   * @template {Validator<T>} V the follow-up validator
+   * @param {Caster<T, ValidationParams>} caster_ turns the value into `T` (throws on failure)
+   * @param {V} target_ validator applied to the cast value
+   * @returns {V}
+   * @since 4.1.0
+   */
+  asType<T, V extends Validator<T>>(
+    caster_: Caster<T, ValidationParams>,
+    target_: V
+  ): V;
+  /**
+   * cast the (validated) value with a custom cast callback
+   *
+   * @template T the cast target type
+   * @param {Caster<T, ValidationParams>} caster_ turns the value into `T` (throws on failure)
+   * @returns {Validator<T>}
+   * @since 4.1.0
+   */
+  asType<T>(caster_: Caster<T, ValidationParams>): Validator<T>;
+  /**
+   * parse the (validated) value as a JSON string, then validate the parsed
+   * structure with the given follow-up validator (kept for chaining)
+   *
+   * @template T the parsed/validated type
+   * @template {Validator<T>} V the follow-up validator
+   * @param {V} target_ validator applied to the parsed value
+   * @returns {V}
+   * @since 4.1.0
+   */
+  asJson<T, V extends Validator<T>>(target_: V): V;
+}
+
+export interface Validator<Out, ValidationParams = unknown>
+  extends Castable<ValidationParams> {
   /**
    * retrieve error from last validation; undefined if validation succeeded
    *

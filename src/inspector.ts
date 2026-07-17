@@ -7,6 +7,7 @@ import type {
   MethodLike,
   RecordLike
 } from 'ts-lib-extended';
+import type { Caster } from './cast.js';
 import type {
   CustomValidation,
   PartialPropertyValidators,
@@ -16,13 +17,20 @@ import type {
   ValidationParamsMapper,
   Validator
 } from './types.js';
+import { CastFactories } from './validator/cast-factories.js';
 import { DefaultAnyValidator } from './validator/any.js';
 import { DefaultArrayValidator } from './validator/array.js';
-import { DefaultBooleanValidator } from './validator/boolean.js';
+import {
+  DefaultBooleanValidator,
+  type BooleanValidator
+} from './validator/boolean.js';
 import { DefaultCustomValidator } from './validator/custom.js';
-import { DefaultDateValidator } from './validator/date.js';
+import { DefaultDateValidator, type DateValidator } from './validator/date.js';
 import { DefaultDictionaryValidator } from './validator/dictionary.js';
-import { DefaultBigIntValidator } from './validator/bigint.js';
+import {
+  DefaultBigIntValidator,
+  type BigIntValidator
+} from './validator/bigint.js';
 import { DefaultEnumValidator } from './validator/enum.js';
 import { DefaultExcludeValidator } from './validator/exclude.js';
 import { DefaultValidator } from './validator/index.js';
@@ -38,12 +46,18 @@ import { DefaultSetValidator } from './validator/set.js';
 import { DefaultSymbolValidator } from './validator/symbol.js';
 import { DefaultNullValidator } from './validator/null.js';
 import { DefaultNullishValidator } from './validator/nullish.js';
-import { DefaultNumberValidator } from './validator/number.js';
+import {
+  DefaultNumberValidator,
+  type NumberValidator
+} from './validator/number.js';
 import { DefaultObjectValidator } from './validator/object.js';
 import { DefaultOptionalValidator } from './validator/optional.js';
 import { DefaultPartialValidator } from './validator/partial.js';
 import { DefaultStrictValidator } from './validator/strict.js';
-import { DefaultStringValidator } from './validator/string.js';
+import {
+  DefaultStringValidator,
+  type StringValidator
+} from './validator/string.js';
 import { DefaultTupleValidator } from './validator/tuple.js';
 import { DefaultUndefinedValidator } from './validator/undefined.js';
 import { DefaultUnionValidator } from './validator/union.js';
@@ -453,4 +467,115 @@ export class TypeInspector {
       ChildValidationParams
     >(validator_, withParams_);
   }
+
+  /**
+   * Cast an incoming (unknown) value to a string, then validate it.
+   *
+   * @public
+   * @readonly
+   * @type {StringValidator}
+   * @since 4.1.0
+   */
+  public get asString(): StringValidator {
+    return this.any.asString;
+  }
+
+  /**
+   * Cast an incoming (unknown) value to a number, then validate it.
+   *
+   * @public
+   * @readonly
+   * @type {NumberValidator}
+   * @since 4.1.0
+   */
+  public get asNumber(): NumberValidator {
+    return this.any.asNumber;
+  }
+
+  /**
+   * Cast an incoming (unknown) value to a boolean, then validate it.
+   *
+   * @public
+   * @readonly
+   * @type {BooleanValidator}
+   * @since 4.1.0
+   */
+  public get asBoolean(): BooleanValidator {
+    return this.any.asBoolean;
+  }
+
+  /**
+   * Cast an incoming (unknown) value to a bigint, then validate it.
+   *
+   * @public
+   * @readonly
+   * @type {BigIntValidator}
+   * @since 4.1.0
+   */
+  public get asBigint(): BigIntValidator {
+    return this.any.asBigint;
+  }
+
+  /**
+   * Cast an incoming (unknown) value to a Date, then validate it.
+   *
+   * @public
+   * @readonly
+   * @type {DateValidator}
+   * @since 4.1.0
+   */
+  public get asDate(): DateValidator {
+    return this.any.asDate;
+  }
+
+  /**
+   * Cast an incoming (unknown) value with a custom cast callback, continuing
+   * with the given follow-up validator (its concrete type stays available for
+   * chaining).
+   *
+   * @public
+   * @template T the cast target type
+   * @template {Validator<T>} V the follow-up validator
+   * @param {Caster<T>} caster_ turns the value into `T` (throws on failure)
+   * @param {V} target_ validator applied to the cast value
+   * @returns {V}
+   * @since 4.1.0
+   */
+  public asType<T, V extends Validator<T>>(
+    caster_: Caster<T>,
+    target_: V
+  ): V;
+  /**
+   * Cast an incoming (unknown) value with a custom cast callback.
+   *
+   * @public
+   * @template T the cast target type
+   * @param {Caster<T>} caster_ turns the value into `T` (throws on failure)
+   * @returns {Validator<T>}
+   * @since 4.1.0
+   */
+  public asType<T>(caster_: Caster<T>): Validator<T>;
+  public asType<T>(caster_: Caster<T>, target_?: Validator<T>): Validator<T> {
+    return target_ === undefined
+      ? this.any.asType(caster_)
+      : this.any.asType(caster_, target_);
+  }
+
+  /**
+   * Parse an incoming JSON string, then validate the parsed structure with the
+   * given follow-up validator (kept for chaining). Ideal for casting to complex
+   * types like objects, tuples or dictionaries.
+   *
+   * @public
+   * @template T the parsed/validated type
+   * @template {Validator<T>} V the follow-up validator
+   * @param {V} target_ validator applied to the parsed value
+   * @returns {V}
+   * @since 4.1.0
+   */
+  public asJson<T, V extends Validator<T>>(target_: V): V {
+    return this.any.asJson(target_);
+  }
 }
+
+DefaultValidator.useCastFactories(new CastFactories());

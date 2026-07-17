@@ -71,6 +71,7 @@ export class DefaultPartialValidator<
     }
 
     const errors: ValidationError[] = [];
+    let result: RecordLike = value_;
 
     for (const validatorKey in this._propertyValidators) {
       const propertyValidator = this._propertyValidators[validatorKey];
@@ -81,13 +82,20 @@ export class DefaultPartialValidator<
           () => value_[validatorKey],
           propertyValidator,
           validatorKey,
-          params_
+          params_,
+          (validated) => {
+            if (result === value_) {
+              result = { ...value_ };
+            }
+
+            (result as Record<PropertyKey, unknown>)[validatorKey] = validated;
+          }
         );
       }
     }
 
     this.throwOnErrors(errors, 'one or more properties are invalid');
 
-    return value_;
+    return result as Out;
   }
 }

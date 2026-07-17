@@ -1,3 +1,12 @@
+import {
+  castToBigint,
+  castToBoolean,
+  castToDate,
+  castToJson,
+  castToNumber,
+  castToString,
+  type Caster
+} from '@/cast.js';
 import { ValidationError, isValidationError } from '@/error.js';
 import type {
   CustomValidation,
@@ -5,6 +14,12 @@ import type {
   ValidationErrorHandler,
   Validator
 } from '@/types.js';
+import type { CastFactories } from './cast-factories.js';
+import type { BigIntValidator } from './bigint.js';
+import type { BooleanValidator } from './boolean.js';
+import type { DateValidator } from './date.js';
+import type { NumberValidator } from './number.js';
+import type { StringValidator } from './string.js';
 
 /**
  * Base class of ALL validators, which contains the main validation logic that is not type-related.
@@ -22,7 +37,17 @@ export abstract class DefaultValidator<
   Out,
   ValidationParams = unknown
 > implements Validator<Out, ValidationParams> {
+  /**
+   * Factories for the cast targets (asString/asNumber/...), injected once at
+   * bootstrap via {@link useCastFactories}. Kept out of a static import to
+   * break the base <-> subclass import cycle.
+   */
+  private static _castFactories: CastFactories | undefined;
+
   private _validationError: ValidationError | undefined;
+  private _transform:
+    | ((value_: unknown, params_?: ValidationParams) => unknown)
+    | undefined;
   private readonly _customValidations: CustomValidation<
     Out,
     ValidationParams
@@ -34,6 +59,27 @@ export abstract class DefaultValidator<
     this._conditions = [];
     this._customValidations = [];
     this._errorHandlers = [];
+  }
+
+  /**
+   * Inject the {@link CastFactories} used by the cast API. Called once by the
+   * inspector at bootstrap (after all validator classes are defined).
+   *
+   * @public
+   * @static
+   * @param {CastFactories} castFactories_
+   * @since 4.1.0
+   */
+  public static useCastFactories(castFactories_: CastFactories): void {
+    DefaultValidator._castFactories = castFactories_;
+  }
+
+  private get castFactories(): CastFactories {
+    if (DefaultValidator._castFactories === undefined) {
+      throw new Error('cast factories are not registered');
+    }
+
+    return DefaultValidator._castFactories;
   }
 
   public get validationError(): ValidationError | undefined {
@@ -51,7 +97,11 @@ export abstract class DefaultValidator<
   }
 
   public validate(value_: unknown, params_?: ValidationParams): Out {
-    const value = this.validateBaseType(value_, params_);
+    const baseValue =
+      this._transform === undefined
+        ? value_
+        : this._transform(value_, params_);
+    const value = this.validateBaseType(baseValue, params_);
 
     for (let i = 0; i < this._conditions.length; i++) {
       this._conditions[i](value, params_);
@@ -87,7 +137,13 @@ export abstract class DefaultValidator<
     value_: unknown,
     params_?: ValidationParams
   ): Out | undefined {
-    return this.isValid(value_, params_) ? value_ : undefined;
+    // return the validated value: for casting validators this is the CONVERTED
+    // value, not the original input
+    try {
+      return this.validate(value_, params_);
+    } catch {
+      return undefined;
+    }
   }
 
   public validOrFallback(
@@ -96,6 +152,48 @@ export abstract class DefaultValidator<
     params_?: ValidationParams
   ): Out {
     return this.validOrDefault(value_, params_) ?? fallback_;
+  }
+
+  public get asString(): StringValidator {
+    return this.deriveCast(this.castFactories.string(), castToString);
+  }
+
+  public get asNumber(): NumberValidator {
+    return this.deriveCast(this.castFactories.number(), castToNumber);
+  }
+
+  public get asBoolean(): BooleanValidator {
+    return this.deriveCast(this.castFactories.boolean(), castToBoolean);
+  }
+
+  public get asBigint(): BigIntValidator {
+    return this.deriveCast(this.castFactories.bigint(), castToBigint);
+  }
+
+  public get asDate(): DateValidator {
+    return this.deriveCast(this.castFactories.date(), castToDate);
+  }
+
+  public asType<T, V extends Validator<T>>(
+    caster_: Caster<T, ValidationParams>,
+    target_: V
+  ): V;
+  public asType<T>(caster_: Caster<T, ValidationParams>): Validator<T>;
+  public asType<T>(
+    caster_: Caster<T, ValidationParams>,
+    target_?: Validator<T>
+  ): Validator<T> {
+    const target =
+      target_ ?? (this.castFactories.passthrough() as DefaultValidator<T>);
+    return this.deriveCast(this.asDefaultValidator(target), caster_);
+  }
+
+  public asJson<T, V extends Validator<T>>(target_: V): V {
+    this.applyCast(
+      this.asDefaultValidator(target_),
+      castToJson as Caster<T, ValidationParams>
+    );
+    return target_;
   }
 
   protected abstract validateBaseType(
@@ -175,6 +273,60 @@ export abstract class DefaultValidator<
   ): this {
     this._conditions.push(condition_);
     return this;
+  }
+
+  /**
+   * Install a pre-processing transform that runs before {@link validateBaseType}.
+   * Used by the cast API to feed a converted value into a follow-up validator.
+   *
+   * @protected
+   * @param {(value_: unknown, params_?: ValidationParams) => unknown} transform_
+   * @returns {this}
+   * @since 4.1.0
+   */
+  protected setTransform(
+    transform_: (value_: unknown, params_?: ValidationParams) => unknown
+  ): this {
+    this._transform = transform_;
+    return this;
+  }
+
+  /**
+   * Wire up a cast: `target_` first runs THIS validator, then the cast, before
+   * applying its own validation. Returns `target_` so its concrete type stays
+   * available for method chaining.
+   */
+  private deriveCast<T, V extends DefaultValidator<T>>(
+    target_: V,
+    caster_: Caster<T, ValidationParams>
+  ): V {
+    this.applyCast(target_, caster_);
+    return target_;
+  }
+
+  private applyCast<T>(
+    target_: DefaultValidator<T>,
+    caster_: Caster<T, ValidationParams>
+  ): void {
+    target_.setTransform((value_, params_) => {
+      const source = this.validate(value_, params_ as ValidationParams);
+
+      try {
+        return caster_(source, params_ as ValidationParams);
+      } catch (reason_) {
+        target_.rethrowError(reason_);
+      }
+    });
+  }
+
+  private asDefaultValidator<T>(
+    validator_: Validator<T>
+  ): DefaultValidator<T> {
+    if (validator_ instanceof DefaultValidator) {
+      return validator_ as DefaultValidator<T>;
+    }
+
+    throw new Error('cast target must be a Default* validator');
   }
 
   private hasMessage(value_: unknown): value_ is { message: unknown } {

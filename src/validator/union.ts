@@ -55,21 +55,18 @@ export class DefaultUnionValidator<
       const validator = this._validators[i];
 
       try {
-        validator.validate(value_, params_);
-        break;
+        // return the validated value directly: a matching casting validator may
+        // have converted it
+        return validator.validate(value_, params_) as UnionValidatorsItem<V>;
       } catch (reason_) {
         errors.push(this.detectError(reason_).error);
       }
     }
 
-    if (errors.length === this._validators.length) {
-      this.throwValidationError(
-        'value does not match any of the possible types',
-        undefined,
-        errors
-      );
-    }
-
-    return value_ as UnionValidatorsItem<V>;
+    this.throwValidationError(
+      'value does not match any of the possible types',
+      undefined,
+      errors
+    );
   }
 }

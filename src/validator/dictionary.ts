@@ -69,20 +69,29 @@ export class DefaultDictionaryValidator<
     }
 
     const errors: ValidationError[] = [];
+    const source: Dictionary<unknown> = value_;
+    let result: Dictionary<unknown> = source;
 
-    for (const dictionaryKey in value_) {
+    for (const dictionaryKey in source) {
       this.validateChild(
         errors,
-        () => value_[dictionaryKey],
+        () => source[dictionaryKey],
         this._itemValidator,
         dictionaryKey,
-        params_
+        params_,
+        (validated) => {
+          if (result === source) {
+            result = { ...source };
+          }
+
+          (result as Record<PropertyKey, unknown>)[dictionaryKey] = validated;
+        }
       );
     }
 
     this.throwOnErrors(errors, 'one or more values are invalid');
 
-    return value_ as Out;
+    return result as Out;
   }
 
   private checkKeys(

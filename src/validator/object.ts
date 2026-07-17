@@ -95,6 +95,7 @@ export class DefaultObjectValidator<
     }
 
     const errors: ValidationError[] = [];
+    let result: RecordLike = value_;
 
     // keep optional parameters in mind! The value must be validated even if it is undefined
     for (const validatorKey in this._propertyValidators) {
@@ -103,13 +104,20 @@ export class DefaultObjectValidator<
         () => value_[validatorKey],
         this._propertyValidators[validatorKey],
         validatorKey,
-        params_
+        params_,
+        (validated) => {
+          if (result === value_) {
+            result = { ...value_ };
+          }
+
+          (result as Record<PropertyKey, unknown>)[validatorKey] = validated;
+        }
       );
     }
 
     this.throwOnErrors(errors, 'one or more properties are invalid');
 
-    return value_;
+    return result as Out;
   }
 
   private checkOverload(value_: RecordLike): void {

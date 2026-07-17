@@ -108,14 +108,29 @@ export class DefaultArrayValidator<const Out, ValidationParams = unknown>
     }
 
     const errors: ValidationError[] = [];
+    const source: unknown[] = value_;
+    let result: unknown[] = source;
 
-    for (let i = 0; i < value_.length; i++) {
-      this.validateChild(errors, () => value_[i], this._itemValidator, i, params_);
+    for (let i = 0; i < source.length; i++) {
+      this.validateChild(
+        errors,
+        () => source[i],
+        this._itemValidator,
+        i,
+        params_,
+        (validated) => {
+          if (result === source) {
+            result = [...source];
+          }
+
+          result[i] = validated;
+        }
+      );
     }
 
     this.throwOnErrors(errors, 'one or more items are invalid');
 
-    return value_ as Out[];
+    return result as Out[];
   }
 
   private checkLength(value_: Out[], length_: number): void {

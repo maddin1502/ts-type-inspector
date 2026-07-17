@@ -65,20 +65,29 @@ export class DefaultTupleValidator<
     }
 
     const errors: ValidationError[] = [];
+    const source: unknown[] = value_;
+    let result: unknown[] = source;
 
     for (let i = 0; i < this._itemValidators.length; i++) {
       this.validateChild(
         errors,
-        () => value_[i],
+        () => source[i],
         this._itemValidators[i],
         i,
-        params_
+        params_,
+        (validated) => {
+          if (result === source) {
+            result = [...source];
+          }
+
+          result[i] = validated;
+        }
       );
     }
 
     this.throwOnErrors(errors, 'one or more items are invalid');
 
-    return value_ as Out;
+    return result as Out;
   }
 
   private checkOverload(value_: unknown[]): void {
